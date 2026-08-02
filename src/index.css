@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Fira+Code:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-mono: "Fira Code", ui-monospace, monospace;
+  
+  --color-brand-green-50: #eefdf8;
+  --color-brand-green-100: #d1f4eb;
+  --color-brand-green-200: #a7e9d7;
+  --color-brand-green-600: #006B44; /* Exact DoneX Deep Emerald/Forest Green */
+  --color-brand-green-700: #005637;
+  --color-brand-green-800: #004029;
+  --color-brand-green-900: #003623;
+  --color-brand-green-950: #002D1D;
+  
+  --color-brand-yellow-300: #fff5cc;
+  --color-brand-yellow-400: #ffd541;
+  --color-brand-yellow-500: #FFC107; /* DoneX Vibrant Yellow Gold */
+  --color-brand-yellow-600: #E09F00;
+  
+  --animate-marquee: marquee 35s linear infinite;
+  --animate-spin-slow: spin 15s linear infinite;
+  --animate-bounce-slow: bounce 3s ease-in-out infinite;
+  
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
+
+/* Beautiful organic curves & brush elements */
+.brush-stroke-under {
+  background-image: linear-gradient(120deg, var(--color-brand-yellow-500) 0%, var(--color-brand-yellow-500) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.35em;
+  background-position: 0 88%;
+}
+
+/* Custom rounded shapes like DoneX */
+.donex-card-rounded {
+  border-radius: 40px 12px 40px 12px;
+}
+
+.organic-card-1 {
+  border-radius: 80px 24px 80px 24px;
+}
+
+.organic-card-2 {
+  border-radius: 24px 80px 24px 80px;
+}
+
+.organic-card-3 {
+  border-radius: 50px 50px 50px 50px;
+}
+
+/* Subtle background pattern across the app */
+.subtle-canvas-pattern {
+  background-color: #FAF8F5;
+  background-image: 
+    radial-gradient(rgba(0, 107, 68, 0.05) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(0, 107, 68, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px, 20px 20px;
+  background-position: 0 0, 20px 20px;
+}
+
+/* Custom Glow */
+.custom-glow-green {
+  box-shadow: 0 20px 40px -15px rgba(0, 107, 68, 0.25);
+}
+
+.custom-glow-yellow {
+  box-shadow: 0 20px 40px -15px rgba(255, 193, 7, 0.3);
+}
+
+/* Custom Hide Scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

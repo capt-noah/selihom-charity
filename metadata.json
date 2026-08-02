@@ -1,0 +1,8 @@
+{
+  "name": "Selihom",
+  "description": "A official website for Selihom Mentally Ill People Support Association, featuring program showcases, transformation stories, donation pledges, visit bookings, and bilingual support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
