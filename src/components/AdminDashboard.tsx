@@ -542,18 +542,18 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-gray-900 flex flex-col font-sans relative z-50">
+    <div className="min-h-screen bg-brand-sky-50 text-brand-sky-950 flex flex-col font-sans relative z-50">
       
       {/* Header Bar */}
-      <header className="bg-brand-green-950 text-white px-3.5 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b border-brand-green-800 shrink-0 sticky top-0 z-40 shadow-md">
+      <header className="bg-white border-b border-brand-sky-200 px-3.5 sm:px-6 py-3 sm:py-4 flex items-center justify-between shrink-0 sticky top-0 z-40 shadow-sm">
         <div className="flex items-center gap-2.5 sm:gap-3">
-          <img src={selihomLogo} alt="Selihom Logo" className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white p-1 object-contain shadow-xs shrink-0" />
+          <img src={selihomLogo} alt="Selihom Logo" className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white p-0.5 object-contain border-2 border-brand-sky-400 shadow-sm shrink-0" />
           <div>
-            <h1 className="font-serif font-bold text-base sm:text-xl text-white tracking-tight leading-tight">
-              Selihom Admin Portal
+            <h1 className="font-serif font-bold text-base sm:text-xl text-brand-sky-950 tracking-tight leading-tight">
+              {language === "am" ? "ሰሊሆም አስተዳደር" : "Selihom Admin Portal"}
             </h1>
-            <p className="text-[10px] sm:text-[11px] text-emerald-200/80 hidden sm:block">
-              Internal Shelter Management & Operations
+            <p className="text-[10px] sm:text-[11px] text-brand-sky-500 hidden sm:block">
+              {language === "am" ? "የተጠቃሚዎች መዝገቦች አስተዳደር" : "Internal Shelter Management & Operations"}
             </p>
           </div>
         </div>
@@ -561,16 +561,16 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={onClose}
-            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-brand-green-900 hover:bg-brand-green-800 text-emerald-100 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-brand-green-800 shrink-0"
+            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-brand-sky-50 hover:bg-brand-sky-100 text-brand-sky-700 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-brand-sky-200 shrink-0"
           >
-            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-yellow-400" />
-            <span>{language === "am" ? "መነሻ" : "Website"}</span>
+            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-sky-400" />
+            <span>{language === "am" ? "ወደ ድህረ ገጹ" : "Website"}</span>
           </button>
 
           {isLoggedIn && (
             <button
               onClick={handleLogout}
-              className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-red-950/80 hover:bg-red-900 text-red-200 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-red-900/60 shrink-0"
+              className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-red-200 shrink-0"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{language === "am" ? "ውጣ" : "Logout"}</span>
@@ -581,20 +581,28 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
       {/* MAIN CONTENT AREA */}
       {!isLoggedIn ? (
-        /* LOGIN SCREEN - FULL PAGE */
-        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 bg-[#FAF8F5] min-h-[calc(100vh-70px)]">
+        /* LOGIN SCREEN */
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 bg-brand-sky-50 min-h-[calc(100vh-70px)]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-md w-full bg-white p-6 sm:p-10 rounded-2xl sm:rounded-3xl shadow-xl border border-brand-green-100/80 relative"
+            className="max-w-md w-full bg-white p-6 sm:p-10 rounded-2xl sm:rounded-3xl shadow-lg border-2 border-brand-sky-100 relative"
           >
-            <div className="text-center mb-6 sm:mb-8">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-brand-green-950 text-brand-yellow-400 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-md">
+            {/* 4-colour top stripe */}
+            <div className="absolute top-0 left-0 right-0 h-1 flex rounded-t-3xl overflow-hidden">
+              <div className="flex-1 bg-brand-sky-400" /><div className="flex-1 bg-brand-green-400" />
+              <div className="flex-1 bg-brand-yellow-400" /><div className="flex-1 bg-brand-orange-400" />
+            </div>
+
+            <div className="text-center mb-6 sm:mb-8 pt-2">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-brand-sky-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-md">
                 <Shield className="w-7 h-7 sm:w-8 sm:h-8 stroke-[1.75]" />
               </div>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-brand-green-950">Admin Sign In</h2>
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-brand-sky-950">
+                {language === "am" ? "ወደ አስተዳደር ይግቡ" : "Admin Sign In"}
+              </h2>
               <p className="text-xs text-gray-500 mt-1">
-                Enter administrator credentials to access shelter records.
+                {language === "am" ? "የመዝገብ ቁጥርዎን ያስገቡ" : "Enter administrator credentials to access shelter records."}
               </p>
             </div>
 
@@ -607,43 +615,35 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
             <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Username
+                  {language === "am" ? "የተጠቃሚ ስም" : "Username"}
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <User className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-3.5" />
                   <input
-                    type="text"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter username"
-                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 text-xs text-gray-900 focus:border-brand-green-600 focus:ring-2 focus:ring-brand-green-100 outline-none transition-all"
+                    type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
+                    placeholder={language === "am" ? "የተጠቃሚ ስምዎን ያስገቡ" : "Enter username"}
+                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-brand-sky-200 text-xs text-gray-900 focus:border-brand-sky-400 focus:ring-2 focus:ring-brand-sky-100 outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Password
+                  {language === "am" ? "የይለፍ ቃል" : "Password"}
                 </label>
                 <div className="relative">
-                  <KeyRound className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <KeyRound className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-3.5" />
                   <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 text-xs text-gray-900 focus:border-brand-green-600 focus:ring-2 focus:ring-brand-green-100 outline-none transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-brand-sky-200 text-xs text-gray-900 focus:border-brand-sky-400 focus:ring-2 focus:ring-brand-sky-100 outline-none transition-all"
                   />
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-3 sm:py-3.5 bg-brand-green-950 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-brand-green-900 transition-all cursor-pointer shadow-md mt-2"
-              >
-                Login to Portal
+              <button type="submit"
+                className="w-full py-3 sm:py-3.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md mt-2">
+                {language === "am" ? "ይግቡ" : "Login to Portal"}
               </button>
             </form>
           </motion.div>
@@ -653,277 +653,137 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
         <main className="flex-1 max-w-7xl w-full mx-auto p-3.5 sm:p-6 space-y-4 sm:space-y-6">
           
           {/* Navigation Tabs Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-brand-green-100 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-brand-sky-200 shadow-xs">
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full sm:w-auto">
               <button
                 onClick={() => { setActiveTab("bookings"); setSearchQuery(""); setStatusFilter("all"); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
-                  activeTab === "bookings"
-                    ? "bg-brand-green-950 text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-100"
+                  activeTab === "bookings" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span>Bookings ({bookings.length})</span>
+                <span>{language === "am" ? `ጉብኝቶች (${bookings.length})` : `Bookings (${bookings.length})`}</span>
               </button>
 
               <button
                 onClick={() => { setActiveTab("pledges"); setSearchQuery(""); setStatusFilter("all"); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
-                  activeTab === "pledges"
-                    ? "bg-brand-green-950 text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-100"
+                  activeTab === "pledges" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
                 }`}
               >
                 <Gift className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span>Pledges ({pledges.length})</span>
+                <span>{language === "am" ? `ቃልኪዳኖች (${pledges.length})` : `Pledges (${pledges.length})`}</span>
               </button>
 
               <button
                 onClick={() => { setActiveTab("volunteers"); setSearchQuery(""); setStatusFilter("all"); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
-                  activeTab === "volunteers"
-                    ? "bg-brand-green-950 text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-100"
+                  activeTab === "volunteers" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
                 }`}
               >
                 <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span>Volunteers ({volunteers.length})</span>
+                <span>{language === "am" ? `በጎ ፈቃደኞች (${volunteers.length})` : `Volunteers (${volunteers.length})`}</span>
               </button>
 
               <button
                 onClick={() => { setActiveTab("profile"); setProfileMessage(null); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
-                  activeTab === "profile"
-                    ? "bg-brand-green-950 text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-100"
+                  activeTab === "profile" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
                 }`}
               >
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span>Profile</span>
+                <span>{language === "am" ? "መገለጫ" : "Profile"}</span>
               </button>
             </div>
-
-            {/* intentionally empty — no global action buttons */}
             <div />
           </div>
 
           {/* Interactive Filter Chips & Search Bar (hidden on profile tab) */}
           {activeTab !== "profile" && (
-            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
               <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
-                {/* Search Bar */}
                 <div className="relative w-full sm:w-80 md:w-96">
-                  <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-2.5 sm:top-3" />
+                  <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3" />
                   <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search name, ID, or phone..."
-                    className="w-full pl-9 pr-9 py-2 sm:py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none transition-all"
+                    type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={language === "am" ? "ስም፣ መታወቂያ ወይም ስልክ ይፈልጉ..." : "Search name, ID, or phone..."}
+                    className="w-full pl-9 pr-9 py-2 sm:py-2.5 bg-brand-sky-50 rounded-xl border border-brand-sky-200 text-xs text-gray-900 focus:bg-white focus:border-brand-sky-400 outline-none transition-all"
                   />
                   {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-2.5 sm:top-3 text-gray-400 hover:text-gray-600 cursor-pointer"
-                    >
+                    <button onClick={() => setSearchQuery("")} className="absolute right-3 top-2.5 sm:top-3 text-gray-400 hover:text-gray-600 cursor-pointer">
                       <X className="w-4 h-4" />
                     </button>
                   )}
                 </div>
-
-                {/* Counter readout */}
-                <div className="text-xs font-bold text-gray-500 self-start sm:self-auto">
-                  Showing{" "}
-                  <span className="text-brand-green-950 font-black">
-                    {activeTab === "bookings"
-                      ? filteredBookings.length
-                      : activeTab === "pledges"
-                      ? pledgeSubTab === "pledges"
-                        ? filteredPledges.length
-                        : filteredNeeds.length
-                      : filteredVolunteers.length}
-                  </span>{" "}
-                  records
+                <div className="text-xs font-bold text-brand-sky-600 self-start sm:self-auto">
+                  {language === "am" ? "ያሳያል " : "Showing "}<span className="text-brand-sky-950 font-black">
+                    {activeTab === "bookings" ? filteredBookings.length : activeTab === "pledges" ? pledgeSubTab === "pledges" ? filteredPledges.length : filteredNeeds.length : filteredVolunteers.length}
+                  </span>{language === "am" ? " መዝገቦች" : " records"}
                 </div>
               </div>
 
-              {/* Status Filter Chips */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
                 <span className="font-extrabold text-gray-400 uppercase tracking-wider text-[10px] shrink-0 mr-1 flex items-center gap-1">
-                  <Filter className="w-3 h-3 text-gray-400" /> Filter:
+                  <Filter className="w-3 h-3 text-gray-400" /> {language === "am" ? "ማጣሪያ:" : "Filter:"}
                 </span>
-
-                <button
-                  onClick={() => setStatusFilter("all")}
-                  className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                    statusFilter === "all"
-                      ? "bg-brand-green-950 text-white shadow-xs"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  All
+                <button onClick={() => setStatusFilter("all")}
+                  className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "all" ? "bg-brand-sky-400 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-700 border border-brand-sky-200 hover:bg-brand-sky-100"}`}>
+                  {language === "am" ? "ሁሉም" : "All"}
                 </button>
 
-                {activeTab === "bookings" && (
-                  <>
-                    <button
-                      onClick={() => setStatusFilter("pending")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "pending"
-                          ? "bg-amber-600 text-white shadow-xs"
-                          : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"
-                      }`}
-                    >
-                      Pending ({bookings.filter((b) => (b.status || "pending") === "pending").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("approved")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "approved"
-                          ? "bg-green-700 text-white shadow-xs"
-                          : "bg-green-50 text-green-900 border border-green-200 hover:bg-green-100"
-                      }`}
-                    >
-                      Approved ({bookings.filter((b) => b.status === "approved").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("completed")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "completed"
-                          ? "bg-brand-green-900 text-white shadow-xs"
-                          : "bg-brand-green-50 text-brand-green-900 border border-brand-green-200 hover:bg-brand-green-100"
-                      }`}
-                    >
-                      Completed ({bookings.filter((b) => b.status === "completed").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("cancelled")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "cancelled"
-                          ? "bg-red-700 text-white shadow-xs"
-                          : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"
-                      }`}
-                    >
-                      Cancelled ({bookings.filter((b) => b.status === "cancelled").length})
-                    </button>
-                  </>
-                )}
+                {activeTab === "bookings" && (<>
+                  <button onClick={() => setStatusFilter("pending")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "pending" ? "bg-amber-500 text-white shadow-xs" : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"}`}>
+                    {language === "am" ? `በቅድሚያ (${bookings.filter(b=>(b.status||"pending")==="pending").length})` : `Pending (${bookings.filter(b=>(b.status||"pending")==="pending").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("approved")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "approved" ? "bg-brand-green-500 text-white shadow-xs" : "bg-brand-green-50 text-brand-green-900 border border-brand-green-200 hover:bg-brand-green-100"}`}>
+                    {language === "am" ? `ተቀባይነት (${bookings.filter(b=>b.status==="approved").length})` : `Approved (${bookings.filter(b=>b.status==="approved").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("completed")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "completed" ? "bg-brand-sky-500 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-900 border border-brand-sky-200 hover:bg-brand-sky-100"}`}>
+                    {language === "am" ? `ተጠናቋል (${bookings.filter(b=>b.status==="completed").length})` : `Completed (${bookings.filter(b=>b.status==="completed").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("cancelled")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "cancelled" ? "bg-red-600 text-white shadow-xs" : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"}`}>
+                    {language === "am" ? `ተሰርዟል (${bookings.filter(b=>b.status==="cancelled").length})` : `Cancelled (${bookings.filter(b=>b.status==="cancelled").length})`}
+                  </button>
+                </>)}
 
-                {activeTab === "pledges" && pledgeSubTab === "pledges" && (
-                  <>
-                    <button
-                      onClick={() => setStatusFilter("pledged")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "pledged"
-                          ? "bg-amber-600 text-white shadow-xs"
-                          : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"
-                      }`}
-                    >
-                      Pledged ({pledges.filter((p) => (p.status || "pledged") === "pledged").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("received")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "received"
-                          ? "bg-green-700 text-white shadow-xs"
-                          : "bg-green-50 text-green-900 border border-green-200 hover:bg-green-100"
-                      }`}
-                    >
-                      Received ({pledges.filter((p) => p.status === "received").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("cancelled")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "cancelled"
-                          ? "bg-red-700 text-white shadow-xs"
-                          : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"
-                      }`}
-                    >
-                      Cancelled ({pledges.filter((p) => p.status === "cancelled").length})
-                    </button>
-                  </>
-                )}
+                {activeTab === "pledges" && pledgeSubTab === "pledges" && (<>
+                  <button onClick={() => setStatusFilter("pledged")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "pledged" ? "bg-amber-500 text-white shadow-xs" : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"}`}>
+                    {language === "am" ? `ቃልኪዳን (${pledges.filter(p=>(p.status||"pledged")==="pledged").length})` : `Pledged (${pledges.filter(p=>(p.status||"pledged")==="pledged").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("received")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "received" ? "bg-brand-green-500 text-white shadow-xs" : "bg-brand-green-50 text-brand-green-900 border border-brand-green-200 hover:bg-brand-green-100"}`}>
+                    {language === "am" ? `ተቀበለ (${pledges.filter(p=>p.status==="received").length})` : `Received (${pledges.filter(p=>p.status==="received").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("cancelled")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "cancelled" ? "bg-red-600 text-white shadow-xs" : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"}`}>
+                    {language === "am" ? `ተሰርዟል (${pledges.filter(p=>p.status==="cancelled").length})` : `Cancelled (${pledges.filter(p=>p.status==="cancelled").length})`}
+                  </button>
+                </>)}
 
-                {activeTab === "pledges" && pledgeSubTab === "needs" && (
-                  <>
-                    <button
-                      onClick={() => setStatusFilter("high")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "high"
-                          ? "bg-red-600 text-white shadow-xs"
-                          : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"
-                      }`}
-                    >
-                      High Priority ({inKindNeeds.filter((it) => it.urgency === "High").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("medium")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "medium"
-                          ? "bg-amber-600 text-white shadow-xs"
-                          : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"
-                      }`}
-                    >
-                      Medium Priority ({inKindNeeds.filter((it) => it.urgency === "Medium").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("low")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "low"
-                          ? "bg-emerald-700 text-white shadow-xs"
-                          : "bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100"
-                      }`}
-                    >
-                      Low Priority ({inKindNeeds.filter((it) => it.urgency === "Low").length})
-                    </button>
-                  </>
-                )}
+                {activeTab === "pledges" && pledgeSubTab === "needs" && (<>
+                  <button onClick={() => setStatusFilter("high")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "high" ? "bg-red-600 text-white shadow-xs" : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"}`}>
+                    {language === "am" ? `ከፍተኛ (${inKindNeeds.filter(it=>it.urgency==="High").length})` : `High (${inKindNeeds.filter(it=>it.urgency==="High").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("medium")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "medium" ? "bg-amber-500 text-white shadow-xs" : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"}`}>
+                    {language === "am" ? `መካከለኛ (${inKindNeeds.filter(it=>it.urgency==="Medium").length})` : `Medium (${inKindNeeds.filter(it=>it.urgency==="Medium").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("low")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "low" ? "bg-brand-green-600 text-white shadow-xs" : "bg-brand-green-50 text-brand-green-900 border border-brand-green-200 hover:bg-brand-green-100"}`}>
+                    {language === "am" ? `ዝቅተኛ (${inKindNeeds.filter(it=>it.urgency==="Low").length})` : `Low (${inKindNeeds.filter(it=>it.urgency==="Low").length})`}
+                  </button>
+                </>)}
 
-                {activeTab === "volunteers" && (
-                  <>
-                    <button
-                      onClick={() => setStatusFilter("new")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "new"
-                          ? "bg-amber-600 text-white shadow-xs"
-                          : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"
-                      }`}
-                    >
-                      New ({volunteers.filter((v) => (v.status || "new") === "new").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("reviewed")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "reviewed"
-                          ? "bg-blue-700 text-white shadow-xs"
-                          : "bg-blue-50 text-blue-900 border border-blue-200 hover:bg-blue-100"
-                      }`}
-                    >
-                      Under Review ({volunteers.filter((v) => v.status === "reviewed").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("accepted")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "accepted"
-                          ? "bg-green-700 text-white shadow-xs"
-                          : "bg-green-50 text-green-900 border border-green-200 hover:bg-green-100"
-                      }`}
-                    >
-                      Accepted ({volunteers.filter((v) => v.status === "accepted").length})
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("declined")}
-                      className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${
-                        statusFilter === "declined"
-                          ? "bg-red-700 text-white shadow-xs"
-                          : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"
-                      }`}
-                    >
-                      Declined ({volunteers.filter((v) => v.status === "declined").length})
-                    </button>
-                  </>
-                )}
+                {activeTab === "volunteers" && (<>
+                  <button onClick={() => setStatusFilter("new")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "new" ? "bg-amber-500 text-white shadow-xs" : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"}`}>
+                    {language === "am" ? `አዲስ (${volunteers.filter(v=>(v.status||"new")==="new").length})` : `New (${volunteers.filter(v=>(v.status||"new")==="new").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("reviewed")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "reviewed" ? "bg-brand-sky-500 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-900 border border-brand-sky-200 hover:bg-brand-sky-100"}`}>
+                    {language === "am" ? `በግምገማ (${volunteers.filter(v=>v.status==="reviewed").length})` : `Reviewed (${volunteers.filter(v=>v.status==="reviewed").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("accepted")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "accepted" ? "bg-brand-green-500 text-white shadow-xs" : "bg-brand-green-50 text-brand-green-900 border border-brand-green-200 hover:bg-brand-green-100"}`}>
+                    {language === "am" ? `ተቀበለ (${volunteers.filter(v=>v.status==="accepted").length})` : `Accepted (${volunteers.filter(v=>v.status==="accepted").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("declined")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "declined" ? "bg-red-600 text-white shadow-xs" : "bg-red-50 text-red-900 border border-red-200 hover:bg-red-100"}`}>
+                    {language === "am" ? `ተነፍጓል (${volunteers.filter(v=>v.status==="declined").length})` : `Declined (${volunteers.filter(v=>v.status==="declined").length})`}
+                  </button>
+                </>)}
               </div>
             </div>
           )}
@@ -932,28 +792,24 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {activeTab === "bookings" && (
             <div className="space-y-4">
               {/* Section Header with Reload Button */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-green-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-brand-green-50 text-brand-green-950 rounded-xl flex items-center justify-center font-bold border border-brand-green-200 shrink-0">
-                    <Calendar className="w-5 h-5 text-brand-green-800" />
+                  <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-950 rounded-xl flex items-center justify-center font-bold border border-brand-sky-200 shrink-0">
+                    <Calendar className="w-5 h-5 text-brand-sky-500" />
                   </div>
                   <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-green-950 leading-tight">
-                      Visit Bookings Management
+                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
+                      {language === "am" ? "የጉብኝት ምዝገቦች አስተዳደር" : "Visit Bookings Management"}
                     </h2>
-                    <p className="text-[11px] text-gray-500 font-medium">
-                      Real-time records from data/db.json {lastSyncedAt ? `• Last reloaded ${lastSyncedAt}` : ""}
+                    <p className="text-[11px] text-brand-sky-500 font-medium">
+                      {language === "am" ? "ከ data/db.json" : "Real-time records · db.json"} {lastSyncedAt ? `• ${language === "am" ? "መጨረሻ ጊዜ" : "Last reloaded"} ${lastSyncedAt}` : ""}
                     </p>
                   </div>
                 </div>
-
-                <button
-                  onClick={handleRefreshClick}
-                  disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-brand-yellow-400 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? "Reloading Bookings..." : "Reload Bookings Data"}</span>
+                <button onClick={handleRefreshClick} disabled={isRefreshing}
+                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload Data")}</span>
                 </button>
               </div>
 
@@ -965,7 +821,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-xs font-black text-brand-green-950 bg-brand-green-50 border border-brand-green-200 px-2.5 py-0.5 rounded-md">
+                      <span className="font-mono text-xs font-black text-brand-sky-950 bg-brand-sky-50 border border-brand-sky-200 px-2.5 py-0.5 rounded-md">
                         {item.id}
                       </span>
                       <span
@@ -973,7 +829,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                           item.status === "approved"
                             ? "bg-green-100 text-green-800 border-green-200"
                             : item.status === "completed"
-                            ? "bg-brand-green-100 text-brand-green-900 border-brand-green-200"
+                            ? "bg-brand-sky-100 text-brand-sky-900 border-brand-sky-200"
                             : item.status === "cancelled"
                             ? "bg-red-100 text-red-800 border-red-200"
                             : "bg-amber-100 text-amber-800 border-amber-200"
@@ -984,7 +840,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     </div>
 
                     <div>
-                      <h4 className="font-serif font-bold text-lg text-brand-green-950 group-hover:text-brand-green-700 transition-colors">
+                      <h4 className="font-serif font-bold text-lg text-brand-sky-950 group-hover:text-brand-sky-700 transition-colors">
                         {item.name}
                       </h4>
                       <p className="text-xs text-gray-500 font-medium mt-0.5">Booked: {item.createdAt}</p>
@@ -992,12 +848,12 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
                     <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600 font-medium bg-gray-50 p-2.5 rounded-xl border border-gray-100">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-brand-green-700" />
+                        <Calendar className="w-3.5 h-3.5 text-brand-sky-700" />
                         {item.date}
                       </span>
                       <span className="text-gray-300">•</span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-brand-green-700" />
+                        <Clock className="w-3.5 h-3.5 text-brand-sky-700" />
                         {item.timeSlot}
                       </span>
                     </div>
@@ -1007,10 +863,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
                     <button
                       onClick={() => setDetailModal({ isOpen: true, type: "booking", data: item })}
-                      className="w-full py-2.5 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                      className="w-full py-2.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                     >
                       <Eye className="w-4 h-4 text-brand-yellow-400" />
-                      <span>Details</span>
+                      <span>{language === "am" ? "ዝርዝር" : "Details"}</span>
                     </button>
                   </div>
                 </div>
@@ -1028,67 +884,53 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {/* TAB 2: IN-KIND PLEDGES & NEEDED ITEMS MANAGER */}
           {activeTab === "pledges" && (
             <div className="space-y-4">
-              {/* Section Header with Reload Button */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-green-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              {/* Section Header */}
+              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-brand-yellow-50 text-brand-yellow-950 rounded-xl flex items-center justify-center font-bold border border-brand-yellow-200 shrink-0">
+                  <div className="w-9 h-9 bg-brand-yellow-100 text-brand-yellow-700 rounded-xl flex items-center justify-center font-bold border border-brand-yellow-200 shrink-0">
                     <Gift className="w-5 h-5 text-brand-yellow-600" />
                   </div>
                   <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-green-950 leading-tight">
-                      {pledgeSubTab === "pledges" ? "In-Kind Donor Pledges" : "Shelter Needed Items & Priorities"}
+                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
+                      {pledgeSubTab === "pledges" ? (language === "am" ? "የዓይነት ቃልኪዳኖች" : "In-Kind Donor Pledges") : (language === "am" ? "የሚያስፈልጉ እቃዎች" : "Shelter Needed Items")}
                     </h2>
-                    <p className="text-[11px] text-gray-500 font-medium">
-                      Real-time records from data/db.json {lastSyncedAt ? `• Last reloaded ${lastSyncedAt}` : ""}
+                    <p className="text-[11px] text-brand-sky-500 font-medium">
+                      {language === "am" ? "ከ db.json" : "Real-time · db.json"} {lastSyncedAt ? `• ${lastSyncedAt}` : ""}
                     </p>
                   </div>
                 </div>
-
-                <button
-                  onClick={handleRefreshClick}
-                  disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-brand-yellow-400 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? "Reloading Pledges..." : "Reload Pledges Data"}</span>
+                <button onClick={handleRefreshClick} disabled={isRefreshing}
+                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
                 </button>
               </div>
               {/* Sub-Tab Selector Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-gray-200 shadow-xs">
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-brand-sky-200 shadow-xs">
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => { setPledgeSubTab("pledges"); setStatusFilter("all"); }}
+                  <button onClick={() => { setPledgeSubTab("pledges"); setStatusFilter("all"); }}
                     className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                      pledgeSubTab === "pledges"
-                        ? "bg-brand-green-950 text-white shadow-xs"
-                        : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
+                      pledgeSubTab === "pledges" ? "bg-brand-sky-400 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-700 hover:bg-brand-sky-100 border border-brand-sky-200"
                     }`}
                   >
                     <Gift className="w-4 h-4 text-brand-yellow-400" />
-                    <span>Donor Pledges ({pledges.length})</span>
+                    <span>{language === "am" ? `ቃልኪዳኖች (${pledges.length})` : `Donor Pledges (${pledges.length})`}</span>
                   </button>
 
-                  <button
-                    onClick={() => { setPledgeSubTab("needs"); setStatusFilter("all"); }}
+                  <button onClick={() => { setPledgeSubTab("needs"); setStatusFilter("all"); }}
                     className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                      pledgeSubTab === "needs"
-                        ? "bg-brand-green-950 text-white shadow-xs"
-                        : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
-                    }`}
-                  >
-                    <Package className="w-4 h-4 text-brand-yellow-400" />
-                    <span>Needed Items & Priorities ({inKindNeeds.length})</span>
+                      pledgeSubTab === "needs" ? "bg-brand-sky-400 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-700 hover:bg-brand-sky-100 border border-brand-sky-200"
+                    }`}>
+                    <Package className="w-4 h-4" />
+                    <span>{language === "am" ? `የሚፈለጉ እቃዎች (${inKindNeeds.length})` : `Needed Items (${inKindNeeds.length})`}</span>
                   </button>
                 </div>
-
                 {pledgeSubTab === "needs" && (
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleOpenCreateNeed}
-                      className="px-3.5 py-1.5 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
-                    >
-                      <Plus className="w-4 h-4 text-brand-yellow-400" />
-                      <span>Add Needed Supply</span>
+                    <button onClick={handleOpenCreateNeed}
+                      className="px-3.5 py-1.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
+                      <Plus className="w-4 h-4" />
+                      <span>{language === "am" ? "እቃ ጨምር" : "Add Needed Supply"}</span>
                     </button>
                   </div>
                 )}
@@ -1104,7 +946,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-mono text-xs font-black text-brand-green-950 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-md">
+                          <span className="font-mono text-xs font-black text-brand-sky-950 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-md">
                             {item.id}
                           </span>
                           <span
@@ -1121,7 +963,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         </div>
 
                         <div>
-                          <h4 className="font-serif font-bold text-lg text-brand-green-950 group-hover:text-brand-green-700 transition-colors">
+                          <h4 className="font-serif font-bold text-lg text-brand-sky-950 group-hover:text-brand-sky-700 transition-colors">
                             {item.donorName}
                           </h4>
                           <p className="text-xs text-gray-500 font-medium mt-0.5">Pledged: {item.date}</p>
@@ -1141,10 +983,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       <div className="pt-2 border-t border-gray-100">
                         <button
                           onClick={() => setDetailModal({ isOpen: true, type: "pledge", data: item })}
-                          className="w-full py-2.5 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                          className="w-full py-2.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                         >
                           <Eye className="w-4 h-4 text-brand-yellow-400" />
-                          <span>Details</span>
+                          <span>{language === "am" ? "ዝርዝር" : "Details"}</span>
                         </button>
                       </div>
                     </div>
@@ -1188,7 +1030,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
                         {/* Title (English & Amharic) */}
                         <div>
-                          <h4 className="font-serif font-bold text-base text-brand-green-950 group-hover:text-brand-green-700 transition-colors">
+                          <h4 className="font-serif font-bold text-base text-brand-sky-950 group-hover:text-brand-sky-700 transition-colors">
                             {item.name.en}
                           </h4>
                           <p className="text-xs font-bold text-gray-500 font-sans mt-0.5">
@@ -1197,11 +1039,11 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         </div>
 
                         {/* Quantity / Goal */}
-                        <div className="bg-brand-green-50/60 p-2.5 rounded-xl border border-brand-green-100/80">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-brand-green-900 block mb-0.5">
-                            Needed Quantity Goal:
+                        <div className="bg-brand-sky-50/60 p-2.5 rounded-xl border border-brand-sky-100/80">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-brand-sky-700 block mb-0.5">
+                            {language === "am" ? "የሚፈለግ ብዛት:" : "Needed Quantity Goal:"}
                           </span>
-                          <p className="text-xs font-extrabold text-brand-green-950">
+                          <p className="text-xs font-extrabold text-brand-sky-950">
                             {item.neededQuantity.en} <span className="text-gray-300 font-normal">|</span> {item.neededQuantity.am}
                           </p>
                         </div>
@@ -1217,10 +1059,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       <div className="pt-3 border-t border-gray-100 flex items-center gap-2">
                         <button
                           onClick={() => handleOpenEditNeed(item)}
-                          className="flex-1 py-2 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                          className="flex-1 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
                         >
                           <Edit3 className="w-3.5 h-3.5 text-brand-yellow-400" />
-                          <span>Edit Supply</span>
+                          <span>{language === "am" ? "እቃ አርትዕ" : "Edit Supply"}</span>
                         </button>
 
                         <button
@@ -1235,14 +1077,12 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   ))}
 
                   {filteredNeeds.length === 0 && (
-                    <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-gray-200 text-gray-500 text-xs space-y-3">
-                      <p>No needed supplies found matching search/filter criteria.</p>
-                      <button
-                        onClick={handleOpenCreateNeed}
-                        className="px-4 py-2 bg-brand-green-950 text-white font-bold rounded-xl text-xs inline-flex items-center gap-2 cursor-pointer shadow-xs"
-                      >
-                        <Plus className="w-4 h-4 text-brand-yellow-400" />
-                        <span>Add First Needed Supply</span>
+                    <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-brand-sky-100 text-gray-500 text-xs space-y-3">
+                      <p>{language === "am" ? "ምንም የሚፈለጉ እቃዎች አልተገኙም።" : "No needed supplies found matching search/filter criteria."}</p>
+                      <button onClick={handleOpenCreateNeed}
+                        className="px-4 py-2 bg-brand-sky-400 text-white font-bold rounded-xl text-xs inline-flex items-center gap-2 cursor-pointer shadow-xs">
+                        <Plus className="w-4 h-4" />
+                        <span>{language === "am" ? "እቃ ጨምር" : "Add First Needed Supply"}</span>
                       </button>
                     </div>
                   )}
@@ -1255,28 +1095,24 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {activeTab === "volunteers" && (
             <div className="space-y-4">
               {/* Section Header with Reload Button */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-green-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-emerald-50 text-emerald-950 rounded-xl flex items-center justify-center font-bold border border-emerald-200 shrink-0">
-                    <Users className="w-5 h-5 text-emerald-800" />
+                  <div className="w-9 h-9 bg-brand-green-100 text-brand-green-700 rounded-xl flex items-center justify-center font-bold border border-brand-green-200 shrink-0">
+                    <Users className="w-5 h-5 text-brand-green-500" />
                   </div>
                   <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-green-950 leading-tight">
-                      Volunteer Applications
+                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
+                      {language === "am" ? "የበጎ ፈቃደኛ ማመልከቻዎች" : "Volunteer Applications"}
                     </h2>
-                    <p className="text-[11px] text-gray-500 font-medium">
-                      Real-time records from data/db.json {lastSyncedAt ? `• Last reloaded ${lastSyncedAt}` : ""}
+                    <p className="text-[11px] text-brand-sky-500 font-medium">
+                      {language === "am" ? "ከ db.json" : "Real-time · db.json"} {lastSyncedAt ? `• ${lastSyncedAt}` : ""}
                     </p>
                   </div>
                 </div>
-
-                <button
-                  onClick={handleRefreshClick}
-                  disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-brand-yellow-400 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? "Reloading Volunteers..." : "Reload Volunteer Data"}</span>
+                <button onClick={handleRefreshClick} disabled={isRefreshing}
+                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
                 </button>
               </div>
 
@@ -1307,7 +1143,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     </div>
 
                     <div>
-                      <h4 className="font-serif font-bold text-lg text-brand-green-950 group-hover:text-brand-green-700 transition-colors">
+                      <h4 className="font-serif font-bold text-lg text-brand-sky-950 group-hover:text-brand-sky-700 transition-colors">
                         {item.fullName}
                       </h4>
                       <p className="text-xs text-gray-500 font-medium mt-0.5">Applied: {item.submittedAt}</p>
@@ -1324,10 +1160,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   <div className="pt-2 border-t border-gray-100">
                     <button
                       onClick={() => setDetailModal({ isOpen: true, type: "volunteer", data: item })}
-                      className="w-full py-2.5 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                      className="w-full py-2.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                     >
                       <Eye className="w-4 h-4 text-brand-yellow-400" />
-                      <span>Details</span>
+                      <span>{language === "am" ? "ዝርዝር" : "Details"}</span>
                     </button>
                   </div>
                 </div>
@@ -1346,40 +1182,36 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {activeTab === "profile" && (
             <div className="space-y-4 sm:space-y-6">
               {/* Section Header with Reload Button */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-green-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-brand-green-50 text-brand-green-950 rounded-xl flex items-center justify-center font-bold border border-brand-green-200 shrink-0">
-                    <User className="w-5 h-5 text-brand-green-800" />
+                  <div className="w-9 h-9 bg-brand-sky-50 text-brand-sky-950 rounded-xl flex items-center justify-center font-bold border border-brand-sky-200 shrink-0">
+                    <User className="w-5 h-5 text-brand-sky-800" />
                   </div>
                   <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-green-950 leading-tight">
-                      Admin Profile & System Settings
+                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
+                      {language === "am" ? "የአስተዳደር መገለጫ" : "Admin Profile & Settings"}
                     </h2>
-                    <p className="text-[11px] text-gray-500 font-medium">
-                      Real-time records from data/db.json {lastSyncedAt ? `• Last reloaded ${lastSyncedAt}` : ""}
+                    <p className="text-[11px] text-brand-sky-500 font-medium">
+                      {language === "am" ? "ከ db.json" : "Real-time · db.json"} {lastSyncedAt ? `• ${lastSyncedAt}` : ""}
                     </p>
                   </div>
                 </div>
-
-                <button
-                  onClick={handleRefreshClick}
-                  disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-brand-yellow-400 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? "Reloading Profile..." : "Reload Profile Data"}</span>
+                <button onClick={handleRefreshClick} disabled={isRefreshing}
+                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
                 </button>
               </div>
               {/* Profile Summary Header Card */}
-              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-gray-200 shadow-xs space-y-4 sm:space-y-6">
-                <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-gray-100">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-brand-green-950 text-brand-yellow-400 rounded-2xl flex items-center justify-center font-serif text-xl sm:text-2xl font-bold shadow-md shrink-0">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-brand-sky-100 shadow-xs space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-brand-sky-100">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-brand-sky-400 text-white rounded-2xl flex items-center justify-center font-serif text-xl sm:text-2xl font-bold shadow-md shrink-0">
                     {profile.name.slice(0, 1)}
                   </div>
                   <div>
                     <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
-                      <h3 className="font-serif text-lg sm:text-xl font-bold text-brand-green-950">{profile.name}</h3>
-                      <span className="bg-brand-green-100 text-brand-green-800 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md border border-brand-green-200">
+                      <h3 className="font-serif text-lg sm:text-xl font-bold text-brand-sky-950">{profile.name}</h3>
+                      <span className="bg-brand-sky-100 text-brand-sky-800 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md border border-brand-sky-200">
                         {profile.role}
                       </span>
                     </div>
@@ -1401,26 +1233,26 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-1 sm:pt-2">
                   <div className="bg-gray-50 rounded-2xl p-4 sm:p-5 border border-gray-100">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                      Visit Bookings
+                      {language === "am" ? "የጉብኝት ምዝገቦች" : "Visit Bookings"}
                     </span>
-                    <span className="text-xl sm:text-2xl font-black text-brand-green-950">{bookings.length}</span>
-                    <span className="text-[10px] text-gray-500 block mt-0.5">Scheduled center tours</span>
+                    <span className="text-xl sm:text-2xl font-black text-brand-sky-950">{bookings.length}</span>
+                    <span className="text-[10px] text-gray-500 block mt-0.5">{language === "am" ? "የታቀዱ ጉብኝቶች" : "Scheduled center tours"}</span>
                   </div>
 
                   <div className="bg-gray-50 rounded-2xl p-4 sm:p-5 border border-gray-100">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                      In-Kind Pledges
+                      {language === "am" ? "የዓይነት ቃልኪዳኖች" : "In-Kind Pledges"}
                     </span>
-                    <span className="text-xl sm:text-2xl font-black text-brand-green-950">{pledges.length}</span>
-                    <span className="text-[10px] text-gray-500 block mt-0.5">Donated goods & items</span>
+                    <span className="text-xl sm:text-2xl font-black text-brand-sky-950">{pledges.length}</span>
+                    <span className="text-[10px] text-gray-500 block mt-0.5">{language === "am" ? "የተሰጡ እቃዎች" : "Donated goods & items"}</span>
                   </div>
 
                   <div className="bg-gray-50 rounded-2xl p-4 sm:p-5 border border-gray-100">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                      Volunteers
+                      {language === "am" ? "በጎ ፈቃደኞች" : "Volunteers"}
                     </span>
-                    <span className="text-xl sm:text-2xl font-black text-brand-green-950">{volunteers.length}</span>
-                    <span className="text-[10px] text-gray-500 block mt-0.5">Active applicant forms</span>
+                    <span className="text-xl sm:text-2xl font-black text-brand-sky-950">{volunteers.length}</span>
+                    <span className="text-[10px] text-gray-500 block mt-0.5">{language === "am" ? "ንቁ ማመልከቻዎች" : "Active applicant forms"}</span>
                   </div>
                 </div>
               </div>
@@ -1428,9 +1260,9 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               {/* Edit Admin Profile Form */}
               <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-gray-200 shadow-xs space-y-4 sm:space-y-6">
                 <div>
-                  <h4 className="font-serif text-base sm:text-lg font-extrabold text-brand-green-950">Update Profile & Password</h4>
+                  <h4 className="font-serif text-base sm:text-lg font-extrabold text-brand-sky-950">{language === "am" ? "መገለጫ ማዘመን" : "Update Profile & Password"}</h4>
                   <p className="text-xs text-gray-500 mt-1">
-                    Edit your administrator personal info and update your account login password.
+                    {language === "am" ? "የአስተዳደር መረጃዎን ያዘምኑ።" : "Edit your administrator personal info and update your account login password."}
                   </p>
                 </div>
 
@@ -1460,7 +1292,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         required
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                       />
                     </div>
 
@@ -1471,7 +1303,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         required
                         value={profileRole}
                         onChange={(e) => setProfileRole(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                       />
                     </div>
 
@@ -1482,7 +1314,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         required
                         value={profileEmail}
                         onChange={(e) => setProfileEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                       />
                     </div>
 
@@ -1493,7 +1325,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         required
                         value={profilePhone}
                         onChange={(e) => setProfilePhone(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                       />
                     </div>
                   </div>
@@ -1503,11 +1335,11 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   {/* Login Security Credentials */}
                   <div className="space-y-3.5 sm:space-y-4">
                     <div className="flex items-center justify-between">
-                      <h5 className="font-serif text-sm font-bold text-brand-green-950">Security & Credentials</h5>
+                      <h5 className="font-serif text-sm font-bold text-brand-sky-950">Security & Credentials</h5>
                       <button
                         type="button"
                         onClick={() => setShowPasswords(!showPasswords)}
-                        className="text-xs font-semibold text-brand-green-700 hover:underline flex items-center gap-1 cursor-pointer"
+                        className="text-xs font-semibold text-brand-sky-700 hover:underline flex items-center gap-1 cursor-pointer"
                       >
                         {showPasswords ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         {showPasswords ? "Hide Passwords" : "Show Passwords"}
@@ -1521,7 +1353,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         required
                         value={editUsername}
                         onChange={(e) => setEditUsername(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                        className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                       />
                     </div>
 
@@ -1570,10 +1402,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   <div className="flex justify-end pt-2">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto px-6 py-3 bg-brand-green-950 hover:bg-brand-green-900 text-white font-bold text-xs rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all"
+                      className="w-full sm:w-auto px-6 py-3 bg-brand-sky-400 hover:bg-brand-sky-500 text-white font-bold text-xs rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all"
                     >
                       <Save className="w-4 h-4 text-brand-yellow-400" />
-                      Save Admin Profile
+                      {language === "am" ? "መገለጫ አስቀምጥ" : "Save Admin Profile"}
                     </button>
                   </div>
                 </form>
@@ -1603,7 +1435,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         : confirmModal.action === "status_change"
                         ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                         : confirmModal.action === "save_need" || confirmModal.action === "save_profile"
-                        ? "bg-brand-green-50 text-brand-green-800 border-brand-green-100"
+                        ? "bg-brand-sky-50 text-brand-sky-800 border-brand-sky-100"
                         : "bg-amber-50 text-amber-700 border-amber-100"
                     }`}
                   >
@@ -1620,7 +1452,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     )}
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-base sm:text-lg text-brand-green-950">
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950">
                       {confirmModal.title || (confirmModal.action === "delete" ? "Confirm Deletion" : "Confirm Action")}
                     </h3>
                     <p className="text-xs text-gray-500 font-medium">
@@ -1658,7 +1490,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       ? "bg-red-600 hover:bg-red-700 shadow-red-600/20"
                       : confirmModal.action === "status_change"
                       ? "bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20"
-                      : "bg-brand-green-950 hover:bg-brand-green-900 shadow-brand-green-950/20"
+                      : "bg-brand-sky-950 hover:bg-brand-sky-900 shadow-brand-sky-950/20"
                   }`}
                 >
                   <Check className="w-4 h-4" />
@@ -1694,14 +1526,14 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               <div className="flex items-start justify-between gap-3 pb-3 sm:pb-4 border-b border-gray-100">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-mono text-xs font-black text-brand-green-950 bg-brand-green-50 border border-brand-green-200 px-2.5 py-0.5 rounded-md">
+                    <span className="font-mono text-xs font-black text-brand-sky-950 bg-brand-sky-50 border border-brand-sky-200 px-2.5 py-0.5 rounded-md">
                       {detailModal.data.id}
                     </span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-brand-green-800 bg-brand-green-100/80 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-brand-sky-800 bg-brand-sky-100/80 px-2 py-0.5 rounded-md">
                       {detailModal.type} RECORD
                     </span>
                   </div>
-                  <h3 className="font-serif font-bold text-xl sm:text-2xl text-brand-green-950">
+                  <h3 className="font-serif font-bold text-xl sm:text-2xl text-brand-sky-950">
                     {"name" in detailModal.data
                       ? detailModal.data.name
                       : "donorName" in detailModal.data
@@ -1747,30 +1579,30 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   {"phone" in detailModal.data && detailModal.data.phone && (
                     <a
                       href={`tel:${detailModal.data.phone}`}
-                      className="px-3 py-1.5 bg-white hover:bg-brand-green-50 text-brand-green-900 text-xs font-bold rounded-xl border border-gray-200 flex items-center justify-center gap-1 transition-colors"
+                      className="px-3 py-1.5 bg-white hover:bg-brand-sky-50 text-brand-sky-900 text-xs font-bold rounded-xl border border-gray-200 flex items-center justify-center gap-1 transition-colors"
                       title="Call Phone Number"
                     >
-                      <Phone className="w-3.5 h-3.5 text-brand-green-700" />
+                      <Phone className="w-3.5 h-3.5 text-brand-sky-700" />
                       <span>{detailModal.data.phone}</span>
                     </a>
                   )}
                   {"donorPhone" in detailModal.data && detailModal.data.donorPhone && (
                     <a
                       href={`tel:${detailModal.data.donorPhone}`}
-                      className="px-3 py-1.5 bg-white hover:bg-brand-green-50 text-brand-green-900 text-xs font-bold rounded-xl border border-gray-200 flex items-center justify-center gap-1 transition-colors"
+                      className="px-3 py-1.5 bg-white hover:bg-brand-sky-50 text-brand-sky-900 text-xs font-bold rounded-xl border border-gray-200 flex items-center justify-center gap-1 transition-colors"
                       title="Call Phone Number"
                     >
-                      <Phone className="w-3.5 h-3.5 text-brand-green-700" />
+                      <Phone className="w-3.5 h-3.5 text-brand-sky-700" />
                       <span>{detailModal.data.donorPhone}</span>
                     </a>
                   )}
-                  {detailModal.data.email && (
+                  {(detailModal.data as any).email && (
                     <a
-                      href={`mailto:${detailModal.data.email}`}
-                      className="px-3 py-1.5 bg-white hover:bg-brand-green-50 text-brand-green-900 text-xs font-bold rounded-xl border border-gray-200 flex items-center justify-center gap-1 transition-colors"
+                      href={`mailto:${(detailModal.data as any).email}`}
+                      className="px-3 py-1.5 bg-white hover:bg-brand-sky-50 text-brand-sky-900 text-xs font-bold rounded-xl border border-gray-200 flex items-center justify-center gap-1 transition-colors"
                       title="Send Email"
                     >
-                      <Mail className="w-3.5 h-3.5 text-brand-green-700" />
+                      <Mail className="w-3.5 h-3.5 text-brand-sky-700" />
                       <span>Email</span>
                     </a>
                   )}
@@ -1780,8 +1612,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               {/* ALL DATAS & FIELD SPECIFIC DETAILS */}
               {detailModal.type === "volunteer" && (
                 <div className="space-y-3.5 sm:space-y-4">
-                  <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-green-950 uppercase tracking-wider flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-brand-green-700" />
+                  <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-sky-950 uppercase tracking-wider flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-brand-sky-700" />
                     Volunteer Application Details
                   </h4>
 
@@ -1798,7 +1630,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
                     <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
                       <span className="text-gray-400 font-bold block mb-0.5">Interest Area</span>
-                      <span className="font-extrabold text-brand-green-900 uppercase">
+                      <span className="font-extrabold text-brand-sky-900 uppercase">
                         {(detailModal.data as VolunteerApplication).interestArea}
                       </span>
                     </div>
@@ -1834,8 +1666,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
               {detailModal.type === "booking" && (
                 <div className="space-y-3.5 sm:space-y-4">
-                  <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-green-950 uppercase tracking-wider flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-brand-green-700" />
+                  <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-sky-950 uppercase tracking-wider flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-brand-sky-700" />
                     Visit Booking Details
                   </h4>
 
@@ -1847,7 +1679,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
                     <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
                       <span className="text-gray-400 font-bold block mb-0.5">Booking Date & Time</span>
-                      <span className="font-extrabold text-brand-green-950">
+                      <span className="font-extrabold text-brand-sky-950">
                         {(detailModal.data as Booking).date} at {(detailModal.data as Booking).timeSlot}
                       </span>
                     </div>
@@ -1884,8 +1716,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
               {detailModal.type === "pledge" && (
                 <div className="space-y-3.5 sm:space-y-4">
-                  <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-green-950 uppercase tracking-wider flex items-center gap-2">
-                    <Gift className="w-4 h-4 text-brand-green-700" />
+                  <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-sky-950 uppercase tracking-wider flex items-center gap-2">
+                    <Gift className="w-4 h-4 text-brand-sky-700" />
                     In-Kind Donation Pledge Details
                   </h4>
 
@@ -1920,7 +1752,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       {(detailModal.data as DonationPledge).pledgedItems?.map((it, idx) => (
                         <div key={idx} className="flex items-center justify-between bg-white p-2.5 sm:p-3 rounded-xl border border-gray-200">
                           <span className="font-bold text-gray-900 text-xs">{it.name}</span>
-                          <span className="font-black text-brand-green-900 bg-brand-green-50 border border-brand-green-200 px-2.5 py-1 rounded-lg text-xs">
+                          <span className="font-black text-brand-sky-900 bg-brand-sky-50 border border-brand-sky-200 px-2.5 py-1 rounded-lg text-xs">
                             Quantity: {it.quantity}
                           </span>
                         </div>
@@ -1931,8 +1763,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               )}
 
               {/* ACTION OPTIONS BUTTONS INSIDE THE POPUP CARD */}
-              <div className="bg-brand-green-950/5 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-brand-green-950/10 space-y-2.5 sm:space-y-3">
-                <span className="text-xs font-black text-brand-green-950 uppercase tracking-wider block">
+              <div className="bg-brand-sky-950/5 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-brand-sky-950/10 space-y-2.5 sm:space-y-3">
+                <span className="text-xs font-black text-brand-sky-950 uppercase tracking-wider block">
                   Update Status Options
                 </span>
 
@@ -2036,8 +1868,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       }
                       className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         detailModal.data.status === "completed"
-                          ? "bg-brand-green-950 text-white ring-2 ring-brand-green-400 shadow-md"
-                          : "bg-brand-green-900 hover:bg-brand-green-800 text-white"
+                          ? "bg-brand-sky-950 text-white ring-2 ring-brand-green-400 shadow-md"
+                          : "bg-brand-sky-900 hover:bg-brand-sky-800 text-white"
                       }`}
                     >
                       <Check className="w-4 h-4" />
@@ -2134,7 +1966,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
                 <button
                   onClick={() => setDetailModal(null)}
-                  className="px-6 py-2.5 bg-brand-green-950 text-white font-bold text-xs rounded-xl hover:bg-brand-green-900 transition-colors cursor-pointer shadow-sm text-center"
+                  className="px-6 py-2.5 bg-brand-sky-400 text-white font-bold text-xs rounded-xl hover:bg-brand-sky-500 transition-colors cursor-pointer shadow-sm text-center"
                 >
                   Close Pop-Up
                 </button>
@@ -2147,7 +1979,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
       {/* IN-KIND NEEDED ITEM CREATION / EDITING MODAL */}
       <AnimatePresence>
         {needModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-green-950/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-sky-950/60 backdrop-blur-xs">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -2156,11 +1988,11 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
             >
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-brand-green-50 rounded-xl text-brand-green-800">
-                    <Package className="w-5 h-5 text-brand-green-900" />
+                  <div className="p-2 bg-brand-sky-50 rounded-xl text-brand-sky-800">
+                    <Package className="w-5 h-5 text-brand-sky-900" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-brand-green-950">
+                    <h3 className="font-serif font-bold text-lg text-brand-sky-950">
                       {editingNeedId ? "Edit Needed Item" : "Add New Needed Item"}
                     </h3>
                     <p className="text-xs text-gray-500 font-medium">
@@ -2194,7 +2026,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     <select
                       value={needForm.category}
                       onChange={(e) => setNeedForm({ ...needForm, category: e.target.value as InKindItem["category"] })}
-                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:border-brand-green-600 outline-none cursor-pointer"
+                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:border-brand-sky-600 outline-none cursor-pointer"
                     >
                       <option value="Food">Food (ምግብ)</option>
                       <option value="Medical">Medical (ህክምና)</option>
@@ -2212,7 +2044,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     <select
                       value={needForm.urgency}
                       onChange={(e) => setNeedForm({ ...needForm, urgency: e.target.value as InKindItem["urgency"] })}
-                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:border-brand-green-600 outline-none cursor-pointer"
+                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:border-brand-sky-600 outline-none cursor-pointer"
                     >
                       <option value="High">High Priority</option>
                       <option value="Medium">Medium Priority</option>
@@ -2225,7 +2057,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 <div className="space-y-3">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                     <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-700">
-                      <Globe className="w-4 h-4 text-brand-green-800" />
+                      <Globe className="w-4 h-4 text-brand-sky-800" />
                       <span>Item Details in Dual Languages</span>
                     </div>
 
@@ -2236,7 +2068,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         onClick={() => setNeedFormLangTab("en")}
                         className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           needFormLangTab === "en"
-                            ? "bg-brand-green-950 text-white shadow-xs"
+                            ? "bg-brand-sky-950 text-white shadow-xs"
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
@@ -2251,7 +2083,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         onClick={() => setNeedFormLangTab("am")}
                         className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           needFormLangTab === "am"
-                            ? "bg-brand-green-950 text-white shadow-xs"
+                            ? "bg-brand-sky-950 text-white shadow-xs"
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
@@ -2278,7 +2110,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                             setNeedValidationError(null);
                           }}
                           placeholder="e.g. Teff & Food Grains"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                         />
                       </div>
 
@@ -2294,7 +2126,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                             setNeedValidationError(null);
                           }}
                           placeholder="e.g. 50 Sacks of Teff"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                         />
                       </div>
 
@@ -2310,7 +2142,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                             setNeedValidationError(null);
                           }}
                           placeholder="Brief description of why this supply is needed..."
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none resize-none"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none resize-none"
                         />
                       </div>
                     </div>
@@ -2331,7 +2163,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                             setNeedValidationError(null);
                           }}
                           placeholder="ምሳሌ: ጤፍና የእህል እቃዎች"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                         />
                       </div>
 
@@ -2347,7 +2179,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                             setNeedValidationError(null);
                           }}
                           placeholder="ምሳሌ: 50 ጆንያ ጤፍ"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none"
                         />
                       </div>
 
@@ -2363,7 +2195,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                             setNeedValidationError(null);
                           }}
                           placeholder="የእቃው ዝርዝር ገለፃ በአማርኛ..."
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-green-600 outline-none resize-none"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:bg-white focus:border-brand-sky-600 outline-none resize-none"
                         />
                       </div>
                     </div>
@@ -2382,7 +2214,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-brand-green-950 hover:bg-brand-green-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    className="px-5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
                   >
                     <Save className="w-4 h-4 text-brand-yellow-400" />
                     <span>Save Item</span>

@@ -123,7 +123,7 @@ export default function BookingSection() {
   };
 
   return (
-    <section id="visit" className="py-24 bg-[#FAF8F5] border-t border-brand-green-100/35 relative overflow-hidden">
+    <section id="visit" className="py-24 bg-[#FAF8F5] border-t border-brand-sky-100/35 relative overflow-hidden">
       <DotGridPattern />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -134,7 +134,7 @@ export default function BookingSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-serif text-3xl md:text-4xl font-extrabold text-brand-green-950 mb-3 tracking-tight"
+            className="font-serif text-3xl md:text-4xl font-extrabold text-brand-sky-950 mb-3 tracking-tight"
           >
             {language === "am" ? "ማዕከላችንን ለመጎብኘት ጊዜ ይያዙ" : "Schedule a Guided Visit"}
           </motion.h2>
@@ -159,11 +159,11 @@ export default function BookingSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-8 bg-white rounded-3xl border border-brand-green-100 p-8 md:p-10 shadow-md flex flex-col justify-between relative overflow-hidden"
+            className="lg:col-span-8 bg-white rounded-3xl border border-brand-sky-100 p-8 md:p-10 shadow-md flex flex-col justify-between relative overflow-hidden"
           >
             <div className="space-y-6 relative z-10">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 bg-brand-green-50 text-brand-green-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <div className="w-12 h-12 bg-brand-sky-50 text-brand-sky-600 rounded-2xl flex items-center justify-center shadow-sm">
                   <CalendarIcon className="w-6 h-6 stroke-[1.75]" />
                 </div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg">
@@ -172,14 +172,14 @@ export default function BookingSection() {
               </div>
               
               <div className="space-y-3">
-                <span className="text-[10px] font-black uppercase tracking-widest text-brand-green-700 block">
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-sky-700 block">
                   {language === "am" ? "የሰሊሆም ማህበር ማዕከል" : "Selihom Rehabilitation Center"}
                 </span>
-                <h3 className="font-serif text-2xl md:text-3xl font-extrabold text-brand-green-950 leading-tight">
+                <h3 className="font-serif text-2xl md:text-3xl font-extrabold text-brand-sky-950 leading-tight">
                   {language === "am" ? (
-                    <>የእንጦጦ ማዕከላችንን <br /><span className="text-brand-green-700 italic font-normal">በአካል ይጎብኙ</span></>
+                    <>የእንጦጦ ማዕከላችንን <br /><span className="text-brand-sky-700 italic font-normal">በአካል ይጎብኙ</span></>
                   ) : (
-                    <>Entoto Center <br /><span className="text-brand-green-700 italic font-normal">Guided Open Tour</span></>
+                    <>Entoto Center <br /><span className="text-brand-sky-700 italic font-normal">Guided Open Tour</span></>
                   )}
                 </h3>
                 <p className="text-gray-600 text-xs md:text-sm leading-relaxed max-w-lg">
@@ -193,11 +193,11 @@ export default function BookingSection() {
               {/* Tour Feature Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div className="flex gap-2.5 items-start">
-                  <div className="w-5 h-5 rounded-full bg-brand-green-50 flex items-center justify-center shrink-0 text-brand-green-600 border border-brand-green-100 mt-0.5">
+                  <div className="w-5 h-5 rounded-full bg-brand-sky-50 flex items-center justify-center shrink-0 text-brand-sky-600 border border-brand-sky-100 mt-0.5">
                     <Check className="w-3 h-3 stroke-[3]" />
                   </div>
                   <div>
-                    <strong className="text-xs text-brand-green-950 block">
+                    <strong className="text-xs text-brand-sky-950 block">
                       {language === "am" ? "የህክምናና የስነ-ልቦና ክፍሎች" : "Medical Clinic Tour"}
                     </strong>
                     <span className="text-[11px] text-gray-500">
@@ -207,11 +207,11 @@ export default function BookingSection() {
                 </div>
 
                 <div className="flex gap-2.5 items-start">
-                  <div className="w-5 h-5 rounded-full bg-brand-green-50 flex items-center justify-center shrink-0 text-brand-green-600 border border-brand-green-100 mt-0.5">
+                  <div className="w-5 h-5 rounded-full bg-brand-sky-50 flex items-center justify-center shrink-0 text-brand-sky-600 border border-brand-sky-100 mt-0.5">
                     <Check className="w-3 h-3 stroke-[3]" />
                   </div>
                   <div>
-                    <strong className="text-xs text-brand-green-950 block">
+                    <strong className="text-xs text-brand-sky-950 block">
                       {language === "am" ? "የምግብ ማዘጋጃ ክፍል" : "Kitchen Operations"}
                     </strong>
                     <span className="text-[11px] text-gray-500">
@@ -224,12 +224,12 @@ export default function BookingSection() {
 
             <div className="pt-8 border-t border-gray-100 mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
               <div className="text-[11px] text-gray-500 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-brand-green-600 shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-brand-sky-600 shrink-0" />
                 <span>{language === "am" ? "እንጦጦ ራጉኤል ቤተክርስቲያን አቅራቢያ፣ አዲስ አበባ" : "Location: Near Entoto St. Raguel Church, Addis Ababa"}</span>
               </div>
               <button
                 onClick={() => { setSubmittedBooking(null); setIsModalOpen(true); }}
-                className="py-3 px-6 bg-brand-green-600 hover:bg-brand-green-700 text-white font-extrabold text-xs tracking-wider uppercase rounded-xl cursor-pointer shadow-sm flex items-center justify-center gap-2 transition-transform active:scale-98 shrink-0"
+                className="py-3 px-6 bg-brand-sky-600 hover:bg-brand-sky-700 text-white font-extrabold text-xs tracking-wider uppercase rounded-xl cursor-pointer shadow-sm flex items-center justify-center gap-2 transition-transform active:scale-98 shrink-0"
               >
                 <CalendarIcon className="w-4 h-4" />
                 {language === "am" ? "የጉብኝት ጊዜ ይያዙ" : "Book Guided Visit"}
@@ -242,10 +242,10 @@ export default function BookingSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-4 bg-brand-green-950 text-white rounded-3xl p-8 shadow-md flex flex-col justify-between space-y-6"
+            className="lg:col-span-4 bg-brand-sky-950 text-white rounded-3xl p-8 shadow-md flex flex-col justify-between space-y-6"
           >
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-brand-green-900 border border-brand-green-800 text-brand-yellow-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-brand-sky-900 border border-brand-sky-800 text-brand-yellow-400 flex items-center justify-center">
                 <Info className="w-5 h-5" />
               </div>
 
@@ -282,7 +282,7 @@ export default function BookingSection() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-brand-green-900">
+            <div className="pt-4 border-t border-brand-sky-900">
               <span className="text-[10px] text-gray-400 block">
                 {language === "am"
                   ? "ማስታወሻ፡ የማህበሩ አስተባባሪዎች ያስመዘገቡትን ሰዓት ተመልክተው በስልክ ያረጋግጡልዎታል።"
@@ -305,7 +305,7 @@ export default function BookingSection() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-brand-green-950/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-sky-950/40 backdrop-blur-sm"
             />
 
             <motion.div
@@ -328,10 +328,10 @@ export default function BookingSection() {
                   </div>
 
                   <div>
-                    <span className="text-xs font-mono font-bold text-brand-green-700 bg-brand-green-50 px-2.5 py-1 rounded-lg border border-brand-green-200">
+                    <span className="text-xs font-mono font-bold text-brand-sky-700 bg-brand-sky-50 px-2.5 py-1 rounded-lg border border-brand-sky-200">
                       Ref ID: {submittedBooking.id}
                     </span>
-                    <h3 className="font-serif text-2xl font-black text-brand-green-950 mt-3">
+                    <h3 className="font-serif text-2xl font-black text-brand-sky-950 mt-3">
                       {language === "am" ? "የጉብኝት ጥያቄዎ ተመዝግቧል!" : "Visit Request Registered!"}
                     </h3>
                   </div>
@@ -346,7 +346,7 @@ export default function BookingSection() {
                   <div className="pt-4 border-t border-gray-100">
                     <button
                       onClick={() => setIsModalOpen(false)}
-                      className="w-full py-3 bg-brand-green-950 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer hover:bg-brand-green-900 transition-all"
+                      className="w-full py-3 bg-brand-sky-950 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer hover:bg-brand-sky-900 transition-all"
                     >
                       {language === "am" ? "ተመለስ" : "Close Confirmation"}
                     </button>
@@ -355,10 +355,10 @@ export default function BookingSection() {
               ) : (
                 <>
                   <div className="mb-6 pr-8">
-                    <span className="text-[9px] uppercase tracking-widest font-extrabold text-brand-green-700 block mb-1">
+                    <span className="text-[9px] uppercase tracking-widest font-extrabold text-brand-sky-700 block mb-1">
                       {language === "am" ? "የሰሊሆም ማህበር ጉብኝት" : "Selihom Guided Tour"}
                     </span>
-                    <h3 className="font-serif text-2xl font-bold text-brand-green-950">
+                    <h3 className="font-serif text-2xl font-bold text-brand-sky-950">
                       {language === "am" ? "የጉብኝት ጊዜ መምረጫ" : "Schedule Entry Window"}
                     </h3>
                   </div>
@@ -382,11 +382,11 @@ export default function BookingSection() {
                           onClick={() => { setSelectedType("individual"); setVisitorCount(1); }}
                           className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                             selectedType === "individual"
-                              ? "bg-white text-brand-green-950 shadow-xs border border-gray-200 font-extrabold"
+                              ? "bg-white text-brand-sky-950 shadow-xs border border-gray-200 font-extrabold"
                               : "text-gray-600 hover:text-gray-900"
                           }`}
                         >
-                          <User className="w-3.5 h-3.5 text-brand-green-700" />
+                          <User className="w-3.5 h-3.5 text-brand-sky-700" />
                           <span>{language === "am" ? "የግል / ቤተሰብ" : "Individual / Family"}</span>
                         </button>
                         <button
@@ -394,11 +394,11 @@ export default function BookingSection() {
                           onClick={() => { setSelectedType("corporate"); if (visitorCount < 2) setVisitorCount(5); }}
                           className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                             selectedType === "corporate"
-                              ? "bg-white text-brand-green-950 shadow-xs border border-gray-200 font-extrabold"
+                              ? "bg-white text-brand-sky-950 shadow-xs border border-gray-200 font-extrabold"
                               : "text-gray-600 hover:text-gray-900"
                           }`}
                         >
-                          <Users className="w-3.5 h-3.5 text-brand-green-700" />
+                          <Users className="w-3.5 h-3.5 text-brand-sky-700" />
                           <span>{language === "am" ? "የድርጅት / የቡድን" : "Group / Corporate"}</span>
                         </button>
                       </div>
@@ -411,7 +411,7 @@ export default function BookingSection() {
                           {language === "am" ? "የጉብኝት ቀን ይምረጡ" : "Select Tour Date"}
                         </label>
                         {selectedDate && (
-                          <span className="text-[10px] font-bold text-brand-green-800 bg-brand-green-50 px-2 py-0.5 rounded border border-brand-green-200">
+                          <span className="text-[10px] font-bold text-brand-sky-800 bg-brand-sky-50 px-2 py-0.5 rounded border border-brand-sky-200">
                             {selectedDate}
                           </span>
                         )}
@@ -427,7 +427,7 @@ export default function BookingSection() {
                               onClick={() => setSelectedDate(d.dateString)}
                               className={`min-w-[62px] py-2 px-2 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition-all shrink-0 ${
                                 selectedDate === d.dateString
-                                  ? "bg-brand-green-600 text-white font-extrabold border-brand-green-700 shadow-sm scale-102"
+                                  ? "bg-brand-sky-600 text-white font-extrabold border-brand-sky-700 shadow-sm scale-102"
                                   : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 hover:border-gray-300"
                               }`}
                             >
@@ -456,7 +456,7 @@ export default function BookingSection() {
                               });
                               setSelectedDate(formatted);
                             }}
-                            className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-gray-800 cursor-pointer focus:bg-white focus:border-brand-green-600 outline-none font-bold"
+                            className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-gray-800 cursor-pointer focus:bg-white focus:border-brand-sky-600 outline-none font-bold"
                           />
                         </div>
                       </div>
@@ -478,12 +478,12 @@ export default function BookingSection() {
                               onClick={() => setSelectedSlot(slot)}
                               className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex items-center justify-between gap-2 ${
                                 isSelected
-                                  ? "border-brand-green-600 bg-brand-green-50 text-brand-green-950 font-extrabold shadow-xs ring-1 ring-brand-green-500"
+                                  ? "border-brand-sky-600 bg-brand-sky-50 text-brand-sky-950 font-extrabold shadow-xs ring-1 ring-brand-sky-500"
                                   : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
                               }`}
                             >
                               <div className="flex items-center gap-2">
-                                <Clock className={`w-4 h-4 shrink-0 ${isSelected ? "text-brand-green-700" : "text-gray-400"}`} />
+                                <Clock className={`w-4 h-4 shrink-0 ${isSelected ? "text-brand-sky-700" : "text-gray-400"}`} />
                                 <span className="text-xs font-bold">{slot}</span>
                               </div>
                               <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
@@ -499,9 +499,9 @@ export default function BookingSection() {
 
                     {/* Visitor Count for Corporate/Group */}
                     {selectedType === "corporate" && (
-                      <div className="bg-brand-green-50/50 p-3 rounded-xl border border-brand-green-100 flex items-center justify-between">
+                      <div className="bg-brand-sky-50/50 p-3 rounded-xl border border-brand-sky-100 flex items-center justify-between">
                         <div>
-                          <span className="text-xs font-bold text-brand-green-950 block">
+                          <span className="text-xs font-bold text-brand-sky-950 block">
                             {language === "am" ? "የጎብኝዎች ብዛት" : "Number of Visitors in Group"}
                           </span>
                           <span className="text-[10px] text-gray-500">
@@ -516,7 +516,7 @@ export default function BookingSection() {
                           >
                             -
                           </button>
-                          <span className="text-xs font-extrabold text-brand-green-950 min-w-[20px] text-center">
+                          <span className="text-xs font-extrabold text-brand-sky-950 min-w-[20px] text-center">
                             {visitorCount}
                           </span>
                           <button
@@ -539,7 +539,7 @@ export default function BookingSection() {
                           placeholder={language === "am" ? "ሙሉ ስም *" : "Full Name *"}
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-green-950 focus:bg-white focus:border-brand-green-600 outline-none font-medium"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-sky-950 focus:bg-white focus:border-brand-sky-600 outline-none font-medium"
                         />
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -549,14 +549,14 @@ export default function BookingSection() {
                           placeholder={language === "am" ? "ስልክ ቁጥር *" : "Phone Number *"}
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-green-950 focus:bg-white focus:border-brand-green-600 outline-none font-medium"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-sky-950 focus:bg-white focus:border-brand-sky-600 outline-none font-medium"
                         />
                         <input
                           type="email"
                           placeholder={language === "am" ? "ኢሜይል (አማራጭ)" : "Email (Optional)"}
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-green-950 focus:bg-white focus:border-brand-green-600 outline-none font-medium"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-sky-950 focus:bg-white focus:border-brand-sky-600 outline-none font-medium"
                         />
                       </div>
                       <input
@@ -564,7 +564,7 @@ export default function BookingSection() {
                         placeholder={language === "am" ? "ለማስተባበሪያ ማስታወሻ (ለምሳሌ፡ ቁሳቁስ ልገሳ) - አማራጭ" : "Notes / Special Request (Optional)"}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-green-950 focus:bg-white focus:border-brand-green-600 outline-none font-medium"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-brand-sky-950 focus:bg-white focus:border-brand-sky-600 outline-none font-medium"
                       />
                     </div>
 
@@ -574,8 +574,8 @@ export default function BookingSection() {
                         <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-900 block">
                           {language === "am" ? "የተመረጠው የጉብኝት ማጠቃለያ" : "Tour Request Summary"}
                         </span>
-                        <p className="text-brand-green-950 font-extrabold flex items-center gap-1.5">
-                          <CalendarIcon className="w-3.5 h-3.5 text-brand-green-700" />
+                        <p className="text-brand-sky-950 font-extrabold flex items-center gap-1.5">
+                          <CalendarIcon className="w-3.5 h-3.5 text-brand-sky-700" />
                           <span>{selectedDate} • {selectedSlot}</span>
                         </p>
                         <p className="text-gray-600 text-[11px] font-medium">
@@ -587,7 +587,7 @@ export default function BookingSection() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 bg-brand-green-600 hover:bg-brand-green-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-md transition-all active:scale-98 flex items-center justify-center gap-2"
+                      className="w-full py-3.5 bg-brand-sky-600 hover:bg-brand-sky-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-md transition-all active:scale-98 flex items-center justify-center gap-2"
                     >
                       <CalendarIcon className="w-4 h-4" />
                       {isSubmitting ? "Processing..." : (language === "am" ? "የጉብኝት ጊዜውን መዝግብ" : "Confirm & Submit Visit Request")}

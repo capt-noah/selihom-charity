@@ -13,7 +13,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem("selihom_lang");
-    return (saved === "am" || saved === "en") ? saved : "en";
+    // Default to Amharic for first-time visitors (no saved preference)
+    return (saved === "am" || saved === "en") ? saved : "am";
   });
 
   useEffect(() => {
