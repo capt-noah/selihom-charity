@@ -1,52 +1,25 @@
 import { Initiative, Testimonial, InKindItem, TransformationStory, ValueItem, BankAccount, EventItem, GalleryItem } from "./types";
 
-
-// Generated and uploaded images
-import selihomLogo from "./assets/images/selihom_logo.jpg";
-import storyBefAft1 from "./assets/images/health_cutout.jpg";
-import storyBefAft2 from "./assets/images/elderly_dignity.jpg";
-import storyBefAft3 from "./assets/images/about_cutout_color.jpg";
-import storyBefAft4 from "./assets/images/warmth_education.jpg";
-import officialCertificate from "./assets/images/elderly_care.jpg";
+// Real photos — awards, founder, beneficiaries
+import selihomLogo    from "./assets/images/selihom_logo.jpg";
 import charityOwnerImg from "./assets/images/charity-owner.jpg";
-import award1Img from "./assets/images/award1.jpg";
-import award2Img from "./assets/images/award2.jpg";
-import award3Img from "./assets/images/award3.jpg";
-import award4Img from "./assets/images/award4.jpg";
-import award5Img from "./assets/images/award5.jpg";
-import award6Img from "./assets/images/award6.jpg";
-import award7Img from "./assets/images/award7.jpg";
-
-import person1Img from "./assets/images/person1.jpg";
-import person2Img from "./assets/images/person2.jpg";
-import person3Img from "./assets/images/person3.jpg";
-import person4Img from "./assets/images/person4.jpg";
-
-// Preserved template cutout images
-import mealsCutout from "./assets/images/meals_cutout.jpg";
-import eduCutout from "./assets/images/edu_cutout.jpg";
-import healthCutout from "./assets/images/health_cutout.jpg";
-import elderlyDignityCutout from "./assets/images/elderly_dignity.jpg";
-import elderlyWiseCutout from "./assets/images/elderly_wise.jpg";
-import childrenCutout from "./assets/images/children_cutout.jpg";
-import aboutCutout from "./assets/images/warmth_education.jpg";
-import elderlyCutout from "./assets/images/elderly_care.jpg";
+import award1Img      from "./assets/images/award1.jpg";
+import award2Img      from "./assets/images/award2.jpg";
+import award3Img      from "./assets/images/award3.jpg";
+import award4Img      from "./assets/images/award4.jpg";
+import award5Img      from "./assets/images/award5.jpg";
+import award6Img      from "./assets/images/award6.jpg";
+import award7Img      from "./assets/images/award7.jpg";
+import person1Img     from "./assets/images/person1.jpg";
+import person2Img     from "./assets/images/person2.jpg";
+import person3Img     from "./assets/images/person3.jpg";
+import person4Img     from "./assets/images/person4.jpg";
+import officialCertificate from "./assets/images/elderly_care.jpg";
+import elderlyWiseCutout   from "./assets/images/elderly_wise.jpg";
 
 export const IMAGES = {
   selihomLogo,
-  storyBefAft1,
-  storyBefAft2,
-  storyBefAft3,
-  storyBefAft4,
   officialCertificate,
-  mealsCutout,
-  eduCutout,
-  healthCutout,
-  elderlyDignityCutout,
-  elderlyWiseCutout,
-  childrenCutout,
-  aboutCutout,
-  elderlyCutout
 };
 
 export const SELIHOM_INFO = {
@@ -156,7 +129,6 @@ export const INITIATIVES: Initiative[] = [
     },
     goal: 5000000,
     raised: 3850000,
-    image: healthCutout,
     tags: {
       am: ["ሕክምና", "የአዕምሮ ጤና", "ማቋቋም"],
       en: ["Medical Care", "Mental Health", "Rehabilitation"]
@@ -172,7 +144,6 @@ export const INITIATIVES: Initiative[] = [
     },
     goal: 3500000,
     raised: 2900000,
-    image: elderlyDignityCutout,
     tags: {
       am: ["አዛውንቶች", "መጠለያ", "እንክብካቤ"],
       en: ["Elderly Care", "Shelter", "Dignity"]
@@ -188,7 +159,6 @@ export const INITIATIVES: Initiative[] = [
     },
     goal: 2500000,
     raised: 1800000,
-    image: childrenCutout,
     tags: {
       am: ["ህጻናት", "ትምህርት", "ህክምና"],
       en: ["Children", "Education", "Healthcare"]
@@ -204,7 +174,6 @@ export const INITIATIVES: Initiative[] = [
     },
     goal: 3000000,
     raised: 2100000,
-    image: eduCutout,
     tags: {
       am: ["የሙያ ስልጠና", "ስራ እድል", "ራስን መቻል"],
       en: ["Vocational Training", "Employment", "Self-Sufficiency"]
@@ -285,7 +254,7 @@ export const TESTIMONIALS: Testimonial[] = [
       am: "ሰሊሆም ከጎዳና አንስቶ ህይወቴን መልሶልኛል። አሁን እኔም ሌሎችን ለመርዳት በጎ ፈቃደኛ ሆኛለሁ።",
       en: "Selihom rescued me from the street and gave me my life back. Now I volunteer to help others heal."
     },
-    avatar: elderlyWiseCutout
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop"
   },
   {
     id: "test-2",
@@ -438,59 +407,59 @@ export const STATS = [
 export const EVENTS: EventItem[] = [
   {
     id: "evt-1",
-    title: { am: "የማዕከል ማስፋፊያና የመድሃኒት ማሰባሰቢያ ገቢ ማሰባሰቢያ", en: "Shelter Expansion & Psychiatric Medication Drive" },
+    title: { am: "\u12e8\u121b\u12d5\u12a8\u120d \u121b\u1235\u134b\u134a\u12eb\u1293 \u12e8\u1218\u12f5\u1213\u1295\u12e8\u1275 \u121b\u1230\u1263\u1230\u1262\u12eb \u1308\u1262 \u121b\u1230\u1263\u1230\u1262\u12eb", en: "Shelter Expansion & Psychiatric Medication Drive" },
     category: "fundraising",
-    date: { am: "ነሐሴ 15, 2018", en: "August 21, 2026" },
+    date: { am: "\u1290\u1243\u1234 15, 2018", en: "August 21, 2026" },
     time: { am: "ከሰዓት 8:00 - 11:00", en: "02:00 PM - 05:00 PM" },
-    location: { am: "እንጦጦ ራጉኤል ሰሊሆም ማዕከል", en: "Entoto Raguel Selihom Shelter" },
+    location: { am: "\u12d5\u1295\u1326\u1326 \u122b\u1309\u12a4\u120d \u1230\u120a\u1206\u121d \u121b\u12d5\u12a8\u120d", en: "Entoto Raguel Selihom Shelter" },
     description: {
-      am: "ለተጨማሪ 50 ህሙማን አልጋዎችን፣ የንፅህና መስጫዎችንና የ3 ወር አጠቃላይ መድሃኒቶችን ለማሟላት የተዘጋጀ ገቢ ማሰባሰቢያ።",
+      am: "\u1208\u1270\u1328\u121b\u122a 50 \u1205\u1219\u121b\u1295 \u12d3\u120d\u130b\u12c8\u127d\u1295\u1363 \u12e8\u1295\u1364\u1205\u1293 \u1218\u1235\u1328\u12ab\u12c8\u127d\u1295\u1293 የ3 ወር \u12d3\u1325\u1241\u12c8\u12eb \u1218\u12f5\u1213\u1295\u12c8\u127d\u1295 \u1208\u121b\u1237\u1209 \u12e8\u1270\u12db\u130b\u12f0 \u1308\u1262 \u121b\u1230\u1263\u1230\u1262\u12eb\u1362",
       en: "Special fundraising effort to furnish 50 new recovery beds, expand sanitation facilities, and secure 3 months of psychiatric medication supplies."
     },
     goalAmount: 2000000,
     raisedAmount: 1250000,
-    image: healthCutout
+    image: ""
   },
   {
     id: "evt-2",
-    title: { am: "የአዲስ ዓመት ማህበረሰባዊ የምግብና የፍቅር ድግስ", en: "New Year Holiday Community Feast Drive" },
+    title: { am: "\u12e8\u12d0\u12f2\u1235 \u12d3\u1218\u1275 \u121b\u1205\u1260\u1228\u1230\u1263\u12ca \u12e8\u121d\u130d\u1265\u1293 \u12e8\u134d\u1245\u122d \u12f5\u130d\u1235", en: "New Year Holiday Community Feast Drive" },
     category: "fundraising",
-    date: { am: "ጳጉሜ 5, 2018", en: "September 10, 2026" },
-    time: { am: "ከጠዋቱ 3:00 - 11:00", en: "09:00 AM - 05:00 PM" },
-    location: { am: "ሰሊሆም ማዕከል, አዲስ አበባ", en: "Selihom Center, Addis Ababa" },
+    date: { am: "\u1353\u130c\u121c 5, 2018", en: "September 10, 2026" },
+    time: { am: "\u12a8\u1338\u12c8\u1271 3:00 - 11:00", en: "09:00 AM - 05:00 PM" },
+    location: { am: "\u1230\u120a\u1206\u121d \u121b\u12d5\u12a8\u120d, \u12d0\u12f2\u1235 \u12d0\u1260\u1263", en: "Selihom Center, Addis Ababa" },
     description: {
-      am: "ለ200+ ተጠቃሚዎችና አዛውንቶች የበዓል መብራት፣ የአልባሳት ድጋፍና የበግ/የበሬ እርድ ድግስ ማዘጋጀት።",
+      am: "\u1208200+ \u1270\u1338\u12ab\u121a\u12c8\u127d\u1293 \u12d0\u12db\u12c8\u1295\u1276\u127d \u12e8\u1260\u12d3\u120d \u1218\u1265\u122b\u1275\u1363 \u12e8\u12d0\u120d\u1263\u1233\u1275 \u12f5\u130d\u12c3\u134f\u1293 \u12e8\u1260\u130d/\u12e8\u1260\u1228 \u12d5\u122d\u12f5 \u12f5\u130d\u1235 \u121b\u12db\u130b\u12f0\u1275\u1362",
       en: "Providing warm holiday meals, new traditional Habesha attire, and festive celebration for all 200+ beneficiaries and street elders."
     },
     goalAmount: 800000,
     raisedAmount: 510000,
-    image: mealsCutout
+    image: ""
   },
   {
     id: "evt-3",
-    title: { am: "የበጎ ፈቃደኞች መርሐግብርና የልምድ ልውውጥ", en: "Monthly Volunteer Orientation & Open House" },
+    title: { am: "\u12e8\u1260\u130e \u134e\u12c8\u12f0\u129e\u127d \u1218\u122d\u1345\u130d\u1265\u122d\u1293 \u12e8\u120d\u121d\u12f5 \u120d\u12c8\u12c5", en: "Monthly Volunteer Orientation & Open House" },
     category: "upcoming",
-    date: { am: "መስከረም 10, 2019", en: "September 20, 2026" },
-    time: { am: "ከጠዋቱ 4:00 - 7:00", en: "10:00 AM - 01:00 PM" },
-    location: { am: "ሰሊሆም እንጦጦ ማዕከል", en: "Selihom Entoto Center" },
+    date: { am: "\u1218\u1235\u12a8\u1228\u121d 10, 2019", en: "September 20, 2026" },
+    time: { am: "\u12a8\u1338\u12c8\u1271 4:00 - 7:00", en: "10:00 AM - 01:00 PM" },
+    location: { am: "\u1230\u120a\u1206\u121d \u12d5\u1295\u1326\u1326 \u121b\u12d5\u12a8\u120d", en: "Selihom Entoto Center" },
     description: {
-      am: "አዳዲስ በጎ ፈቃደኞችን መቀበል፣ የማዕከሉን ስራዎች ማስጎብኘትና ተጠቃሚዎችን በምግብ ዝግጅትና እንክብካቤ ማገዝ።",
+      am: "\u12d0\u12f3\u12f2\u1235 \u1260\u130e \u134e\u12c8\u12f0\u129e\u127d\u1295 \u1218\u1240\u1260\u120d\u1363 \u12e8\u121b\u12d5\u12a8\u1209\u1295 \u1235\u122b\u12c8\u127d \u121b\u1235\u130e\u1265\u129d\u1273\u1293 \u1270\u1338\u12ab\u121a\u12c8\u127d\u1295 \u1260\u121d\u130d\u1265 \u12dd\u130d\u1305\u1275\u1293 \u12d5\u1295\u12ad\u1265\u12ab\u1260 \u121b\u1308\u12d8\u1362",
       en: "Welcoming new volunteers, guided tour of shelter facilities, and hands-on participation in lunch service and elder companionship."
     },
-    image: aboutCutout
+    image: ""
   },
   {
     id: "evt-4",
-    title: { am: "የአዕምሮ ጤና ግንዛቤ ማስጨበጫ ሰልፍና ጉብኝት", en: "Mental Health Awareness & Stigma Reduction Walk" },
+    title: { am: "\u12e8\u12d0\u12d5\u121d\u122e \u1274\u1293 \u130d\u1295\u12db\u1260 \u121b\u1235\u1288\u1260\u1328\u12ab \u1230\u120d\u1356\u1293 \u130d\u1265\u129d\u1275", en: "Mental Health Awareness & Stigma Reduction Walk" },
     category: "upcoming",
-    date: { am: "ጥቅምት 1, 2019", en: "October 10, 2026" },
-    time: { am: "ከጠዋቱ 2:00 - 6:00", en: "08:00 AM - 12:00 PM" },
-    location: { am: "ከአራት ኪሎ እስከ እንጦጦ ራጉኤል", en: "Arat Kilo to Entoto Raguel" },
+    date: { am: "\u1325\u1245\u121d\u1275 1, 2019", en: "October 10, 2026" },
+    time: { am: "\u12a8\u1338\u12c8\u1271 2:00 - 6:00", en: "08:00 AM - 12:00 PM" },
+    location: { am: "\u12a8\u12d0\u122b\u1275 \u12aa\u120e \u12d5\u1235\u12a8 \u12d5\u1295\u1326\u1326 \u122b\u1309\u12a4\u120d", en: "Arat Kilo to Entoto Raguel" },
     description: {
-      am: "በአዕምሮ ህመም ላይ ያለውን የተሳሳተ አመለካከት ለመቀየርና ህሙማንን ለማቀፍ የተዘጋጀ ሰላማዊ የእግር ጉዞ።",
+      am: "\u1260\u12d0\u12d5\u121d\u122e \u1205\u1218\u121d \u120b\u12ed \u12eb\u1208\u12cd\u1295 \u12e8\u1270\u1233\u1233\u1270 \u12d0\u121e\u1208\u12ab\u12eb\u1275 \u1208\u1218\u1240\u12ed\u122d\u1293 \u1205\u1219\u121b\u1295\u1295 \u1208\u121b\u1240\u134d \u12e8\u1270\u12db\u130b\u12f0 \u1230\u120b\u121b\u12ca \u12e8\u12d5\u130d\u122d \u130d\u12d8\u1362",
       en: "Community awareness walk to dismantle mental health stigma and raise public support for street rehabilitation programs."
     },
-    image: storyBefAft4
+    image: ""
   }
 ];
 
@@ -498,151 +467,101 @@ export const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "gal-owner",
     type: "image",
-    title: { am: "የሰሊሆም ማህበር መስራች አቶ ሚኪያስ ለገሰ", en: "Founder Mikiyas Legesse & Leadership" },
+    title: { am: "\u12e8\u1230\u120a\u1206\u121d \u121b\u1205\u1260\u122d \u1218\u1235\u122b\u127d \u12d0\u1276 \u121a\u12aa\u12eb\u1235 \u1208\u1308\u1230", en: "Founder Mikiyas Legesse & Leadership" },
     category: "mental-health",
     url: charityOwnerImg,
-    description: { am: "የማህበሩ መስራችና ስራ አስፈፃሚ አቶ ሚኪያስ ለገሰ።", en: "Founder and director Mikiyas Legesse leading Selihom's humanitarian mission." }
+    description: { am: "\u12e8\u121b\u1205\u1260\u1229 \u1218\u1235\u122b\u127d\u1293 \u1235\u122b \u12d0\u1235\u134e\u1348\u12db\u121a \u12d0\u1276 \u121a\u12aa\u12eb\u1235 \u1208\u1308\u1230\u1362", en: "Founder and director Mikiyas Legesse leading Selihom's humanitarian mission." }
   },
   {
-    id: "gal-aster",
+    id: "gal-person1",
     type: "image",
-    title: { am: "የህክምናና የተሃድሶ ውጤት", en: "Psychiatric Care & Rehabilitation" },
+    title: { am: "\u12e8\u1215\u12ad\u121d\u1293\u1293 \u12e8\u1270\u1233\u12f5\u1230\u12cb \u12cd\u1324\u1275", en: "Psychiatric Care & Rehabilitation" },
     category: "mental-health",
     url: person1Img,
-    description: { am: "ከጎዳና ተነስታ በሰሊሆም ሙሉ ህክምና ያገኘች ተጠቃሚ።", en: "Beneficiary provided psychiatric treatment and holistic care at Selihom." },
+    description: { am: "\u12a8\u130e\u12f3\u1293 \u1270\u1290\u1230\u1273 \u1260\u1230\u120a\u1206\u121d \u121d\u1209 \u1215\u12ad\u121d\u1293 \u12eb\u1308\u129e\u127d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary provided psychiatric treatment and holistic care at Selihom." },
     imagePosition: "object-center"
   },
   {
-    id: "gal-abebe",
+    id: "gal-person2",
     type: "image",
-    title: { am: "የህክምናና የተሃድሶ ስኬት", en: "Rehabilitation Transformation" },
+    title: { am: "\u12e8\u1215\u12ad\u121d\u1293\u1293 \u12e8\u1270\u1233\u12f5\u1230\u12cb \u1235\u12a8\u1275", en: "Rehabilitation Transformation" },
     category: "mental-health",
     url: person2Img,
-    description: { am: "ከጎዳና ህይወት ወጥቶ በሰሊሆም ሙሉ በሙሉ ያገገመ ተጠቃሚ።", en: "Beneficiary after complete psychiatric recovery and grooming at Selihom." },
+    description: { am: "\u12a8\u130e\u12f3\u1293 \u1215\u12ed\u12c8\u1275 \u12c8\u1325\u1276 \u1260\u1230\u120a\u1206\u121d \u121d\u1209 \u1260\u121d\u1209 \u12eb\u1308\u1308\u121d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary after complete psychiatric recovery at Selihom." },
     imagePosition: "object-top"
   },
   {
-    id: "gal-worknesh",
+    id: "gal-person3",
     type: "image",
-    title: { am: "የማገገምና የደስታ ጉዞ", en: "Recovery & Restoration of Health" },
+    title: { am: "\u12e8\u121b\u1308\u1308\u121d\u1293 \u12e8\u12f0\u1235\u1273 \u130d\u12d8", en: "Recovery & Restoration of Health" },
     category: "mental-health",
     url: person3Img,
-    description: { am: "በማህበሩ ህክምናና ፍቅር አግኝታ በሰላም የምትኖር ተጠቃሚ።", en: "Beneficiary celebrating recovery in clean traditional dress." },
+    description: { am: "\u1260\u121b\u1205\u1260\u1229 \u1215\u12ad\u121d\u1293 \u134d\u1245\u122d \u12d0\u130d\u129d\u1273 \u1260\u1230\u120b\u121d \u12e8\u121d\u1275\u1296\u122d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary celebrating recovery in clean traditional dress." },
     imagePosition: "object-center"
   },
   {
-    id: "gal-worku",
+    id: "gal-person4",
     type: "image",
-    title: { am: "የሙሉ ተሃድሶና የማህበረሰብ ተሳትፎ", en: "Full Recovery & Reintegration" },
+    title: { am: "\u12e8\u121d\u1209 \u1270\u1233\u12f5\u1230\u12cb\u1293 \u12e8\u121b\u1205\u1260\u1228\u1230\u1263\u12ca \u1270\u1233\u1275\u134e", en: "Full Recovery & Reintegration" },
     category: "mental-health",
     url: person4Img,
-    description: { am: "በማህበሩ የህክምና ድጋፍ አግኝቶ አሁን ሙሉ በሙሉ ያገገመ ተጠቃሚ።", en: "Beneficiary rehabilitated and fully healed, dressed in formal attire." },
+    description: { am: "\u1260\u121b\u1205\u1260\u1229 \u12f5\u130d\u12c3 \u12d0\u130d\u129d\u1276 \u121d\u1209 \u1260\u121d\u1209 \u12eb\u1308\u1308\u121d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary rehabilitated and fully healed, wearing formal attire." },
     imagePosition: "object-top"
   },
   {
     id: "gal-award1",
     type: "image",
-    title: { am: "የመንግስት የክብር እውቅና የምስክር ወረቀት", en: "Official NGO Excellence & Certification" },
+    title: { am: "\u12e8\u1218\u1295\u130d\u1235\u1275 \u1215\u130b\u12ca \u12d5\u12c9\u1243\u1293", en: "Official NGO Certification" },
     category: "mental-health",
     url: award1Img,
-    description: { am: "የሰሊሆም ህጋዊ ምዝገባና የሰብአዊ እውቅና ምስክር ወረቀት።", en: "Official registration certificate and government recognition." }
+    description: { am: "\u12e8\u1230\u120a\u1206\u121d \u1215\u130b\u12ca \u121d\u12d8\u1308\u1263 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Official registration certificate and government recognition." }
   },
   {
     id: "gal-award2",
     type: "image",
-    title: { am: "የተለየ የበጎ አድራጎት ማረጋገጫና ሽልማት", en: "Distinguished Service Award" },
+    title: { am: "\u12e8\u1260\u130e \u12d0\u12f5\u122b\u130e\u1275 \u12e8\u12ad\u1265\u122d \u123d\u120d\u121b\u1275", en: "Distinguished Service Award" },
     category: "mental-health",
     url: award2Img,
-    description: { am: "ማህበሩ ላበረከተው ድንቅ የሰብአዊ አገልግሎት የተሰጠ የክብር ሽልማት።", en: "Distinguished service award presented to Selihom." }
+    description: { am: "\u1208\u1230\u120a\u1206\u121d \u121b\u1205\u1260\u122d \u12e8\u1270\u1230\u1320 \u12e8\u12ad\u1265\u122d \u123d\u120d\u121b\u1275\u1362", en: "Distinguished service award presented to Selihom." }
   },
   {
     id: "gal-award3",
     type: "image",
-    title: { am: "ብሄራዊ የሰብአዊ እውቅና ማረጋገጫ", en: "National Humanitarian Recognition" },
+    title: { am: "ብሄራዊ \u12e8\u1230\u1265\u12d0\u12ca \u12d5\u12c9\u1243\u1293", en: "National Humanitarian Recognition" },
     category: "mental-health",
     url: award3Img,
-    description: { am: "የአዕምሮ ህሙማንን በማንሳትና በመንከባከብ የተገኘ ብሄራዊ እውቅና።", en: "National humanitarian honor awarded for rescuing and caring for mentally ill citizens." }
+    description: { am: "\u1208\u1230\u120a\u1206\u121d \u12eb\u1308\u129e\u12cd \u1265\u1204\u122b\u12ca \u12d5\u12c9\u1243\u1293\u1362", en: "National humanitarian honor for rescuing and rehabilitating street beneficiaries." }
   },
   {
     id: "gal-award4",
     type: "image",
-    title: { am: "የታዋቂ ግለሰቦችና የክብር እንግዶች ጉብኝት", en: "Distinguished VIP & Guest Visits" },
+    title: { am: "\u1273\u12c8\u12aa \u12d5\u1295\u130e\u127d\u1293 \u12d0\u121d\u1263\u1233\u12f0\u122e\u127d \u130d\u1265\u129d\u1275", en: "Distinguished VIP & Guest Visits" },
     category: "mental-health",
     url: award4Img,
-    description: { am: "ታዋቂ ግለሰቦችና የክብር እንግዶች ሰሊሆም ማዕከልን ሲጎበኙ።", en: "Dignitaries and famous personalities visiting Selihom shelter." }
+    description: { am: "\u1273\u12c8\u12aa \u130d\u1208\u1230\u129e\u127d\u1293 \u12e8\u12ad\u1265\u122d \u12d5\u1295\u130e\u127d \u1230\u120a\u1206\u121d\u1295 \u1235\u130e\u1260\u129d\u1362", en: "Dignitaries and personalities visiting Selihom shelter." }
   },
   {
     id: "gal-award5",
     type: "image",
-    title: { am: "የበጎ አድራጎት እውቅናና የምስክር ወረቀት (አልበም 5)", en: "Humanitarian Award & Recognition Certificate" },
+    title: { am: "\u12e8\u1230\u1265\u12d0\u12ca \u12d0\u130d\u120d\u130e\u1275 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275", en: "Humanitarian Excellence Certificate" },
     category: "mental-health",
     url: award5Img,
-    description: { am: "የሰሊሆም ማህበር ያገኛቸው ተጨማሪ የክብር ምስክር ወረቀቶችና እውቅናዎች።", en: "Additional official certificates of appreciation and excellence." }
+    description: { am: "\u1208\u1230\u120a\u1206\u121d \u12e8\u1270\u1230\u1320 \u12e8\u1230\u1265\u12d0\u12ca \u12d0\u130d\u120d\u130e\u1275 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Certificate of appreciation acknowledging Selihom's dedicated service." }
   },
   {
     id: "gal-award6",
     type: "image",
-    title: { am: "የተሃድሶና የእንክብካቤ ማረጋገጫ (አልበም 6)", en: "Official Service Certification" },
+    title: { am: "\u12e8\u1270\u1233\u12f5\u1230\u12cb\u1293 \u12d5\u1295\u12ad\u1265\u12ab\u1260 \u121b\u1228\u130b\u1308\u1338", en: "Official Service Certification" },
     category: "mental-health",
     url: award6Img,
-    description: { am: "ለሰሊሆም ማህበር የተሰጠ የበጎ አድራጎት አገልግሎት ምስክር ወረቀት።", en: "Official service certificate honoring Selihom's community impact." }
+    description: { am: "85% \u1270\u1338\u12ab\u121a\u12c8\u127d\u1295 \u12eb\u12f5\u1290 \u12f5\u122d\u130d\u1275 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Certified track record restoring health to over 85% of beneficiaries." }
   },
   {
     id: "gal-award7",
     type: "image",
-    title: { am: "የሰብአዊ አገልግሎት የክብር ሰርተፍኬት (አልበም 7)", en: "Special Humanitarian Honor Certificate" },
+    title: { am: "\u12e8\u121b\u1205\u1260\u1228\u1230\u1263\u12ca \u12d0\u130d\u120d\u130e\u1275 \u123d\u120d\u121b\u1275", en: "Community Service Honour" },
     category: "mental-health",
     url: award7Img,
-    description: { am: "ከመንግስታዊና ከማህበረሰባዊ ተቋማት የተበረከተ የክብር ምስክር ወረቀት።", en: "Certificate of honor awarded by governmental and community organizations." }
+    description: { am: "\u12a8\u1270\u1245\u1233\u121b\u1275 \u12e8\u1270\u1230\u1320 \u120c\u120b \u12e8\u12ad\u1265\u122d \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Additional certificate of honour from governmental and community organisations." }
   },
-  {
-    id: "gal-2",
-    type: "image",
-    title: { am: "የአዛውንቶች እንክብካቤና ፍቅር", en: "Elderly Dignity & Care Package" },
-    category: "elderly",
-    url: elderlyDignityCutout,
-    description: { am: "ለአዛውንቶች የሚደረግ የቤት ውስጥ ህክምናና የምግብ ድጋፍ።", en: "In-home nutritional care and healthcare visit for housebound senior." }
-  },
-  {
-    id: "gal-3",
-    type: "image",
-    title: { am: "የህጻናት ትምህርትና ማጠናከሪያ ክፍል", en: "Children's Learning & Education Center" },
-    category: "children",
-    url: childrenCutout,
-    description: { am: "ለተጋላጭ ህጻናት የሚደረግ የትምህርትና የመጻሕፍት ድጋፍ።", en: "Educational study groups and textbook distribution for vulnerable children." }
-  },
-  {
-    id: "gal-4",
-    type: "image",
-    title: { am: "የዕለታዊ ማዕድ ዝግጅት በሰሊሆም", en: "Daily Warm Kitchen Meal Distribution" },
-    category: "kitchen",
-    url: mealsCutout,
-    description: { am: "በየቀኑ ለ200+ ተጠቃሚዎች የሚዘጋጅ ንፁህና የተመጣጠነ ምግብ።", en: "Freshly prepared balanced meals served twice daily at Entoto shelter." }
-  },
-  {
-    id: "gal-6",
-    type: "image",
-    title: { am: "የበጎ ፈቃደኞች አገልግሎትና ማዕድ ማደል", en: "Volunteers Serving Lunch to Beneficiaries" },
-    category: "volunteers",
-    url: aboutCutout,
-    description: { am: "ወጣቶችና በጎ ፈቃደኞች ተጠቃሚዎችን ሲያገለግሉ።", en: "Youth volunteers actively serving meals and tutoring beneficiaries." }
-  },
-  {
-    id: "gal-7",
-    type: "image",
-    title: { am: "የሰሊሆም መስራች አቶ ሚኪያስ ለገሰ ቃለ-መጠይቅ", en: "Mikiyas Legesse - Founder Interview & Story" },
-    category: "mental-health",
-    url: storyBefAft4,
-    description: { am: "ሰሊሆም ማህበር እንዴት እንደተመሰረተና ያለፈበትን የጽናት መንገድ የሚያሳይ ምስል።", en: "Special documentary story covering the founding journey from shoe shining to Entoto shelter." }
-  },
-  {
-    id: "gal-8",
-    type: "image",
-    title: { am: "የማዕከሉ ዕለታዊ አገልግሎትና የህክምና ሂደት", en: "Inside Selihom: Daily Healthcare & Kitchen Tour" },
-    category: "kitchen",
-    url: healthCutout,
-    description: { am: "የአዕምሮ ህክምና፣ የምግብ አዘጋጀትና የአዛውንቶች እንክብካቤ ምስሎች።", en: "A full view of the kitchen, nursing station, and sleeping quarters." }
-  }
 ];
-
-

@@ -11,7 +11,7 @@ export interface Initiative {
   description: BilingualText;
   goal: number;
   raised: number;
-  image: string;
+  image?: string;
   tags: { en: string[]; am: string[] };
   icon: string; // Lucide icon name
 }
@@ -124,7 +124,7 @@ export interface EventItem {
   description: BilingualText;
   goalAmount?: number;
   raisedAmount?: number;
-  image: string;
+  image?: string;
 }
 
 export interface GalleryItem {

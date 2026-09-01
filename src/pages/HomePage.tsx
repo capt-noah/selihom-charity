@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Calendar, Heart, Users, Award } from "lucide-react";
+import { ArrowRight, Calendar, Heart, Users, Award, Stethoscope, Home, GraduationCap, Briefcase } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 import { SELIHOM_INFO, INITIATIVES } from "../data";
@@ -12,6 +12,19 @@ import { HelpingHandsSketch, FoodNourishSketch, EducationBookSketch } from "../c
 
 function InitiativePreviewCard({ item, index }: { item: (typeof INITIATIVES)[0]; index: number }) {
   const { t } = useLanguage();
+
+  // Mirror the same accent colours as InitiativesSection
+  const colours = [
+    { bg: "bg-brand-sky-400",    icon: "text-white" },
+    { bg: "bg-brand-green-400",  icon: "text-white" },
+    { bg: "bg-brand-yellow-400", icon: "text-white" },
+    { bg: "bg-brand-orange-400", icon: "text-white" },
+  ];
+  const c = colours[index % colours.length];
+
+  const icons = [Stethoscope, Home, GraduationCap, Briefcase];
+  const Icon = icons[index % icons.length];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -20,13 +33,24 @@ function InitiativePreviewCard({ item, index }: { item: (typeof INITIATIVES)[0];
       transition={{ delay: index * 0.1, duration: 0.5 }}
       className="bg-white rounded-2xl overflow-hidden border border-brand-sky-100 shadow-sm hover:shadow-lg hover:border-brand-sky-300 transition-all duration-300 group"
     >
-      <div className="relative h-44 overflow-hidden bg-brand-sky-950">
-        <img src={item.image} alt={t(item.title)} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-sky-950/70 to-transparent" />
-        <span className="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-wider text-white bg-brand-sky-500/80 backdrop-blur-sm px-2.5 py-1 rounded-lg">
+      {/* Coloured header block — no image */}
+      <div className={`relative h-36 ${c.bg} flex items-center justify-center overflow-hidden`}>
+        {/* Faded bg icon */}
+        <Icon className="absolute opacity-10 w-28 h-28 text-white" strokeWidth={1} />
+        {/* Centred icon */}
+        <div className="relative z-10 w-12 h-12 rounded-xl bg-white/25 flex items-center justify-center border border-white/20">
+          <Icon className={`w-6 h-6 stroke-[2] ${c.icon}`} />
+        </div>
+        {/* Tag */}
+        <span className="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-wider text-white bg-white/20 border border-white/30 px-2.5 py-1 rounded-lg">
           {t({ en: item.tags.en[0], am: item.tags.am[0] })}
         </span>
+        {/* Wave */}
+        <svg className="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 400 16" preserveAspectRatio="none" fill="white">
+          <path d="M0,16 C100,0 300,16 400,0 L400,16 Z" />
+        </svg>
       </div>
+
       <div className="p-5">
         <h3 className="font-serif font-bold text-base text-brand-sky-950 mb-1.5 leading-snug group-hover:text-brand-sky-500 transition-colors">
           {t(item.title)}
