@@ -51,6 +51,9 @@ import {
 } from "../utils/adminStorage";
 import { sanitizeText, sanitizePhone, isValidEmail, isNonEmpty } from "../utils/sanitize";
 import selihomLogo from "../assets/images/selihom_logo.jpg";
+import AdminCalendar from "./AdminCalendar";
+import { AdminMedicineTab, AdminSuppliesTab, AdminEventsTab, AdminVolRolesTab, AdminNewsTab } from "./AdminTabs";
+import LoadingDots from "./LoadingDots";
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -86,7 +89,9 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
   const [authError, setAuthError] = useState("");
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<"bookings" | "pledges" | "volunteers" | "profile">("bookings");
+  const [activeTab, setActiveTab] = useState<"bookings" | "pledges" | "volunteers" | "profile" | "calendar" | "events" | "news">("bookings");
+  const [pledgeAdminType, setPledgeAdminType] = useState<"inkind" | "medicine" | "supplies">("inkind");
+  const [volunteerAdminType, setVolunteerAdminType] = useState<"applications" | "roles">("applications");
 
   // Admin Profile State
   const [profile, setProfile] = useState<AdminProfile | null>(null);
@@ -135,10 +140,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
   // Refresh Loader & Timestamp State
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
 
   // Confirmation & Detail Modals
   const [confirmModal, setConfirmModal] = useState<ConfirmationModalConfig | null>(null);
+  const [confirmBusy, setConfirmBusy] = useState(false);
   const [detailModal, setDetailModal] = useState<DetailModalConfig | null>(null);
 
   useEffect(() => {
@@ -172,7 +177,6 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
         setProfilePhone(prof.phone);
         setEditUsername(prof.username);
       }
-      setLastSyncedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     } catch (err) {
       console.error("Failed to refresh data:", err);
     } finally {
@@ -451,7 +455,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
   const executeConfirmAction = async () => {
     if (!confirmModal) return;
     const { type, id, action, newStatus, payload } = confirmModal;
-    setConfirmModal(null);
+    setConfirmBusy(true);
 
     try {
       if (action === "status_change" && newStatus) {
@@ -493,6 +497,9 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
     } catch (err) {
       console.error("Action failed:", err);
       alert("Operation failed. Please check the server is running and try again.");
+    } finally {
+      setConfirmBusy(false);
+      setConfirmModal(null);
     }
   };
 
@@ -666,7 +673,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               </button>
 
               <button
-                onClick={() => { setActiveTab("pledges"); setSearchQuery(""); setStatusFilter("all"); }}
+                onClick={() => { setActiveTab("pledges"); setPledgeAdminType("inkind"); setSearchQuery(""); setStatusFilter("all"); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
                   activeTab === "pledges" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
                 }`}
@@ -686,6 +693,34 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               </button>
 
               <button
+                onClick={() => { setActiveTab("calendar"); }}
+                className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
+                  activeTab === "calendar" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
+                }`}
+              >
+                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span>{language === "am" ? "የቀን መቁጠሪያ" : "Calendar"}</span>
+              </button>
+
+              {/* New tabs — 2nd row on mobile, inline on desktop */}
+              {([
+                { key:"events",    icon:Users,   label:{ en:"Events",     am:"ድግሶች"   } },
+                { key:"news",      icon:FileText,label:{ en:"News",       am:"ዜናዎች"   } },
+              ] as { key: string; icon: React.ComponentType<any>; label: { en: string; am: string } }[]).map(tab => {
+                const Icon = tab.icon;
+                return (
+                  <button key={tab.key}
+                    onClick={() => setActiveTab(tab.key as any)}
+                    className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
+                      activeTab === tab.key ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span>{language === "am" ? tab.label.am : tab.label.en}</span>
+                  </button>
+                );
+              })}
+              <button
                 onClick={() => { setActiveTab("profile"); setProfileMessage(null); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
                   activeTab === "profile" ? "bg-brand-sky-400 text-white shadow-sm" : "text-brand-sky-700 hover:bg-brand-sky-50"
@@ -698,11 +733,39 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
             <div />
           </div>
 
-          {/* Interactive Filter Chips & Search Bar (hidden on profile tab) */}
-          {activeTab !== "profile" && (
+          {/* Shared title, search, reload, and filter controls */}
+          {activeTab !== "profile" && activeTab !== "calendar" && activeTab !== "events" && activeTab !== "news" && (activeTab !== "pledges" || pledgeAdminType === "inkind") && (activeTab !== "volunteers" || volunteerAdminType === "applications") && (
             <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
-              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
-                <div className="relative w-full sm:w-80 md:w-96">
+              <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-600 rounded-xl flex items-center justify-center border border-brand-sky-200 shrink-0">
+                    {activeTab === "bookings" ? <Calendar className="w-5 h-5" /> : activeTab === "pledges" ? <Gift className="w-5 h-5" /> : <Users className="w-5 h-5" />}
+                  </div>
+                  <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
+                      {activeTab === "bookings"
+                        ? (language === "am" ? "የጉብኝት ምዝገቦች አስተዳደር" : "Visit Bookings Management")
+                        : activeTab === "pledges"
+                          ? (pledgeAdminType === "medicine" ? (language === "am" ? "የመድሃኒት አስተዳደር" : "Medicine Management") : pledgeAdminType === "supplies" ? (language === "am" ? "የቁሳቁስ አስተዳደር" : "Supplies Management") : (pledgeSubTab === "pledges" ? (language === "am" ? "የዓይነት ቃልኪዳኖች" : "In-Kind Donor Pledges") : (language === "am" ? "የሚያስፈልጉ እቃዎች" : "Shelter Needed Items")))
+                          : (language === "am" ? "የበጎ ፈቃደኛ ማመልከቻዎች" : "Volunteer Applications")}
+                  </h2>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
+                  {activeTab === "pledges" && (
+                    <select value={pledgeAdminType} onChange={(e) => { setPledgeAdminType(e.target.value as "inkind" | "medicine" | "supplies"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
+                      <option value="inkind">{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</option>
+                      <option value="medicine">{language === "am" ? "መድሃኒት" : "Medicine"}</option>
+                      <option value="supplies">{language === "am" ? "ቁሳቁስ" : "Supplies"}</option>
+                    </select>
+                  )}
+                  {activeTab === "volunteers" && (
+                    <select value={volunteerAdminType} onChange={(e) => { setVolunteerAdminType(e.target.value as "applications" | "roles"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
+                      <option value="applications">{language === "am" ? "ማመልከቻዎች" : "Applications"}</option>
+                      <option value="roles">{language === "am" ? "ሚናዎች" : "Volunteer Roles"}</option>
+                    </select>
+                  )}
+                  {activeTab !== "pledges" || pledgeAdminType === "inkind" ? <div className="relative w-full sm:w-72 md:w-80">
                   <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3" />
                   <input
                     type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
@@ -714,15 +777,58 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       <X className="w-4 h-4" />
                     </button>
                   )}
-                </div>
-                <div className="text-xs font-bold text-brand-sky-600 self-start sm:self-auto">
-                  {language === "am" ? "ያሳያል " : "Showing "}<span className="text-brand-sky-950 font-black">
-                    {activeTab === "bookings" ? filteredBookings.length : activeTab === "pledges" ? pledgeSubTab === "pledges" ? filteredPledges.length : filteredNeeds.length : filteredVolunteers.length}
-                  </span>{language === "am" ? " መዝገቦች" : " records"}
+                  </div> : null}
+                  {(activeTab !== "pledges" || pledgeAdminType === "inkind") && <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+                    className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
+                    <option value="all" disabled>{language === "am" ? "ሁሉም" : "All"}</option>
+                    {activeTab === "bookings" && <>
+                      <option value="pending">{language === "am" ? "በቅድሚያ" : "Pending"}</option>
+                      <option value="approved">{language === "am" ? "ተቀባይነት" : "Approved"}</option>
+                      <option value="completed">{language === "am" ? "ተጠናቋል" : "Completed"}</option>
+                      <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
+                    </>}
+                    {activeTab === "pledges" && pledgeSubTab === "pledges" && <>
+                      <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
+                      <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
+                      <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
+                    </>}
+                    {activeTab === "pledges" && pledgeSubTab === "needs" && <>
+                      <option value="high">{language === "am" ? "ከፍተኛ" : "High"}</option>
+                      <option value="medium">{language === "am" ? "መካከለኛ" : "Medium"}</option>
+                      <option value="low">{language === "am" ? "ዝቅተኛ" : "Low"}</option>
+                    </>}
+                    {activeTab === "volunteers" && <>
+                      <option value="new">{language === "am" ? "አዲስ" : "New"}</option>
+                      <option value="reviewed">{language === "am" ? "በግምገማ" : "Reviewed"}</option>
+                      <option value="accepted">{language === "am" ? "ተቀበለ" : "Accepted"}</option>
+                      <option value="declined">{language === "am" ? "ተነፍጓል" : "Declined"}</option>
+                    </>}
+                  </select>}
+                  {activeTab === "pledges" && (
+                    <>
+                      <select value={pledgeSubTab} onChange={(e) => { setPledgeSubTab(e.target.value as "pledges" | "needs"); setStatusFilter("all"); }}
+                        className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
+                        <option value="pledges">{language === "am" ? "ቃልኪዳኖች" : "Donor Pledges"}</option>
+                        <option value="needs">{language === "am" ? "የሚፈለጉ እቃዎች" : "Needed Items"}</option>
+                      </select>
+                      {pledgeSubTab === "needs" && (
+                        <button onClick={handleOpenCreateNeed}
+                          className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0">
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>{language === "am" ? "እቃ ጨምር" : "Add Item"}</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+                  {activeTab !== "pledges" || pledgeAdminType === "inkind" ? <button onClick={handleRefreshClick} disabled={isRefreshing}
+                    className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 shrink-0">
+                    <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                    <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
+                  </button> : null}
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+              <div className="hidden flex items-center gap-2 overflow-x-auto pb-1 text-xs">
                 <span className="font-extrabold text-gray-400 uppercase tracking-wider text-[10px] shrink-0 mr-1 flex items-center gap-1">
                   <Filter className="w-3 h-3 text-gray-400" /> {language === "am" ? "ማጣሪያ:" : "Filter:"}
                 </span>
@@ -791,28 +897,6 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {/* TAB 1: BOOKINGS LIST */}
           {activeTab === "bookings" && (
             <div className="space-y-4">
-              {/* Section Header with Reload Button */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-950 rounded-xl flex items-center justify-center font-bold border border-brand-sky-200 shrink-0">
-                    <Calendar className="w-5 h-5 text-brand-sky-500" />
-                  </div>
-                  <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
-                      {language === "am" ? "የጉብኝት ምዝገቦች አስተዳደር" : "Visit Bookings Management"}
-                    </h2>
-                    <p className="text-[11px] text-brand-sky-500 font-medium">
-                      {language === "am" ? "ከ data/db.json" : "Real-time records · db.json"} {lastSyncedAt ? `• ${language === "am" ? "መጨረሻ ጊዜ" : "Last reloaded"} ${lastSyncedAt}` : ""}
-                    </p>
-                  </div>
-                </div>
-                <button onClick={handleRefreshClick} disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
-                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload Data")}</span>
-                </button>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredBookings.map((item) => (
                 <div
@@ -882,60 +966,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           )}
 
           {/* TAB 2: IN-KIND PLEDGES & NEEDED ITEMS MANAGER */}
-          {activeTab === "pledges" && (
+          {activeTab === "pledges" && pledgeAdminType === "inkind" && (
             <div className="space-y-4">
-              {/* Section Header */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-brand-yellow-100 text-brand-yellow-700 rounded-xl flex items-center justify-center font-bold border border-brand-yellow-200 shrink-0">
-                    <Gift className="w-5 h-5 text-brand-yellow-600" />
-                  </div>
-                  <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
-                      {pledgeSubTab === "pledges" ? (language === "am" ? "የዓይነት ቃልኪዳኖች" : "In-Kind Donor Pledges") : (language === "am" ? "የሚያስፈልጉ እቃዎች" : "Shelter Needed Items")}
-                    </h2>
-                    <p className="text-[11px] text-brand-sky-500 font-medium">
-                      {language === "am" ? "ከ db.json" : "Real-time · db.json"} {lastSyncedAt ? `• ${lastSyncedAt}` : ""}
-                    </p>
-                  </div>
-                </div>
-                <button onClick={handleRefreshClick} disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
-                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
-                </button>
-              </div>
-              {/* Sub-Tab Selector Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-brand-sky-200 shadow-xs">
-                <div className="flex items-center gap-2">
-                  <button onClick={() => { setPledgeSubTab("pledges"); setStatusFilter("all"); }}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                      pledgeSubTab === "pledges" ? "bg-brand-sky-400 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-700 hover:bg-brand-sky-100 border border-brand-sky-200"
-                    }`}
-                  >
-                    <Gift className="w-4 h-4 text-brand-yellow-400" />
-                    <span>{language === "am" ? `ቃልኪዳኖች (${pledges.length})` : `Donor Pledges (${pledges.length})`}</span>
-                  </button>
-
-                  <button onClick={() => { setPledgeSubTab("needs"); setStatusFilter("all"); }}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                      pledgeSubTab === "needs" ? "bg-brand-sky-400 text-white shadow-xs" : "bg-brand-sky-50 text-brand-sky-700 hover:bg-brand-sky-100 border border-brand-sky-200"
-                    }`}>
-                    <Package className="w-4 h-4" />
-                    <span>{language === "am" ? `የሚፈለጉ እቃዎች (${inKindNeeds.length})` : `Needed Items (${inKindNeeds.length})`}</span>
-                  </button>
-                </div>
-                {pledgeSubTab === "needs" && (
-                  <div className="flex items-center gap-2">
-                    <button onClick={handleOpenCreateNeed}
-                      className="px-3.5 py-1.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
-                      <Plus className="w-4 h-4" />
-                      <span>{language === "am" ? "እቃ ጨምር" : "Add Needed Supply"}</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-
               {/* VIEW A: DONOR PLEDGES RECEIVED */}
               {pledgeSubTab === "pledges" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1091,31 +1123,12 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
             </div>
           )}
 
-          {/* TAB 3: VOLUNTEERS LIST */}
-          {activeTab === "volunteers" && (
-            <div className="space-y-4">
-              {/* Section Header with Reload Button */}
-              <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-100 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-brand-green-100 text-brand-green-700 rounded-xl flex items-center justify-center font-bold border border-brand-green-200 shrink-0">
-                    <Users className="w-5 h-5 text-brand-green-500" />
-                  </div>
-                  <div>
-                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
-                      {language === "am" ? "የበጎ ፈቃደኛ ማመልከቻዎች" : "Volunteer Applications"}
-                    </h2>
-                    <p className="text-[11px] text-brand-sky-500 font-medium">
-                      {language === "am" ? "ከ db.json" : "Real-time · db.json"} {lastSyncedAt ? `• ${lastSyncedAt}` : ""}
-                    </p>
-                  </div>
-                </div>
-                <button onClick={handleRefreshClick} disabled={isRefreshing}
-                  className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 self-end sm:self-auto shrink-0">
-                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span>{isRefreshing ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
-                </button>
-              </div>
+          {activeTab === "pledges" && pledgeAdminType === "medicine" && <AdminMedicineTab language={language} onPledgeTypeChange={setPledgeAdminType} />}
+          {activeTab === "pledges" && pledgeAdminType === "supplies" && <AdminSuppliesTab language={language} onPledgeTypeChange={setPledgeAdminType} />}
 
+          {/* TAB 3: VOLUNTEERS LIST */}
+          {activeTab === "volunteers" && volunteerAdminType === "applications" && (
+            <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredVolunteers.map((item) => (
                 <div
@@ -1178,6 +1191,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
             </div>
           )}
 
+          {activeTab === "volunteers" && volunteerAdminType === "roles" && <AdminVolRolesTab language={language} onVolunteerTypeChange={setVolunteerAdminType} />}
+
           {/* TAB 4: ADMIN PROFILE */}
           {activeTab === "profile" && (
             <div className="space-y-4 sm:space-y-6">
@@ -1192,7 +1207,6 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       {language === "am" ? "የአስተዳደር መገለጫ" : "Admin Profile & Settings"}
                     </h2>
                     <p className="text-[11px] text-brand-sky-500 font-medium">
-                      {language === "am" ? "ከ db.json" : "Real-time · db.json"} {lastSyncedAt ? `• ${lastSyncedAt}` : ""}
                     </p>
                   </div>
                 </div>
@@ -1413,6 +1427,17 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           </div>
           )}
 
+          {/* TAB 5: CALENDAR */}
+          {activeTab === "calendar" && (
+            <AdminCalendar language={language} />
+          )}
+
+          {/* TAB 6: EVENTS */}
+          {activeTab === "events" && <AdminEventsTab language={language} />}
+
+          {/* TAB 10: NEWS */}
+          {activeTab === "news" && <AdminNewsTab language={language} />}
+
         </main>
       )}
 
@@ -1461,7 +1486,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   </div>
                 </div>
                 <button
-                  onClick={() => setConfirmModal(null)}
+                  onClick={() => !confirmBusy && setConfirmModal(null)}
+                  disabled={confirmBusy}
                   className="p-1.5 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
@@ -1477,7 +1503,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-1">
                 <button
                   type="button"
-                  onClick={() => setConfirmModal(null)}
+                  onClick={() => !confirmBusy && setConfirmModal(null)}
+                  disabled={confirmBusy}
                   className="w-full sm:w-auto px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
                 >
                   Cancel
@@ -1485,7 +1512,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 <button
                   type="button"
                   onClick={executeConfirmAction}
-                  className={`w-full sm:w-auto px-5 py-2.5 text-xs font-extrabold rounded-xl text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  disabled={confirmBusy}
+                  className={`w-full sm:w-auto px-5 py-2.5 text-xs font-extrabold rounded-xl text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:cursor-not-allowed disabled:opacity-70 ${
                     confirmModal.action === "delete"
                       ? "bg-red-600 hover:bg-red-700 shadow-red-600/20"
                       : confirmModal.action === "status_change"
@@ -1493,6 +1521,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       : "bg-brand-sky-950 hover:bg-brand-sky-900 shadow-brand-sky-950/20"
                   }`}
                 >
+                  {confirmBusy ? <LoadingDots label="Working" className="justify-center" /> : <>
                   <Check className="w-4 h-4" />
                   <span>
                     {confirmModal.action === "delete"
@@ -1505,6 +1534,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       ? "Update Profile"
                       : "Confirm & Restore DB"}
                   </span>
+                  </>}
                 </button>
               </div>
             </motion.div>
@@ -1520,10 +1550,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white rounded-2xl sm:rounded-3xl max-w-xl w-full p-4 sm:p-7 shadow-2xl border border-gray-200 space-y-4 sm:space-y-6 max-h-[88vh] sm:max-h-[90vh] overflow-y-auto relative"
+              className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full p-4 sm:p-5 shadow-2xl border border-gray-200 space-y-3 max-h-[calc(100vh-2rem)] overflow-y-auto relative"
             >
               {/* Pop-Up Header */}
-              <div className="flex items-start justify-between gap-3 pb-3 sm:pb-4 border-b border-gray-100">
+              <div className="flex items-start justify-between gap-3 pb-2.5 border-b border-gray-100">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-mono text-xs font-black text-brand-sky-950 bg-brand-sky-50 border border-brand-sky-200 px-2.5 py-0.5 rounded-md">
@@ -1533,7 +1563,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                       {detailModal.type} RECORD
                     </span>
                   </div>
-                  <h3 className="font-serif font-bold text-xl sm:text-2xl text-brand-sky-950">
+                  <h3 className="font-serif font-bold text-lg sm:text-xl text-brand-sky-950">
                     {"name" in detailModal.data
                       ? detailModal.data.name
                       : "donorName" in detailModal.data
@@ -1551,7 +1581,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               </div>
 
               {/* CURRENT STATUS READOUT BANNER */}
-              <div className="bg-gray-50 p-3.5 sm:p-4 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-gray-50 p-3 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-0.5">
                     Current Application / Record Status

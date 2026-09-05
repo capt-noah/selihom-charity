@@ -121,7 +121,9 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
           <div className="flex flex-wrap gap-4 items-center justify-center">
             <Link to="/programs"     className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "አገልግሎቶች" : "Programs"}</Link>
             <Link to="/about"        className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ስለ እኛ"   : "About"}</Link>
-            <Link to="/gallery"      className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ምስሎች"    : "Gallery"}</Link>
+            <Link to="/stories"      className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ታሪኮች"    : "Stories"}</Link>
+            <Link to="/events"       className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ፍቅር ድግሶች" : "Events"}</Link>
+            <Link to="/news"         className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ዜናዎች"    : "News"}</Link>
             <Link to="/get-involved" className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ይደግፉ"    : "Donate"}</Link>
             <button onClick={onOpenAdmin} className="text-brand-sky-400 font-bold hover:text-brand-sky-600 cursor-pointer transition-colors">
               {language === "am" ? "የአስተዳደር ገፅ" : "Admin Portal"}

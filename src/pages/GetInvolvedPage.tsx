@@ -7,13 +7,15 @@ import ContactSection from "../components/ContactSection";
 
 export default function GetInvolvedPage() {
   const { hash } = useLocation();
-  const [donateInitiativeId, setDonateInitiativeId] = useState<string | null>(null);
-  const [donateCustomAmount, setDonateCustomAmount] = useState<number | null>(null);
+  const [donateInitiativeId, setDonateInitiativeId] = useState<string | null>(
+    null,
+  );
+  const [donateCustomAmount, setDonateCustomAmount] = useState<number | null>(
+    null,
+  );
 
-  // When the page loads with a hash (e.g. #donate or #visit), scroll to that section
   useEffect(() => {
     if (!hash) return;
-    // Small delay so all sections have rendered before we scroll
     const timer = setTimeout(() => {
       const id = hash.replace("#", "");
       const el = document.getElementById(id);
@@ -25,6 +27,7 @@ export default function GetInvolvedPage() {
   return (
     <div className="pt-16">
       <GetInvolvedSection />
+
       <DonateSection
         initialInitiativeId={donateInitiativeId}
         initialCustomAmount={donateCustomAmount}
@@ -33,6 +36,7 @@ export default function GetInvolvedPage() {
           setDonateCustomAmount(null);
         }}
       />
+
       <BookingSection />
       <ContactSection />
     </div>

@@ -59,7 +59,7 @@ export default function HeroCarousel({ onNavigateAchievements }: { onNavigateAch
 
   useEffect(() => {
     if (isPaused) return;
-    const timer = setInterval(() => setCurrentIndex((p) => (p + 1) % HERO_SLIDES.length), 5000);
+    const timer = setInterval(() => setCurrentIndex((p) => (p + 1) % HERO_SLIDES.length), 3000);
     return () => clearInterval(timer);
   }, [isPaused]);
 

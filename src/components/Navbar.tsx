@@ -24,11 +24,13 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const navItems = [
-    { to: "/",             label: { am: "መነሻ",      en: "Home"         } },
-    { to: "/about",        label: { am: "ስለ እኛ",    en: "About"        } },
-    { to: "/programs",     label: { am: "አገልግሎቶች", en: "Programs"     } },
-    { to: "/gallery",      label: { am: "ምስሎች",     en: "Gallery"      } },
-    { to: "/get-involved", label: { am: "ተሳተፉ",     en: "Get Involved" } },
+    { to: "/",             label: { am: "መነሻ",      en: "Home"             } },
+    { to: "/about",        label: { am: "ስለ እኛ",    en: "About"            } },
+    { to: "/programs",     label: { am: "አገልግሎቶች", en: "Programs"         } },
+    { to: "/stories",      label: { am: "ታሪኮች",    en: "Stories"          } },
+    { to: "/events",       label: { am: "ፍቅር ድግሶች", en: "Events"          } },
+    { to: "/news",         label: { am: "ዜናዎች",    en: "News"             } },
+    { to: "/get-involved", label: { am: "ተሳተፉ",     en: "Get Involved"     } },
   ];
 
   return (

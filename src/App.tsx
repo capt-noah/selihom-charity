@@ -9,8 +9,10 @@ import AdminDashboard from "./components/AdminDashboard";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import ProgramsPage from "./pages/ProgramsPage";
-import GalleryPage from "./pages/GalleryPage";
+import StoriesPage from "./pages/StoriesPage";
 import GetInvolvedPage from "./pages/GetInvolvedPage";
+import EventsPage from "./pages/EventsPage";
+import NewsPage from "./pages/NewsPage";
 
 import { useLanguage } from "./context/LanguageContext";
 import selihomLogo from "./assets/images/selihom_logo.jpg";
@@ -138,8 +140,13 @@ function AppInner() {
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/programs" element={<ProgramsPage />} />
-              <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/stories" element={<StoriesPage />} />
+              {/* Legacy redirect */}
+              <Route path="/gallery" element={<StoriesPage />} />
               <Route path="/get-involved" element={<GetInvolvedPage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/news/:slug" element={<NewsPage />} />
               {/* Fallback → home */}
               <Route path="*" element={<HomePage />} />
             </Routes>

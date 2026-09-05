@@ -19,11 +19,11 @@ export default function GallerySection() {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <motion.span initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             className="inline-block text-[11px] font-black uppercase tracking-widest text-brand-sky-500 mb-3">
-            {language === "am" ? "ምስሎቻችን" : "Our Gallery"}
+            {language === "am" ? "ምስሎቻችን" : "Inspiring Stories"}
           </motion.span>
           <motion.h2 initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-brand-sky-950 tracking-tight mb-4">
-            {language === "am" ? "የስራዎቻችን ምስሎች" : "Visual Gallery"}
+            {language === "am" ? "የህይወት ታሪኮቻችን" : "Inspiring Stories"}
           </motion.h2>
           <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
             className="text-gray-500 text-sm sm:text-base leading-relaxed">
