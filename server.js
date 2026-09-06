@@ -227,15 +227,26 @@ async function buildVolCategory(catRow) {
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ─── API ROUTES ───────────────────────────────────────────────────────────────
-// ══════════════════════════════════════════════════════════════════════════════
+// Quick diagnostics & health checks
+app.get(["/api/ping", "/ping", "/hello"], (_req, res) => {
+  res.json({
+    status: "ok",
+    app: "Selihom Charity Express API",
+    nodeVersion: process.version,
+    port: process.env.PORT || 3000,
+    timestamp: new Date().toISOString()
+  });
+});
 
-// Health check
-app.get("/api/health", async (_req, res) => {
+app.get(["/api/health", "/health"], async (_req, res) => {
   try {
-    await pool.execute("SELECT 1");
-    res.json({ status: "ok", db: "mysql", timestamp: new Date().toISOString() });
+    const [row] = await Promise.race([
+      pool.execute("SELECT 1 AS ping"),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Database response timeout (4s)")), 4000))
+    ]);
+    res.json({ status: "ok", db: "connected", timestamp: new Date().toISOString() });
   } catch (e) {
-    res.status(500).json({ status: "error", message: e.message });
+    res.status(200).json({ status: "warning", db: "disconnected", error: e.message, timestamp: new Date().toISOString() });
   }
 });
 

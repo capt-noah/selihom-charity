@@ -50,6 +50,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit:    parseInt(process.env.DB_POOL_MAX || "10", 10),
   queueLimit:         0,
+  connectTimeout:     5000,
   // Keep connections alive on Plesk (avoids "connection lost" after idle)
   enableKeepAlive:    true,
   keepAliveInitialDelay: 30000,
