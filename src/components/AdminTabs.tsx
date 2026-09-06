@@ -7,13 +7,15 @@
  *   - AdminVolRolesTab    (Phase 6D)
  *   - AdminNewsTab        (Phase 6E)
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Pill, Package, Heart, Users, Newspaper,
   Plus, Edit3, Trash2, Check, X, Save,
   Loader2, AlertCircle, CheckCircle2, Eye, EyeOff,
   RefreshCw, Globe, ChevronDown, ChevronUp,
+  Search, Gift, Award, Upload, Image as ImageIcon,
+  Copy, ExternalLink, FileText,
 } from "lucide-react";
 import {
   getMedicineItems,    saveMedicineItem,    deleteMedicineItem,    MedicineItem,
@@ -23,6 +25,7 @@ import {
   getEventPledges,     updateEventPledgeStatus,    deleteEventPledge,  EventPledge,
   getVolunteerRoles,   saveVolunteerCategory,      deleteVolunteerCategory, VolunteerCategory,
   getNews,             saveArticle,         deleteArticle,         publishArticle, NewsArticle,
+  uploadImageFiles,    resolveImagePath,
 } from "../utils/adminStorage";
 import { useConfirmation } from "./ConfirmationModal";
 
@@ -53,26 +56,27 @@ function SectionHeader({ icon: Icon, title, subtitle, onAdd, addLabel, onRefresh
   return (
     <div className="bg-white border border-brand-sky-200 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-600 rounded-xl flex items-center justify-center border border-brand-sky-200">
+        <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-600 rounded-xl flex items-center justify-center border border-brand-sky-200 shrink-0">
           <Icon className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="font-serif font-bold text-base text-brand-sky-950 leading-tight">{title}</h2>
+          <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">{title}</h2>
           {subtitle && <p className="text-[11px] text-brand-sky-500 font-medium">{subtitle}</p>}
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2 self-end xl:self-auto justify-end w-full xl:w-auto">
+      <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end w-full xl:w-auto">
         {actions}
-        {onRefresh && (
-          <button onClick={onRefresh} disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-brand-sky-600 bg-brand-sky-50 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-100 cursor-pointer disabled:opacity-50 transition-colors">
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />Refresh
-          </button>
-        )}
         {onAdd && (
           <button onClick={onAdd}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-white bg-brand-sky-400 hover:bg-brand-sky-500 rounded-xl cursor-pointer shadow-sm transition-colors">
+            className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0">
             <Plus className="w-3.5 h-3.5" />{addLabel || "Add"}
+          </button>
+        )}
+        {onRefresh && (
+          <button onClick={onRefresh} disabled={loading}
+            className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 shrink-0">
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+            <span>{loading ? "Reloading..." : "Reload"}</span>
           </button>
         )}
       </div>
@@ -131,8 +135,19 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
     await deleteMedicineItem(id); load();
   };
 
-  const visibleMedicines = medicines.filter((med) => med.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const visiblePledges = pledges.filter((pledge) => `${pledge.id} ${pledge.donorName}`.toLowerCase().includes(searchQuery.toLowerCase()) && (pledgeStatus === "all" || pledge.status === pledgeStatus));
+  const visibleMedicines = medicines.filter((med) => {
+    const term = searchQuery.toLowerCase();
+    const matchesSearch = !searchQuery || med.name.toLowerCase().includes(term) || (med.description?.en || "").toLowerCase().includes(term) || (med.description?.am || "").toLowerCase().includes(term);
+    const matchesUrgency = pledgeStatus === "all" || med.urgency.toLowerCase() === pledgeStatus.toLowerCase();
+    return matchesSearch && matchesUrgency;
+  });
+  const visiblePledges = pledges.filter((pledge) => {
+    const term = searchQuery.toLowerCase();
+    const matchesSearch = !searchQuery ||
+      `${pledge.id} ${pledge.donorName || ""} ${pledge.donorPhone || ""} ${pledge.donorEmail || ""} ${pledge.items?.map(i => i.medicineName).join(" ") || ""}`.toLowerCase().includes(term);
+    const matchesStatus = pledgeStatus === "all" || pledge.status === pledgeStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   const urgencyColor: Record<string,string> = {
     High:"bg-red-100 text-red-700 border-red-200",
@@ -143,31 +158,116 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
   return (
     <div className="space-y-4">
       {modal}
-      <SectionHeader icon={Pill} title={language==="am"?"መድሃኒቶች አስተዳደር":"Medicine Management"} onRefresh={load} loading={loading}
-        actions={<>
-          <div className="relative w-44 sm:w-56">
-            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search medicines..."
-              className="w-full rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs outline-none focus:border-brand-sky-400" />
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("inkind")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
+            >
+              <Gift className="w-4 h-4" />
+              <span>{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("medicine")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-rose-500 text-white shadow-sm border border-rose-600"
+            >
+              <Pill className="w-4 h-4" />
+              <span>{language === "am" ? "መድሃኒት" : "Medicine"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("supplies")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+            >
+              <Package className="w-4 h-4" />
+              <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+            </button>
           </div>
-          <select value={subTab} onChange={(e) => setSubTab(e.target.value as "items" | "pledges")}
-            className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-            <option value="items">{language === "am" ? "የመድሃኒት ዝርዝር" : "Medicine List"}</option>
-            <option value="pledges">{language === "am" ? "ቃልኪዳኖች" : "Pledges"}</option>
-          </select>
-          {subTab === "pledges" && <select value={pledgeStatus} onChange={(e) => setPledgeStatus(e.target.value)} className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-            <option value="all">{language === "am" ? "ሁሉም" : "All"}</option>
-            <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
-            <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
-            <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
-          </select>}
-          {onPledgeTypeChange && <select value="medicine" onChange={(e) => onPledgeTypeChange(e.target.value as "inkind" | "medicine" | "supplies")}
-            className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-            <option value="inkind">{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</option>
-            <option value="medicine">{language === "am" ? "መድሃኒት" : "Medicine"}</option>
-            <option value="supplies">{language === "am" ? "ቁሳቁስ" : "Supplies"}</option>
-          </select>}
-          {subTab === "items" && <button onClick={openAdd} className="flex items-center gap-1.5 rounded-xl bg-brand-sky-400 px-3 py-1.5 text-xs font-bold text-white hover:bg-brand-sky-500"><Plus className="w-3.5 h-3.5" />Add</button>}
-        </>} />
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
+
+            <div className="relative w-full sm:w-72 md:w-80">
+              <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  subTab === "items"
+                    ? (language === "am" ? "የመድሃኒት ስም ይፈልጉ..." : "Search medicine name...")
+                    : (language === "am" ? "ስም፣ መታወቂያ ወይም ስልክ ይፈልጉ..." : "Search name, ID, or phone...")
+                }
+                className="w-full pl-9 pr-9 py-2 sm:py-2.5 bg-brand-sky-50 rounded-xl border border-brand-sky-200 text-xs text-gray-900 focus:bg-white focus:border-brand-sky-400 outline-none transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-2.5 sm:top-3 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            <select
+              value={pledgeStatus}
+              onChange={(e) => setPledgeStatus(e.target.value)}
+              className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400 cursor-pointer"
+            >
+              <option value="all">{language === "am" ? "ሁሉም" : "All"}</option>
+              {subTab === "pledges" && (
+                <>
+                  <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
+                  <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
+                  <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
+                </>
+              )}
+              {subTab === "items" && (
+                <>
+                  <option value="high">{language === "am" ? "ከፍተኛ" : "High"}</option>
+                  <option value="medium">{language === "am" ? "መካከለኛ" : "Medium"}</option>
+                  <option value="low">{language === "am" ? "ዝቅተኛ" : "Low"}</option>
+                </>
+              )}
+            </select>
+
+            <select
+              value={subTab}
+              onChange={(e) => {
+                setSubTab(e.target.value as "items" | "pledges");
+                setPledgeStatus("all");
+              }}
+              className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400 cursor-pointer"
+            >
+              <option value="items">{language === "am" ? "የመድሃኒት ዝርዝር" : "Medicine List"}</option>
+              <option value="pledges">{language === "am" ? "ቃልኪዳኖች" : "Donor Pledges"}</option>
+            </select>
+
+            {subTab === "items" && (
+              <button
+                onClick={openAdd}
+                className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{language === "am" ? "መድሃኒት ጨምር" : "Add Medicine"}</span>
+              </button>
+            )}
+
+            <button
+              onClick={load}
+              disabled={loading}
+              className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 shrink-0"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>{loading ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Medicine list */}
       {subTab === "items" && (
@@ -373,37 +473,140 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
     load();
   };
 
-  const visibleCategories = categories.filter((cat) => `${cat.name.en} ${cat.name.am}`.toLowerCase().includes(searchQuery.toLowerCase()));
-  const visiblePledges = pledges.filter((pledge) => `${pledge.id} ${pledge.donorName || ""}`.toLowerCase().includes(searchQuery.toLowerCase()) && (pledgeStatus === "all" || pledge.status === pledgeStatus));
+  const visibleCategories = categories.filter((cat) => {
+    const term = searchQuery.toLowerCase();
+    const matchesSearchCat = !searchQuery || `${cat.name.en} ${cat.name.am}`.toLowerCase().includes(term);
+    const matchesSearchItem = cat.items.some((item) =>
+      `${item.name.en} ${item.name.am} ${item.neededQty.en} ${item.neededQty.am} ${item.impactDesc.en} ${item.impactDesc.am}`.toLowerCase().includes(term)
+    );
+    const matchesUrgency = pledgeStatus === "all" || cat.items.some((item) => item.urgency.toLowerCase() === pledgeStatus.toLowerCase());
+    return (matchesSearchCat || matchesSearchItem) && matchesUrgency;
+  });
+
+  const visiblePledges = pledges.filter((pledge) => {
+    const term = searchQuery.toLowerCase();
+    const matchesSearch = !searchQuery ||
+      `${pledge.id} ${pledge.donorName || ""} ${pledge.donorPhone || ""} ${pledge.donorEmail || ""} ${pledge.items?.map((i: any) => `${i.itemName || ""} ${i.custom || ""}`).join(" ") || ""}`.toLowerCase().includes(term);
+    const matchesStatus = pledgeStatus === "all" || pledge.status === pledgeStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-4">
       {modal}
-      <SectionHeader icon={Package} title={language==="am"?"ቁሳቁሶች አስተዳደር":"Supplies Management"} onRefresh={load} loading={loading}
-        actions={<>
-          <div className="relative w-44 sm:w-56">
-            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search supplies..."
-              className="w-full rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs outline-none focus:border-brand-sky-400" />
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("inkind")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
+            >
+              <Gift className="w-4 h-4" />
+              <span>{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("medicine")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100"
+            >
+              <Pill className="w-4 h-4" />
+              <span>{language === "am" ? "መድሃኒት" : "Medicine"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("supplies")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-amber-500 text-white shadow-sm border border-amber-600"
+            >
+              <Package className="w-4 h-4" />
+              <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+            </button>
           </div>
-          <select value={subTab} onChange={(e) => setSubTab(e.target.value as "cats" | "pledges")}
-            className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-            <option value="cats">{language === "am" ? "ምድቦች" : "Categories"}</option>
-            <option value="pledges">{language === "am" ? "ቃልኪዳኖች" : "Pledges"}</option>
-          </select>
-          {subTab === "pledges" && <select value={pledgeStatus} onChange={(e) => setPledgeStatus(e.target.value)} className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-            <option value="all">{language === "am" ? "ሁሉም" : "All"}</option>
-            <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
-            <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
-            <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
-          </select>}
-          {onPledgeTypeChange && <select value="supplies" onChange={(e) => onPledgeTypeChange(e.target.value as "inkind" | "medicine" | "supplies")}
-            className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-            <option value="inkind">{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</option>
-            <option value="medicine">{language === "am" ? "መድሃኒት" : "Medicine"}</option>
-            <option value="supplies">{language === "am" ? "ቁሳቁስ" : "Supplies"}</option>
-          </select>}
-          {subTab === "cats" && <button onClick={() => { setCf({nameEn:"",nameAm:"",icon:"Package",color:"bg-brand-sky-400"}); setCatForm({open:true,editing:null}); }} className="flex items-center gap-1.5 rounded-xl bg-brand-sky-400 px-3 py-1.5 text-xs font-bold text-white hover:bg-brand-sky-500"><Plus className="w-3.5 h-3.5" />Add</button>}
-        </>} />
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
+
+            <div className="relative w-full sm:w-72 md:w-80">
+              <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  subTab === "cats"
+                    ? (language === "am" ? "ምድብ ወይም እቃ ይፈልጉ..." : "Search categories or items...")
+                    : (language === "am" ? "ስም፣ መታወቂያ ወይም ስልክ ይፈልጉ..." : "Search name, ID, or phone...")
+                }
+                className="w-full pl-9 pr-9 py-2 sm:py-2.5 bg-brand-sky-50 rounded-xl border border-brand-sky-200 text-xs text-gray-900 focus:bg-white focus:border-brand-sky-400 outline-none transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-2.5 sm:top-3 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            <select
+              value={pledgeStatus}
+              onChange={(e) => setPledgeStatus(e.target.value)}
+              className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400 cursor-pointer"
+            >
+              <option value="all">{language === "am" ? "ሁሉም" : "All"}</option>
+              {subTab === "pledges" && (
+                <>
+                  <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
+                  <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
+                  <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
+                </>
+              )}
+              {subTab === "cats" && (
+                <>
+                  <option value="high">{language === "am" ? "ከፍተኛ" : "High"}</option>
+                  <option value="medium">{language === "am" ? "መካከለኛ" : "Medium"}</option>
+                  <option value="low">{language === "am" ? "ዝቅተኛ" : "Low"}</option>
+                </>
+              )}
+            </select>
+
+            <select
+              value={subTab}
+              onChange={(e) => {
+                setSubTab(e.target.value as "cats" | "pledges");
+                setPledgeStatus("all");
+              }}
+              className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400 cursor-pointer"
+            >
+              <option value="cats">{language === "am" ? "ምድቦች" : "Categories"}</option>
+              <option value="pledges">{language === "am" ? "ቃልኪዳኖች" : "Donor Pledges"}</option>
+            </select>
+
+            {subTab === "cats" && (
+              <button
+                onClick={() => {
+                  setCf({ nameEn: "", nameAm: "", icon: "Package", color: "bg-brand-sky-400" });
+                  setCatForm({ open: true, editing: null });
+                }}
+                className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{language === "am" ? "ምድብ ጨምር" : "Add Category"}</span>
+              </button>
+            )}
+
+            <button
+              onClick={load}
+              disabled={loading}
+              className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 shrink-0"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>{loading ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       {subTab === "cats" && (
         <div className="space-y-3">
@@ -695,7 +898,15 @@ export function AdminVolRolesTab({ language, onVolunteerTypeChange }: { language
   const load = async () => { setLoading(true); setCategories(await getVolunteerRoles()); setLoading(false); };
   useEffect(() => { load(); }, []);
 
-  const visibleCategories = categories.filter((cat) => `${cat.name.en} ${cat.name.am}`.toLowerCase().includes(searchQuery.toLowerCase()));
+  const visibleCategories = categories.filter((cat) => {
+    if (!searchQuery) return true;
+    const term = searchQuery.toLowerCase();
+    const matchesCat = `${cat.name.en} ${cat.name.am}`.toLowerCase().includes(term);
+    const matchesRoles = cat.roles?.some((role: any) =>
+      `${role.name.en} ${role.name.am} ${role.description?.en || ""} ${role.description?.am || ""}`.toLowerCase().includes(term)
+    );
+    return matchesCat || matchesRoles;
+  });
 
   const saveCat = async () => {
     if (!cf.nameEn.trim()) return;
@@ -738,12 +949,70 @@ export function AdminVolRolesTab({ language, onVolunteerTypeChange }: { language
   return (
     <div className="space-y-4">
       {modal}
-      <SectionHeader icon={Users} title={language==="am"?"የበጎ ፈቃደኝነት ሚናዎች":"Volunteer Roles Management"} onRefresh={load} loading={loading}
-        actions={<>
-          <div className="relative w-44 sm:w-56"><input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search roles..." className="w-full rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs outline-none focus:border-brand-sky-400" /></div>
-          {onVolunteerTypeChange && <select value="roles" onChange={(e) => onVolunteerTypeChange(e.target.value as "applications" | "roles")} className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-1.5 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400"><option value="applications">{language === "am" ? "ማመልከቻዎች" : "Applications"}</option><option value="roles">{language === "am" ? "ሚናዎች" : "Volunteer Roles"}</option></select>}
-          <button onClick={() => { setCf({nameEn:"",nameAm:"",icon:"Users",color:"bg-brand-sky-400"}); setCatModal({open:true,editing:null}); }} className="flex items-center gap-1.5 rounded-xl bg-brand-sky-400 px-3 py-1.5 text-xs font-bold text-white hover:bg-brand-sky-500"><Plus className="w-3.5 h-3.5" />Add</button>
-        </>} />
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => onVolunteerTypeChange?.("applications")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-brand-sky-50 text-brand-sky-800 border border-brand-sky-200 hover:bg-brand-sky-100"
+            >
+              <Users className="w-4 h-4" />
+              <span>{language === "am" ? "ማመልከቻዎች" : "Applications"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onVolunteerTypeChange?.("roles")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm border border-purple-700"
+            >
+              <Award className="w-4 h-4" />
+              <span>{language === "am" ? "የበጎ ፈቃድ ሚናዎች" : "Volunteer Roles"}</span>
+            </button>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
+
+            <div className="relative w-full sm:w-72 md:w-80">
+              <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={language === "am" ? "የሚና ስም ወይም ምድብ ይፈልጉ..." : "Search roles or categories..."}
+                className="w-full pl-9 pr-9 py-2 sm:py-2.5 bg-brand-sky-50 rounded-xl border border-brand-sky-200 text-xs text-gray-900 focus:bg-white focus:border-brand-sky-400 outline-none transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-2.5 sm:top-3 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={() => {
+                setCf({ nameEn: "", nameAm: "", icon: "Users", color: "bg-brand-sky-400" });
+                setCatModal({ open: true, editing: null });
+              }}
+              className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>{language === "am" ? "ምድብ ጨምር" : "Add Category"}</span>
+            </button>
+
+            <button
+              onClick={load}
+              disabled={loading}
+              className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-70 shrink-0"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>{loading ? (language === "am" ? "በመጫን ላይ..." : "Reloading...") : (language === "am" ? "አዙር" : "Reload")}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-3">
         {visibleCategories.map(cat => (
@@ -879,35 +1148,96 @@ export function AdminNewsTab({ language }: { language: string }) {
   const [editing,  setEditing]  = useState<NewsArticle | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [af, setAf] = useState<Partial<NewsArticle>>({
-    title:{en:"",am:""}, excerpt:{en:"",am:""}, body:{en:"",am:""},
-    category:"Community", coverImage:"", author:"", isPublished:false,
+    title:{en:"",am:""}, body:{en:"",am:""},
+    category:"Community", coverImage:"", imagePaths:[], author:"", isPublished:false,
   });
   const [formLang, setFormLang] = useState<"en"|"am">("en");
+  const [uploading, setUploading] = useState(false);
+  const [copiedPath, setCopiedPath] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => { setLoading(true); setArticles(await getNews(true)); setLoading(false); };
   useEffect(() => { load(); }, []);
 
   const openAdd = () => {
     setEditing(null);
-    setAf({ title:{en:"",am:""}, excerpt:{en:"",am:""}, body:{en:"",am:""}, category:"Community", coverImage:"", author:"", isPublished:false });
+    setAf({
+      title:{en:"",am:""}, body:{en:"",am:""},
+      category:"Community", coverImage:"", imagePaths:[], author:"", isPublished:false,
+    });
     setShowForm(true);
   };
-  const openEdit = (a: NewsArticle) => { setEditing(a); setAf(a); setShowForm(true); };
 
-  const handleSave = async () => {
+  const openEdit = (a: NewsArticle) => {
+    setEditing(a);
+    const paths = (a.imagePaths && a.imagePaths.length > 0)
+      ? a.imagePaths
+      : (a.coverImage ? [a.coverImage] : []);
+    setAf({
+      ...a,
+      imagePaths: paths,
+      coverImage: a.coverImage || paths[0] || "",
+    });
+    setShowForm(true);
+  };
+
+  const copyPath = (path: string) => {
+    navigator.clipboard.writeText(path);
+    setCopiedPath(path);
+    setTimeout(() => setCopiedPath(null), 2000);
+  };
+
+  const handleFileUpload = async (filesList: FileList | null) => {
+    if (!filesList || filesList.length === 0) return;
+    const files = Array.from(filesList);
+    setUploading(true);
+    try {
+      const uploadedUrls = await uploadImageFiles(files);
+      if (uploadedUrls && uploadedUrls.length > 0) {
+        setAf((prev) => {
+          const currentPaths = prev.imagePaths || [];
+          const updated = [...currentPaths, ...uploadedUrls];
+          return {
+            ...prev,
+            imagePaths: updated,
+            coverImage: prev.coverImage || updated[0] || "",
+          };
+        });
+      }
+    } catch (err) {
+      console.error("Failed to upload image(s):", err);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setAf((prev) => {
+      const updated = (prev.imagePaths || []).filter((_, i) => i !== indexToRemove);
+      return {
+        ...prev,
+        imagePaths: updated,
+        coverImage: updated[0] || "",
+      };
+    });
+  };
+
+  const handleSave = async (publish: boolean = false) => {
     if (!af.title?.en?.trim()) return;
     const slug = (editing?.slug || af.title.en).toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9\-]/g,"").slice(0,80) || `article-${Date.now()}`;
+    const paths = af.imagePaths || [];
     const article: NewsArticle = {
       id:          editing?.id || `news-${Date.now()}`,
       slug,
       title:       af.title   || {en:"",am:""},
-      excerpt:     af.excerpt || {en:"",am:""},
       body:        af.body    || {en:"",am:""},
       category:    af.category || "Community",
-      coverImage:  af.coverImage || "",
+      coverImage:  paths[0] || af.coverImage || "",
+      imagePaths:  paths,
       author:      af.author || "",
       publishedAt: editing?.publishedAt || new Date().toISOString(),
-      isPublished: af.isPublished || false,
+      isPublished: publish,
     };
     await saveArticle(article);
     setShowForm(false); load();
@@ -937,42 +1267,146 @@ export function AdminNewsTab({ language }: { language: string }) {
         onAdd={openAdd} addLabel="New Article"
         subtitle={`${articles.filter(a=>a.isPublished).length} published · ${articles.filter(a=>!a.isPublished).length} drafts`} />
 
-      <div className="space-y-3">
-        {articles.map(a => (
-          <div key={a.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all flex items-start gap-4 group">
-            {a.coverImage && (
-              <img src={a.coverImage} alt="" className="w-16 h-16 rounded-xl object-cover shrink-0 border border-gray-100" />
-            )}
-            <div className="flex-1 min-w-0 space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${catColors[a.category]||"bg-gray-100 text-gray-600"}`}>{a.category}</span>
-                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${a.isPublished?"bg-green-100 text-green-700":"bg-gray-100 text-gray-500"}`}>
-                  {a.isPublished ? "Published" : "Draft"}
-                </span>
-              </div>
-              <p className="font-serif font-bold text-sm text-brand-sky-950 line-clamp-1">{a.title.en}</p>
-              {a.excerpt.en && <p className="text-[11px] text-gray-500 line-clamp-1">{a.excerpt.en}</p>}
-              <p className="text-[10px] text-gray-400">{a.author} · {new Date(a.publishedAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}</p>
-            </div>
-            <div className="flex flex-col gap-1.5 shrink-0">
-              <button onClick={() => togglePublish(a)}
-                className={`px-3 py-1.5 rounded-xl text-[9px] font-bold cursor-pointer transition-colors flex items-center gap-1 ${a.isPublished?"bg-green-50 text-green-700 border border-green-200 hover:bg-green-100":"bg-gray-50 text-gray-600 border border-gray-200 hover:bg-brand-sky-50"}`}>
-                {a.isPublished ? <><EyeOff className="w-3 h-3"/>Unpublish</> : <><Eye className="w-3 h-3"/>Publish</>}
-              </button>
-              <button onClick={() => openEdit(a)}
-                className="px-3 py-1.5 bg-brand-sky-50 text-brand-sky-700 rounded-xl text-[9px] font-bold cursor-pointer hover:bg-brand-sky-100 border border-brand-sky-200 flex items-center gap-1 transition-colors">
-                <Edit3 className="w-3 h-3"/>Edit
-              </button>
-              <button onClick={() => del(a.id, a.title.en)}
-                className="p-1.5 bg-red-50 text-red-500 rounded-xl cursor-pointer border border-red-200 hover:bg-red-100 flex items-center justify-center transition-colors">
-                <Trash2 className="w-3.5 h-3.5"/>
-              </button>
-            </div>
-          </div>
-        ))}
-        {articles.length===0 && !loading && (
+      {/* News Table */}
+      <div className="bg-white border border-brand-sky-200 rounded-2xl shadow-xs overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[760px]">
+            <thead>
+              <tr className="bg-brand-sky-50/70 border-b border-brand-sky-100 text-[11px] font-black uppercase text-brand-sky-900 tracking-wider">
+                <th className="py-3 px-4">Article</th>
+                <th className="py-3 px-4 w-36">Status</th>
+                <th className="py-3 px-4">Attached Images / Path</th>
+                <th className="py-3 px-4 w-32 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 text-xs">
+              {articles.map(a => {
+                const paths = (a.imagePaths && a.imagePaths.length > 0)
+                  ? a.imagePaths
+                  : (a.coverImage ? [a.coverImage] : []);
+                return (
+                  <tr key={a.id} className="hover:bg-brand-sky-50/30 transition-colors">
+                    {/* Article / Title column */}
+                    <td className="py-3.5 px-4 align-top">
+                      <div className="space-y-1 max-w-sm">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${catColors[a.category] || "bg-gray-100 text-gray-600"}`}>
+                            {a.category}
+                          </span>
+                        </div>
+                        <p className="font-serif font-bold text-sm text-brand-sky-950 line-clamp-1">{a.title.en}</p>
+                        {a.title.am && (
+                          <p className="text-[11px] text-gray-600 line-clamp-1">{a.title.am}</p>
+                        )}
+                        <p className="text-[10px] text-gray-400">
+                          {a.author ? `${a.author} · ` : ""}{new Date(a.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* Status column */}
+                    <td className="py-3.5 px-4 align-top">
+                      <div className="space-y-2">
+                        <span className={`inline-block text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${a.isPublished ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                          {a.isPublished ? "Published" : "Draft"}
+                        </span>
+                        <div>
+                          <button
+                            onClick={() => togglePublish(a)}
+                            className={`px-2.5 py-1 rounded-lg text-[9px] font-bold cursor-pointer transition-colors flex items-center gap-1 ${a.isPublished ? "bg-green-50 text-green-700 border border-green-200 hover:bg-green-100" : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-brand-sky-50"}`}
+                          >
+                            {a.isPublished ? <><EyeOff className="w-3 h-3" />Unpublish</> : <><Eye className="w-3 h-3" />Publish</>}
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Attached Images / Path column */}
+                    <td className="py-3.5 px-4 align-top">
+                      {paths.length > 0 ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-brand-sky-700">
+                            <ImageIcon className="w-3.5 h-3.5" />
+                            <span>{paths.length} {paths.length === 1 ? "Image" : "Images"}</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            {paths.map((p, idx) => (
+                              <div key={idx} className="flex items-center gap-2 bg-gray-50 hover:bg-brand-sky-50/50 p-1.5 rounded-xl border border-gray-100 transition-colors">
+                                <img
+                                  src={resolveImagePath(p)}
+                                  alt=""
+                                  className="w-8 h-8 rounded-lg object-cover shrink-0 border border-gray-200 bg-white"
+                                  onError={(e) => { (e.currentTarget as HTMLElement).style.display = 'none'; }}
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1">
+                                    {idx === 0 && (
+                                      <span className="text-[8px] font-bold uppercase px-1 py-0.2 bg-brand-sky-100 text-brand-sky-700 rounded shrink-0">Cover</span>
+                                    )}
+                                    <span className="font-mono text-[10px] text-gray-700 truncate select-all block max-w-[200px]" title={p}>
+                                      {p}
+                                    </span>
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => copyPath(p)}
+                                  title="Copy image path"
+                                  className="p-1 rounded-md text-gray-400 hover:text-brand-sky-600 hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-brand-sky-200"
+                                >
+                                  {copiedPath === p ? (
+                                    <Check className="w-3 h-3 text-green-600" />
+                                  ) : (
+                                    <Copy className="w-3 h-3" />
+                                  )}
+                                </button>
+                                <a
+                                  href={resolveImagePath(p)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title="Open in new tab"
+                                  className="p-1 rounded-md text-gray-400 hover:text-brand-sky-600 hover:bg-white transition-colors border border-transparent hover:border-brand-sky-200"
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-gray-400 italic flex items-center gap-1.5 py-1">
+                          <ImageIcon className="w-3.5 h-3.5 text-gray-300" />
+                          <span>No attached images</span>
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Actions column */}
+                    <td className="py-3.5 px-4 align-top text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => openEdit(a)}
+                          className="px-2.5 py-1.5 bg-brand-sky-50 text-brand-sky-700 rounded-xl text-[10px] font-bold cursor-pointer hover:bg-brand-sky-100 border border-brand-sky-200 flex items-center gap-1 transition-colors"
+                        >
+                          <Edit3 className="w-3 h-3" />Edit
+                        </button>
+                        <button
+                          onClick={() => del(a.id, a.title.en)}
+                          className="p-1.5 bg-red-50 text-red-500 rounded-xl cursor-pointer border border-red-200 hover:bg-red-100 flex items-center justify-center transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {articles.length === 0 && !loading && (
           <div className="text-center py-12 text-xs text-gray-400 space-y-2">
-            <Newspaper className="w-10 h-10 text-brand-sky-200 mx-auto"/>
+            <Newspaper className="w-10 h-10 text-brand-sky-200 mx-auto" />
             <p>No articles yet. Create your first one!</p>
           </div>
         )}
@@ -992,58 +1426,197 @@ export function AdminNewsTab({ language }: { language: string }) {
               {/* Language tabs */}
               <div className="flex gap-2 mb-3 bg-gray-100 p-1 rounded-xl">
                 {(["en","am"] as const).map(l => (
-                  <button key={l} onClick={() => setFormLang(l)}
+                  <button key={l} type="button" onClick={() => setFormLang(l)}
                     className={`flex-1 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors ${formLang===l?"bg-white text-brand-sky-950 shadow-xs":"text-gray-600 hover:text-gray-900"}`}>
                     {l === "en" ? "English" : "አማርኛ"}
                   </button>
                 ))}
               </div>
 
-              <div className="space-y-3">
-                <div><label className="block text-xs font-bold text-gray-600 mb-1">Title ({formLang.toUpperCase()}) *</label>
-                  <input value={(af.title as any)?.[formLang]||""} onChange={e=>setAf(p=>({...p,title:{...(p.title||{en:"",am:""}), [formLang]:e.target.value}}))}
-                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400" /></div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 mb-1">Title ({formLang.toUpperCase()}) *</label>
+                  <input
+                    value={(af.title as any)?.[formLang]||""}
+                    onChange={e=>setAf(p=>({...p,title:{...(p.title||{en:"",am:""}), [formLang]:e.target.value}}))}
+                    placeholder={formLang === "en" ? "Article title in English..." : "የዜናው ርዕስ በአማርኛ..."}
+                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400"
+                  />
+                </div>
 
-                <div><label className="block text-xs font-bold text-gray-600 mb-1">Excerpt ({formLang.toUpperCase()})</label>
-                  <textarea rows={1} value={(af.excerpt as any)?.[formLang]||""} onChange={e=>setAf(p=>({...p,excerpt:{...(p.excerpt||{en:"",am:""}), [formLang]:e.target.value}}))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400 resize-none"/></div>
-
-                <div><label className="block text-xs font-bold text-gray-600 mb-1">Body ({formLang.toUpperCase()}) — use blank lines for paragraphs</label>
-                  <textarea rows={4} value={(af.body as any)?.[formLang]||""} onChange={e=>setAf(p=>({...p,body:{...(p.body||{en:"",am:""}), [formLang]:e.target.value}}))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400 resize-none font-mono"/></div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 mb-1">Body ({formLang.toUpperCase()}) — use blank lines for paragraphs</label>
+                  <textarea
+                    rows={5}
+                    value={(af.body as any)?.[formLang]||""}
+                    onChange={e=>setAf(p=>({...p,body:{...(p.body||{en:"",am:""}), [formLang]:e.target.value}}))}
+                    placeholder={formLang === "en" ? "Write article content here..." : "የዜናውን ዝርዝር እዚህ ይጻፉ..."}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400 resize-none font-sans"
+                  />
+                </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className="block text-xs font-bold text-gray-600 mb-1">Category</label>
-                    <select value={af.category||"Community"} onChange={e=>setAf(p=>({...p,category:e.target.value}))}
-                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400 bg-white">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">Category</label>
+                    <select
+                      value={af.category||"Community"}
+                      onChange={e=>setAf(p=>({...p,category:e.target.value}))}
+                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400 bg-white"
+                    >
                       {NEWS_CATS.map(c=><option key={c} value={c}>{c}</option>)}
-                    </select></div>
-                  <div><label className="block text-xs font-bold text-gray-600 mb-1">Author</label>
-                    <input value={af.author||""} onChange={e=>setAf(p=>({...p,author:e.target.value}))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">Author</label>
+                    <input
+                      value={af.author||""}
+                      onChange={e=>setAf(p=>({...p,author:e.target.value}))}
                       placeholder="Admin name"
-                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400"/></div>
+                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400"
+                    />
+                  </div>
                 </div>
 
-                <div><label className="block text-xs font-bold text-gray-600 mb-1">Cover Image URL (optional)</label>
-                  <input value={af.coverImage||""} onChange={e=>setAf(p=>({...p,coverImage:e.target.value}))}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-brand-sky-400"/></div>
+                {/* Attached Images Section - Independent of language tabs */}
+                <div className="p-3.5 bg-brand-sky-50/50 border border-brand-sky-200/80 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-brand-sky-950 flex items-center gap-1.5">
+                        <ImageIcon className="w-4 h-4 text-brand-sky-500" />
+                        Attached Images
+                      </h4>
+                      <p className="text-[10px] text-gray-500">
+                        Images are saved under <code className="bg-white px-1 py-0.5 rounded border border-gray-200 text-brand-sky-700">uploads/</code> and persist across languages.
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-bold text-brand-sky-700 bg-brand-sky-100 px-2 py-0.5 rounded-full">
+                      {(af.imagePaths || []).length} attached
+                    </span>
+                  </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                  <div><span className="text-xs font-bold text-gray-700 block">Publish immediately</span>
-                    <span className="text-[10px] text-gray-400">If off, saved as draft</span></div>
-                  <button type="button" onClick={() => setAf(p=>({...p,isPublished:!p.isPublished}))}
-                    className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer ${af.isPublished?"bg-brand-sky-400":"bg-gray-300"}`}>
-                    <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${af.isPublished?"translate-x-4":"translate-x-0"}`}/>
-                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={e => handleFileUpload(e.target.files)}
+                    className="hidden"
+                  />
+
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={e => { e.preventDefault(); }}
+                    onDrop={e => {
+                      e.preventDefault();
+                      handleFileUpload(e.dataTransfer.files);
+                    }}
+                    className="border-2 border-dashed border-brand-sky-300 hover:border-brand-sky-500 rounded-xl p-4 text-center cursor-pointer bg-white hover:bg-brand-sky-50/40 transition-all group"
+                  >
+                    {uploading ? (
+                      <div className="flex items-center justify-center gap-2 text-brand-sky-600 text-xs font-bold py-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Uploading images to codebase...</span>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <div className="w-8 h-8 rounded-full bg-brand-sky-100 text-brand-sky-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                          <Upload className="w-4 h-4" />
+                        </div>
+                        <p className="text-xs font-bold text-brand-sky-950">
+                          Click to upload or drag and drop images
+                        </p>
+                        <p className="text-[10px] text-gray-400">
+                          PNG, JPG, WEBP, GIF · Multiple images supported
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {(af.imagePaths || []).length > 0 && (
+                    <div className="space-y-2 pt-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                        Attached Files & Codebase Paths:
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                        {(af.imagePaths || []).map((path, idx) => (
+                          <div key={idx} className="flex items-center gap-2.5 p-2 bg-white rounded-xl border border-gray-200 shadow-xs group">
+                            <div className="relative shrink-0">
+                              <img src={resolveImagePath(path)} alt="" className="w-11 h-11 rounded-lg object-cover border border-gray-100 bg-gray-50" />
+                              {idx === 0 && (
+                                <span className="absolute -top-1.5 -left-1.5 bg-brand-sky-600 text-white text-[8px] font-black uppercase px-1 py-0.2 rounded shadow-xs">
+                                  Cover
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-mono text-[10px] text-gray-700 truncate select-all" title={path}>
+                                {path}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => copyPath(path)}
+                                  className="text-[9px] text-brand-sky-600 hover:text-brand-sky-800 font-bold flex items-center gap-1 cursor-pointer"
+                                >
+                                  {copiedPath === path ? (
+                                    <><Check className="w-3 h-3 text-green-600" /> Copied</>
+                                  ) : (
+                                    <><Copy className="w-3 h-3" /> Copy Path</>
+                                  )}
+                                </button>
+                                <a
+                                  href={path}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[9px] text-gray-400 hover:text-gray-600 flex items-center gap-0.5"
+                                >
+                                  <ExternalLink className="w-2.5 h-2.5" /> View
+                                </a>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeImage(idx)}
+                              title="Remove image"
+                              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
+
               </div>
 
-              <div className="flex gap-3 mt-3">
-                <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 cursor-pointer hover:bg-gray-50">Cancel</button>
-                <button onClick={handleSave} className="flex-1 py-2.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold cursor-pointer shadow-sm flex items-center justify-center gap-1.5">
-                  <Save className="w-3.5 h-3.5"/>{af.isPublished?"Save & Publish":"Save as Draft"}
+              <div className="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="py-2.5 px-4 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
                 </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => handleSave(false)}
+                    className="py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold cursor-pointer transition-colors flex items-center gap-1.5 border border-gray-200"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-gray-500" />
+                    Draft
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSave(true)}
+                    className="py-2.5 px-5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold cursor-pointer shadow-sm transition-all hover:shadow-md flex items-center gap-1.5"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    Publish
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>

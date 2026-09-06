@@ -236,6 +236,7 @@ CREATE TABLE IF NOT EXISTS news (
   body_am      LONGTEXT,
   category     VARCHAR(40)   NOT NULL DEFAULT 'Community',
   cover_image  VARCHAR(500)  NOT NULL DEFAULT '',
+  image_paths  TEXT,
   author       VARCHAR(80)   NOT NULL DEFAULT '',
   published_at DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
   is_published TINYINT(1)    NOT NULL DEFAULT 0,

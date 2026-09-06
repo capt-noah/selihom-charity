@@ -5,6 +5,9 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // Set base path for nested hosting under your portfolio domain: yourdomain.com/selihom/
+    // When deploying standalone at root domain, change to '/' or remove base.
+    base: process.env.VITE_BASE_PATH || '/selihom/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

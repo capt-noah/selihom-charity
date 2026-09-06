@@ -1,14 +1,35 @@
 import { Booking, DonationPledge, VolunteerApplication, AdminProfile, InKindItem } from "../types";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
+export const getApiUrl = (endpoint: string): string => {
+  const isNested = window.location.pathname.startsWith("/selihom");
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  return isNested ? `/selihom${cleanEndpoint}` : cleanEndpoint;
+};
+
+export const resolveImagePath = (path: string | undefined | null): string => {
+  if (!path) return "";
+  // If already absolute or blob/data url, return as is
+  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:") || path.startsWith("blob:")) {
+    return path;
+  }
+  const isNested = window.location.pathname.startsWith("/selihom");
+  if (isNested) {
+    if (path.startsWith("/selihom/")) return path;
+    const clean = path.startsWith("/") ? path : `/${path}`;
+    return `/selihom${clean}`;
+  }
+  return path.startsWith("/") ? path : `/${path}`;
+};
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
+  const fullUrl = getApiUrl(path);
+  const res = await fetch(fullUrl, {
     ...options,
     headers: { "Content-Type": "application/json", ...(options?.headers ?? {}) },
   });
   if (!res.ok) {
-    throw new Error(`API ${options?.method ?? "GET"} ${path} failed: ${res.status}`);
+    throw new Error(`API ${options?.method ?? "GET"} ${fullUrl} failed: ${res.status}`);
   }
   return res.json() as Promise<T>;
 }
@@ -359,14 +380,48 @@ export interface NewsArticle {
   id: string;
   slug: string;
   title: { en: string; am: string };
-  excerpt: { en: string; am: string };
+  excerpt?: { en: string; am: string };
   body: { en: string; am: string };
   category: string;
   coverImage: string;
+  imagePaths?: string[];
   author: string;
   publishedAt: string;
   isPublished: boolean;
 }
+
+export const uploadImageFile = async (file: File): Promise<string> => {
+  const base64 = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const res = await apiFetch<{ url?: string; path?: string }>("/api/upload", {
+    method: "POST",
+    body: JSON.stringify({ filename: file.name, data: base64 }),
+  });
+  return res.url || res.path || "";
+};
+
+export const uploadImageFiles = async (files: File[]): Promise<string[]> => {
+  const payload = await Promise.all(
+    files.map(async (f) => {
+      const data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(f);
+      });
+      return { filename: f.name, data };
+    })
+  );
+  const res = await apiFetch<{ urls: string[] }>("/api/upload", {
+    method: "POST",
+    body: JSON.stringify({ files: payload }),
+  });
+  return res.urls || [];
+};
 
 export const getNews = async (all = false): Promise<NewsArticle[]> =>
   apiFetch<NewsArticle[]>(`/api/news${all ? "?all=true" : ""}`);

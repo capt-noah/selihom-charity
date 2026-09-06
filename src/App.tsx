@@ -36,16 +36,16 @@ function TiletBand() {
 function AppInner() {
   const { language } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdminPage, setIsAdminPage] = useState(() =>
-    window.location.pathname === "/admin" || window.location.hash === "#admin"
-  );
+  const [isAdminPage, setIsAdminPage] = useState(() => {
+    const p = window.location.pathname;
+    return p.endsWith("/admin") || window.location.hash === "#admin";
+  });
 
   // Admin routing (pushState, keeps existing backend SPA pattern)
   useEffect(() => {
     const handleLocation = () => {
-      setIsAdminPage(
-        window.location.pathname === "/admin" || window.location.hash === "#admin"
-      );
+      const p = window.location.pathname;
+      setIsAdminPage(p.endsWith("/admin") || window.location.hash === "#admin");
     };
     window.addEventListener("popstate", handleLocation);
     window.addEventListener("hashchange", handleLocation);
@@ -56,13 +56,15 @@ function AppInner() {
   }, []);
 
   const openAdminPage = () => {
-    window.history.pushState({}, "", "/admin");
+    const base = window.location.pathname.startsWith("/selihom") ? "/selihom/admin" : "/admin";
+    window.history.pushState({}, "", base);
     setIsAdminPage(true);
     window.scrollTo(0, 0);
   };
 
   const closeAdminPage = () => {
-    window.history.pushState({}, "", "/");
+    const base = window.location.pathname.startsWith("/selihom") ? "/selihom/" : "/";
+    window.history.pushState({}, "", base);
     setIsAdminPage(false);
     window.scrollTo(0, 0);
   };
@@ -161,8 +163,11 @@ function AppInner() {
 }
 
 export default function App() {
+  // Support running nested under /selihom or standalone at root domain
+  const basename = window.location.pathname.startsWith('/selihom') ? '/selihom' : '';
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <AppInner />
     </BrowserRouter>
   );

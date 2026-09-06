@@ -11,6 +11,7 @@
 
 import express   from "express";
 import path      from "path";
+import fs        from "fs";
 import { fileURLToPath } from "url";
 import dotenv    from "dotenv";
 import pool      from "./database/db.js";
@@ -23,7 +24,25 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 const app  = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-app.use(express.json({ limit: "200kb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Uploads directory storage
+const uploadsDir = path.join(__dirname, "uploads");
+const publicUploadsDir = path.join(__dirname, "public", "uploads");
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+if (!fs.existsSync(publicUploadsDir)) fs.mkdirSync(publicUploadsDir, { recursive: true });
+app.use("/uploads", express.static(uploadsDir));
+app.use("/uploads", express.static(publicUploadsDir));
+
+// Ensure news table has image_paths column
+pool.query("SHOW COLUMNS FROM news LIKE 'image_paths'")
+  .then(([rows]) => {
+    if (rows && rows.length === 0) {
+      return pool.query("ALTER TABLE news ADD COLUMN image_paths TEXT AFTER cover_image");
+    }
+  })
+  .catch(() => {});
 
 // ─── INPUT SANITISATION ────────────────────────────────────────────────────
 
@@ -142,6 +161,19 @@ function rowToMed(r) {
 
 function rowToNews(r) {
   if (!r) return null;
+  let imagePaths = [];
+  if (r.image_paths) {
+    try {
+      imagePaths = typeof r.image_paths === "string" && r.image_paths.startsWith("[")
+        ? JSON.parse(r.image_paths)
+        : r.image_paths.split(",").map(s => s.trim()).filter(Boolean);
+    } catch {
+      imagePaths = [r.image_paths];
+    }
+  } else if (r.cover_image) {
+    imagePaths = [r.cover_image];
+  }
+
   return {
     id:          r.id,
     slug:        r.slug,
@@ -149,7 +181,8 @@ function rowToNews(r) {
     excerpt:     { en: r.excerpt_en || "", am: r.excerpt_am || "" },
     body:        { en: r.body_en    || "", am: r.body_am    || "" },
     category:    r.category,
-    coverImage:  r.cover_image,
+    coverImage:  r.cover_image || imagePaths[0] || "",
+    imagePaths,
     author:      r.author,
     publishedAt: r.published_at instanceof Date ? r.published_at.toISOString() : r.published_at,
     isPublished: !!r.is_published,
@@ -885,6 +918,45 @@ app.delete("/api/volunteer_roles/:id", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ─── FILE UPLOAD ─────────────────────────────────────────────────────────────
+
+app.post("/api/upload", async (req, res) => {
+  try {
+    const { filename, data, files } = req.body;
+
+    const saveFile = (origName, base64Data) => {
+      const matches = String(base64Data).match(/^data:([A-Za-z-+/0-9]+);base64,(.+)$/);
+      const rawBase64 = matches ? matches[2] : base64Data;
+      const buffer = Buffer.from(rawBase64, "base64");
+      const ext = path.extname(origName || "").toLowerCase() || (matches ? `.${matches[1].split("/")[1]}` : ".jpg");
+      const cleanExt = ext.replace(/[^a-z0-9.]/g, "") || ".jpg";
+      const safeName = `img-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${cleanExt}`;
+      const filePath = path.join(uploadsDir, safeName);
+      const publicFilePath = path.join(publicUploadsDir, safeName);
+
+      fs.writeFileSync(filePath, buffer);
+      try { fs.writeFileSync(publicFilePath, buffer); } catch (_) {}
+
+      return `/uploads/${safeName}`;
+    };
+
+    if (Array.isArray(files) && files.length > 0) {
+      const urls = files.map(f => saveFile(f.filename || "image.jpg", f.data));
+      return res.json({ urls });
+    }
+
+    if (!data) {
+      return res.status(400).json({ error: "No image data provided" });
+    }
+
+    const url = saveFile(filename || "image.jpg", data);
+    res.json({ url, path: url, filename: path.basename(url) });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ error: "Failed to upload image: " + err.message });
+  }
+});
+
 // ─── NEWS ─────────────────────────────────────────────────────────────────────
 
 app.get("/api/news", async (req, res) => {
@@ -914,23 +986,31 @@ app.post("/api/news", async (req, res) => {
       .toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9\-]/g,"").slice(0,80)
       || `article-${Date.now()}`;
     const publishedAt = b.publishedAt ? new Date(b.publishedAt) : new Date();
+
+    const imagePaths = Array.isArray(b.imagePaths)
+      ? b.imagePaths
+      : (b.coverImage ? [b.coverImage] : []);
+    const coverImage = sanitize(b.coverImage || imagePaths[0] || "", 500);
+    const imagePathsStr = JSON.stringify(imagePaths);
+
     await pool.execute(`
       INSERT INTO news
         (id,slug,title_en,title_am,excerpt_en,excerpt_am,body_en,body_am,
-         category,cover_image,author,published_at,is_published)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+         category,cover_image,image_paths,author,published_at,is_published)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
       ON DUPLICATE KEY UPDATE
         slug=VALUES(slug),title_en=VALUES(title_en),title_am=VALUES(title_am),
         excerpt_en=VALUES(excerpt_en),excerpt_am=VALUES(excerpt_am),
         body_en=VALUES(body_en),body_am=VALUES(body_am),
         category=VALUES(category),cover_image=VALUES(cover_image),
+        image_paths=VALUES(image_paths),
         author=VALUES(author),published_at=VALUES(published_at),is_published=VALUES(is_published)
-    `, [id, rawSlug, titleEn, sanitize(b.title?.am,200),
-        sanitize(b.excerpt?.en,400), sanitize(b.excerpt?.am,400),
-        b.body?.en||"", b.body?.am||"",
+    `, [id, rawSlug, titleEn, sanitize(b.title?.am, 200),
+        sanitize(b.excerpt?.en || "", 400), sanitize(b.excerpt?.am || "", 400),
+        b.body?.en || "", b.body?.am || "",
         whitelist(b.category, NEWS_CATEGORIES, "Community"),
-        sanitize(b.coverImage,500), sanitize(b.author,80),
-        publishedAt, b.isPublished===true ? 1 : 0]);
+        coverImage, imagePathsStr, sanitize(b.author, 80),
+        publishedAt, b.isPublished === true ? 1 : 0]);
     const row = await q1("SELECT * FROM news WHERE id=?", [id]);
     res.json(rowToNews(row));
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1002,13 +1082,29 @@ app.get(["/api/db","/api/db/download"], async (req, res) => {
 // ─── STATIC FILES + SPA FALLBACK ──────────────────────────────────────────────
 
 const distPath = path.join(__dirname, "dist");
+
+// Serve assets under /selihom (so the production build works directly on standalone server too)
+app.use("/selihom/uploads", express.static(uploadsDir));
+app.use("/selihom/uploads", express.static(publicUploadsDir));
+app.use("/selihom", express.static(distPath));
+
+// Also serve at root /
 app.use(express.static(distPath));
-app.get("*", (_req, res) => {
+
+// SPA Fallback for /selihom/* and /*
+app.get(["/selihom/*", "*"], (_req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
-// ─── START ────────────────────────────────────────────────────────────────────
+// ─── START (STANDALONE MODE) ──────────────────────────────────────────────────
+// When run directly (node server.js), start listening on PORT.
+// When imported by Portfolio server (sub-app mode), exporting app allows mounting routes.
+const isMain = process.argv[1] && (process.argv[1].endsWith("server.js") || process.argv[1].includes("selihom"));
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`\nSelihom server  →  http://0.0.0.0:${PORT}  (MySQL backend)\n`);
-});
+if (isMain && !process.env.NESTED_APP) {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`\nSelihom server  →  http://0.0.0.0:${PORT}  (MySQL backend)\n`);
+  });
+}
+
+export default app;

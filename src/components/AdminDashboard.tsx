@@ -28,7 +28,9 @@ import {
   Edit3,
   Package,
   Globe,
-  RefreshCw
+  RefreshCw,
+  Pill,
+  Award
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { Booking, DonationPledge, VolunteerApplication, AdminProfile, InKindItem } from "../types";
@@ -737,36 +739,88 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {activeTab !== "profile" && activeTab !== "calendar" && activeTab !== "events" && activeTab !== "news" && (activeTab !== "pledges" || pledgeAdminType === "inkind") && (activeTab !== "volunteers" || volunteerAdminType === "applications") && (
             <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
               <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-600 rounded-xl flex items-center justify-center border border-brand-sky-200 shrink-0">
-                    {activeTab === "bookings" ? <Calendar className="w-5 h-5" /> : activeTab === "pledges" ? <Gift className="w-5 h-5" /> : <Users className="w-5 h-5" />}
+                {activeTab === "pledges" ? (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => { setPledgeAdminType("inkind"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        pledgeAdminType === "inkind"
+                          ? "bg-emerald-500 text-white shadow-sm border border-emerald-600"
+                          : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
+                      }`}
+                    >
+                      <Gift className="w-4 h-4" />
+                      <span>{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setPledgeAdminType("medicine"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        pledgeAdminType === "medicine"
+                          ? "bg-rose-500 text-white shadow-sm border border-rose-600"
+                          : "bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100"
+                      }`}
+                    >
+                      <Pill className="w-4 h-4" />
+                      <span>{language === "am" ? "መድሃኒት" : "Medicine"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setPledgeAdminType("supplies"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        pledgeAdminType === "supplies"
+                          ? "bg-amber-500 text-white shadow-sm border border-amber-600"
+                          : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+                      }`}
+                    >
+                      <Package className="w-4 h-4" />
+                      <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+                    </button>
                   </div>
-                  <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
-                      {activeTab === "bookings"
-                        ? (language === "am" ? "የጉብኝት ምዝገቦች አስተዳደር" : "Visit Bookings Management")
-                        : activeTab === "pledges"
-                          ? (pledgeAdminType === "medicine" ? (language === "am" ? "የመድሃኒት አስተዳደር" : "Medicine Management") : pledgeAdminType === "supplies" ? (language === "am" ? "የቁሳቁስ አስተዳደር" : "Supplies Management") : (pledgeSubTab === "pledges" ? (language === "am" ? "የዓይነት ቃልኪዳኖች" : "In-Kind Donor Pledges") : (language === "am" ? "የሚያስፈልጉ እቃዎች" : "Shelter Needed Items")))
-                          : (language === "am" ? "የበጎ ፈቃደኛ ማመልከቻዎች" : "Volunteer Applications")}
-                  </h2>
-                </div>
+                ) : activeTab === "volunteers" ? (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => { setVolunteerAdminType("applications"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        volunteerAdminType === "applications"
+                          ? "bg-brand-sky-500 text-white shadow-sm border border-brand-sky-600"
+                          : "bg-brand-sky-50 text-brand-sky-800 border border-brand-sky-200 hover:bg-brand-sky-100"
+                      }`}
+                    >
+                      <Users className="w-4 h-4" />
+                      <span>{language === "am" ? "ማመልከቻዎች" : "Applications"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setVolunteerAdminType("roles"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        volunteerAdminType === "roles"
+                          ? "bg-purple-600 text-white shadow-sm border border-purple-700"
+                          : "bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100"
+                      }`}
+                    >
+                      <Award className="w-4 h-4" />
+                      <span>{language === "am" ? "የበጎ ፈቃድ ሚናዎች" : "Volunteer Roles"}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 bg-brand-sky-100 text-brand-sky-600 rounded-xl flex items-center justify-center border border-brand-sky-200 shrink-0">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <h2 className="font-serif font-bold text-base sm:text-lg text-brand-sky-950 leading-tight">
+                      {language === "am" ? "የጉብኝት ምዝገቦች አስተዳደር" : "Visit Bookings Management"}
+                    </h2>
+                  </div>
+                )}
                 <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
-                  {activeTab === "pledges" && (
-                    <select value={pledgeAdminType} onChange={(e) => { setPledgeAdminType(e.target.value as "inkind" | "medicine" | "supplies"); setSearchQuery(""); setStatusFilter("all"); }}
-                      className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-                      <option value="inkind">{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</option>
-                      <option value="medicine">{language === "am" ? "መድሃኒት" : "Medicine"}</option>
-                      <option value="supplies">{language === "am" ? "ቁሳቁስ" : "Supplies"}</option>
-                    </select>
-                  )}
-                  {activeTab === "volunteers" && (
-                    <select value={volunteerAdminType} onChange={(e) => { setVolunteerAdminType(e.target.value as "applications" | "roles"); setSearchQuery(""); setStatusFilter("all"); }}
-                      className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-                      <option value="applications">{language === "am" ? "ማመልከቻዎች" : "Applications"}</option>
-                      <option value="roles">{language === "am" ? "ሚናዎች" : "Volunteer Roles"}</option>
-                    </select>
-                  )}
                   {activeTab !== "pledges" || pledgeAdminType === "inkind" ? <div className="relative w-full sm:w-72 md:w-80">
-                  <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3" />
+                  <Search className="w-4 h-4 text-brand-sky-400 absolute left-3.5 top-2.5 sm:top-3 pointer-events-none" />
                   <input
                     type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={language === "am" ? "ስም፣ መታወቂያ ወይም ስልክ ይፈልጉ..." : "Search name, ID, or phone..."}
@@ -779,8 +833,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   )}
                   </div> : null}
                   {(activeTab !== "pledges" || pledgeAdminType === "inkind") && <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-                    className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400">
-                    <option value="all" disabled>{language === "am" ? "ሁሉም" : "All"}</option>
+                    className="rounded-xl border border-brand-sky-200 bg-brand-sky-50 px-3 py-2 text-xs font-bold text-brand-sky-700 outline-none focus:border-brand-sky-400 cursor-pointer">
+                    <option value="all">{language === "am" ? "ሁሉም" : "All"}</option>
                     {activeTab === "bookings" && <>
                       <option value="pending">{language === "am" ? "በቅድሚያ" : "Pending"}</option>
                       <option value="approved">{language === "am" ? "ተቀባይነት" : "Approved"}</option>

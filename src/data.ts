@@ -14,7 +14,7 @@ import person1Img     from "./assets/images/person1.jpg";
 import person2Img     from "./assets/images/person2.jpg";
 import person3Img     from "./assets/images/person3.jpg";
 import person4Img     from "./assets/images/person4.jpg";
-import officialCertificate from "./assets/images/elderly_care.jpg";
+import officialCertificate from "./assets/images/award1.jpg";
 import elderlyWiseCutout   from "./assets/images/elderly_wise.jpg";
 
 export const IMAGES = {
