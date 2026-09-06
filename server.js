@@ -1099,9 +1099,9 @@ app.get(["/selihom/*", "*"], (_req, res) => {
 // ─── START (STANDALONE MODE) ──────────────────────────────────────────────────
 // When run directly (node server.js), start listening on PORT.
 // When imported by Portfolio server (sub-app mode), exporting app allows mounting routes.
-const isMain = process.argv[1] && (process.argv[1].endsWith("server.js") || process.argv[1].includes("selihom"));
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename);
 
-if (isMain && !process.env.NESTED_APP) {
+if (isMain) {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`\nSelihom server  →  http://0.0.0.0:${PORT}  (MySQL backend)\n`);
   });
