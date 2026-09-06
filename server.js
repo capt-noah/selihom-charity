@@ -1094,28 +1094,23 @@ app.get(["/api/db","/api/db/download"], async (req, res) => {
 
 const distPath = path.join(__dirname, "dist");
 
-// Serve assets under /selihom (so the production build works directly on standalone server too)
-app.use("/selihom/uploads", express.static(uploadsDir));
-app.use("/selihom/uploads", express.static(publicUploadsDir));
-app.use("/selihom", express.static(distPath));
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
 
-// Also serve at root /
-app.use(express.static(distPath));
-
-// SPA Fallback for /selihom/* and /*
-app.get(["/selihom/*", "*"], (_req, res) => {
-  res.sendFile(path.join(distPath, "index.html"));
+// SPA Fallback
+app.get("*", (_req, res) => {
+  const indexPath = path.join(distPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(200).send("Selihom Charity server is running.");
+  }
 });
 
-// ─── START (STANDALONE MODE) ──────────────────────────────────────────────────
-// When run directly (node server.js), start listening on PORT.
-// When imported by Portfolio server (sub-app mode), exporting app allows mounting routes.
-const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename);
-
-if (isMain) {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`\nSelihom server  →  http://0.0.0.0:${PORT}  (MySQL backend)\n`);
-  });
-}
+// ─── START ────────────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
 
 export default app;
