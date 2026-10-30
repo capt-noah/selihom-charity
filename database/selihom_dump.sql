@@ -1,6 +1,6 @@
 -- ============================================================
 -- Selihom Charity - Full Production Database Dump
--- Generated: 2026-10-30T17:53:51.713Z
+-- Generated: 2026-10-30T18:42:16.627Z
 -- Character Set: utf8mb4 / utf8mb4_unicode_ci
 -- Compatible with MySQL 5.7+, MySQL 8.0+, MariaDB 10+
 -- Note: Database name agnostic (safe to import on portfolio_db or selihom)
@@ -571,11 +571,11 @@ CREATE TABLE `site_settings` (
   `motto_en` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Kind hearts excel beautiful faces!',
   `motto_am` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!',
   `phones` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'selihome@gmail.com',
+  `email` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'selihomc@gmail.com',
   `address_en` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `address_am` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `registration_number` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1113/2019',
-  `registration_date` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Feb 03, 2020',
+  `registration_date` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '30/02/2011 ዓ.ም (Oct 30, 2018)',
   `registration_agency_en` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations',
   `registration_agency_am` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ',
   `telegram_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'https://t.me/Selihommentallyill',
