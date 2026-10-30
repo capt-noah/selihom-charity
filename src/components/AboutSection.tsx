@@ -68,7 +68,7 @@ export default function AboutSection() {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-brand-sky-100">
                 {[
-                  language === "am" ? "200+ ዕለታዊ ተጠቃሚዎች" : "200+ Daily Beneficiaries",
+                  language === "am" ? "400+ ዕለታዊ ተጠቃሚዎች" : "400+ Daily Beneficiaries",
                   language === "am" ? "85% የማገገም መጠን"    : "85% Recovery Rate",
                   language === "am" ? "እንጦጦ ራጉኤል ማዕከል"  : "Entoto Raguel Shelter",
                   language === "am" ? "የሙያና የስራ እድል"     : "Vocational Jobs",

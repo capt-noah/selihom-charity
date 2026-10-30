@@ -44,6 +44,94 @@ pool.query("SHOW COLUMNS FROM news LIKE 'image_paths'")
   })
   .catch(() => {});
 
+// Ensure bank_accounts table exists
+pool.query(`
+  CREATE TABLE IF NOT EXISTS bank_accounts (
+    id             VARCHAR(40)  NOT NULL PRIMARY KEY,
+    bank_name_en   VARCHAR(120) NOT NULL,
+    bank_name_am   VARCHAR(120) NOT NULL DEFAULT '',
+    account_number VARCHAR(80)  NOT NULL,
+    account_name   VARCHAR(200) NOT NULL DEFAULT '',
+    logo           VARCHAR(255) NOT NULL DEFAULT '',
+    sort_order     INT          NOT NULL DEFAULT 0,
+    is_active      TINYINT(1)   NOT NULL DEFAULT 1,
+    created_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+`).catch(err => console.error("bank_accounts table init:", err.message));
+
+pool.query(`
+  CREATE TABLE IF NOT EXISTS site_settings (
+    id                     INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    setting_key            VARCHAR(60)  NOT NULL UNIQUE DEFAULT 'global',
+    org_name_en            VARCHAR(200) NOT NULL DEFAULT 'Selihom Mentally Ill People Support Association',
+    org_name_am            VARCHAR(200) NOT NULL DEFAULT 'ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር',
+    motto_en               VARCHAR(255) NOT NULL DEFAULT 'Kind hearts excel beautiful faces!',
+    motto_am               VARCHAR(255) NOT NULL DEFAULT 'ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!',
+    phones                 TEXT         NOT NULL,
+    email                  VARCHAR(120) NOT NULL DEFAULT 'selihome@gmail.com',
+    address_en             TEXT         NOT NULL,
+    address_am             TEXT         NOT NULL,
+    registration_number    VARCHAR(80)  NOT NULL DEFAULT '1113/2019',
+    registration_date      VARCHAR(80)  NOT NULL DEFAULT 'Feb 03, 2020',
+    registration_agency_en VARCHAR(255) NOT NULL DEFAULT 'Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations',
+    registration_agency_am VARCHAR(255) NOT NULL DEFAULT 'የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ',
+    telegram_url           VARCHAR(255) NOT NULL DEFAULT 'https://t.me/Selihommentallyill',
+    facebook_url           VARCHAR(255) NOT NULL DEFAULT 'https://facebook.com/SelihomSupport',
+    tiktok_url             VARCHAR(255) NOT NULL DEFAULT 'https://tiktok.com/@selihomcharity',
+    youtube_url            VARCHAR(255) NOT NULL DEFAULT 'https://youtube.com/@selihomcharity',
+    instagram_url          VARCHAR(255) NOT NULL DEFAULT '',
+    linkedin_url           VARCHAR(255) NOT NULL DEFAULT '',
+    updated_at             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+`).then(async () => {
+  await pool.query(`
+    INSERT IGNORE INTO site_settings (
+      setting_key, org_name_en, org_name_am, motto_en, motto_am,
+      phones, email, address_en, address_am,
+      registration_number, registration_date, registration_agency_en, registration_agency_am,
+      telegram_url, facebook_url, tiktok_url, youtube_url, instagram_url, linkedin_url
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `, [
+    "global",
+    "Selihom Mentally Ill People Support Association",
+    "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    "Kind hearts excel beautiful faces!",
+    "ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!",
+    JSON.stringify(["+251911004903", "+251953905050", "0118195444"]),
+    "selihome@gmail.com",
+    "Near Entoto St. Raguel and Elias Church, on the road leading toward Fetesha, Addis Ababa, Ethiopia",
+    "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስትያን ወደ ፍተሻ በሚወስደው መንገድ፣ አዲስ አበባ",
+    "1113/2019",
+    "Feb 03, 2020",
+    "Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations",
+    "የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ",
+    "https://t.me/Selihommentallyill",
+    "https://facebook.com/SelihomSupport",
+    "https://tiktok.com/@selihomcharity",
+    "https://youtube.com/@selihomcharity",
+    "",
+    "",
+  ]);
+}).catch(err => console.error("site_settings table init:", err.message));
+
+// Ensure estimated_delivery_date columns exist in pledge tables
+async function ensureEstimatedDateColumns() {
+  try {
+    const tables = ["pledges", "supplies_pledges", "medicine_pledges"];
+    for (const table of tables) {
+      const cols = await q(`SHOW COLUMNS FROM ${table} LIKE 'estimated_delivery_date'`);
+      if (cols.length === 0) {
+        await pool.query(`ALTER TABLE ${table} ADD COLUMN estimated_delivery_date VARCHAR(80) NOT NULL DEFAULT ''`);
+        console.log(`✓ Added estimated_delivery_date column to ${table}`);
+      }
+    }
+  } catch (err) {
+    console.error("Column migration notice (estimated_delivery_date):", err.message);
+  }
+}
+setTimeout(ensureEstimatedDateColumns, 1000);
+
 // ─── INPUT SANITISATION ────────────────────────────────────────────────────
 
 function sanitize(value, maxLen = 500) {
@@ -189,6 +277,72 @@ function rowToNews(r) {
   };
 }
 
+function rowToBankAccount(r) {
+  if (!r) return null;
+  return {
+    id:            r.id,
+    bank:          { en: r.bank_name_en, am: r.bank_name_am },
+    accountNumber: r.account_number,
+    accountName:   r.account_name,
+    logo:          r.logo || "",
+    sortOrder:     r.sort_order != null ? r.sort_order : 0,
+    isActive:      r.is_active !== false && r.is_active !== 0,
+  };
+}
+
+function rowToSiteSettings(r, bankRows = []) {
+  let phones = ["+251911004903", "+251953905050", "0118195444"];
+  if (r?.phones) {
+    try {
+      phones = typeof r.phones === "string" && r.phones.startsWith("[")
+        ? JSON.parse(r.phones)
+        : String(r.phones).split(",").map(p => p.trim()).filter(Boolean);
+    } catch {
+      phones = [String(r.phones)];
+    }
+  }
+
+  const bankAccounts = bankRows && bankRows.length > 0
+    ? bankRows.map(rowToBankAccount).filter(Boolean)
+    : DEFAULT_SETTINGS.bankAccounts;
+
+  if (!r) {
+    return { ...DEFAULT_SETTINGS, bankAccounts };
+  }
+
+  return {
+    bankAccounts,
+    social: {
+      telegram:  r.telegram_url  || "",
+      facebook:  r.facebook_url  || "",
+      tiktok:    r.tiktok_url    || "",
+      youtube:   r.youtube_url   || "",
+      instagram: r.instagram_url || "",
+      linkedin:  r.linkedin_url  || "",
+    },
+    contact: {
+      phones,
+      email: r.email || "selihome@gmail.com",
+      address: {
+        en: r.address_en || DEFAULT_SETTINGS.contact.address.en,
+        am: r.address_am || DEFAULT_SETTINGS.contact.address.am,
+      },
+    },
+    registration: {
+      number: r.registration_number || "1113/2019",
+      date:   r.registration_date   || "Feb 03, 2020",
+      agency: {
+        en: r.registration_agency_en || DEFAULT_SETTINGS.registration.agency.en,
+        am: r.registration_agency_am || DEFAULT_SETTINGS.registration.agency.am,
+      },
+    },
+    motto: {
+      en: r.motto_en || DEFAULT_SETTINGS.motto.en,
+      am: r.motto_am || DEFAULT_SETTINGS.motto.am,
+    },
+  };
+}
+
 // Build supply category object with its items
 async function buildCategory(catRow) {
   const items = await q(
@@ -281,6 +435,25 @@ app.post("/api/bookings", async (req, res) => {
     const orgName     = sanitize(b.organizationName, 120);
     const slotId      = sanitize(b.slotId, 40) || null;
 
+    // Handle slot booking count safely (prevent duplicate increments on booking updates)
+    const existingBooking = await q1("SELECT id, slot_id FROM bookings WHERE id=?", [id]);
+    if (!existingBooking && slotId) {
+      await pool.execute(
+        "UPDATE availability_slots SET current_bookings=current_bookings+1 WHERE id=?",
+        [slotId]);
+    } else if (existingBooking && existingBooking.slot_id !== slotId) {
+      if (existingBooking.slot_id) {
+        await pool.execute(
+          "UPDATE availability_slots SET current_bookings=GREATEST(current_bookings-1,0) WHERE id=?",
+          [existingBooking.slot_id]);
+      }
+      if (slotId) {
+        await pool.execute(
+          "UPDATE availability_slots SET current_bookings=current_bookings+1 WHERE id=?",
+          [slotId]);
+      }
+    }
+
     await pool.execute(`
       INSERT INTO bookings
         (id,name,email,phone,visit_date,time_slot,visit_type,visitor_count,
@@ -294,13 +467,6 @@ app.post("/api/bookings", async (req, res) => {
         organization_name=VALUES(organization_name), slot_id=VALUES(slot_id)
     `, [id,name,email,phone,visitDate,timeSlot,visitType,visitorCount,
         notes,status,contactType,orgName,slotId,createdAt]);
-
-    // Increment slot booking count if a slotId is provided
-    if (slotId) {
-      await pool.execute(
-        "UPDATE availability_slots SET current_bookings=current_bookings+1 WHERE id=?",
-        [slotId]);
-    }
 
     const rows = await q("SELECT * FROM bookings ORDER BY created_at DESC");
     res.json(rows.map(rowToBooking));
@@ -334,33 +500,39 @@ app.delete("/api/bookings/:id", async (req, res) => {
 
 // ─── PLEDGES ──────────────────────────────────────────────────────────────────
 
+async function allInKindPledges() {
+  const pledges = await q("SELECT * FROM pledges ORDER BY created_at DESC");
+  const result  = [];
+  for (const p of pledges) {
+    const items = await q("SELECT * FROM pledge_items WHERE pledge_id=?", [p.id]);
+    result.push({
+      id:                    p.id,
+      donorName:             p.donor_name,
+      donorEmail:            p.donor_email,
+      donorPhone:            p.donor_phone,
+      type:                  p.type,
+      date:                  p.date,
+      estimatedDeliveryDate: p.estimated_delivery_date || "",
+      status:                p.status,
+      pledgedItems: items.map(it => ({ itemId: it.item_id, name: it.item_name, quantity: it.quantity })),
+    });
+  }
+  return result;
+}
+
 app.get("/api/pledges", async (_req, res) => {
   try {
-    const pledges = await q("SELECT * FROM pledges ORDER BY created_at DESC");
-    const result  = [];
-    for (const p of pledges) {
-      const items = await q("SELECT * FROM pledge_items WHERE pledge_id=?", [p.id]);
-      result.push({
-        id:          p.id,
-        donorName:   p.donor_name,
-        donorEmail:  p.donor_email,
-        donorPhone:  p.donor_phone,
-        type:        p.type,
-        date:        p.date,
-        status:      p.status,
-        pledgedItems: items.map(it => ({ itemId: it.item_id, name: it.item_name, quantity: it.quantity })),
-      });
-    }
-    res.json(result);
+    res.json(await allInKindPledges());
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post("/api/pledges", async (req, res) => {
   try {
     const b = req.body;
-    const donorName  = sanitize(b.donorName, 120);
-    const donorPhone = sanitizePhone(b.donorPhone);
-    const donorEmail = sanitize(b.donorEmail, 120);
+    const donorName             = sanitize(b.donorName, 120);
+    const donorPhone            = sanitizePhone(b.donorPhone);
+    const donorEmail            = sanitize(b.donorEmail, 120);
+    const estimatedDeliveryDate = sanitize(b.estimatedDeliveryDate, 80);
     if (!donorName)                  return res.status(400).json({ error: "donorName is required" });
     if (!donorPhone && !donorEmail)  return res.status(400).json({ error: "phone or email required" });
     if (donorEmail && !isValidEmail(donorEmail)) return res.status(400).json({ error: "invalid email" });
@@ -369,30 +541,20 @@ app.post("/api/pledges", async (req, res) => {
     const status = whitelist(b.status, PLEDGE_STATUSES, "pledged");
     const type   = whitelist(b.type, ["money","inkind"], "inkind");
     await pool.execute(`
-      INSERT INTO pledges (id,donor_name,donor_email,donor_phone,type,date,status)
-      VALUES (?,?,?,?,?,?,?)
+      INSERT INTO pledges (id,donor_name,donor_email,donor_phone,type,date,estimated_delivery_date,status)
+      VALUES (?,?,?,?,?,?,?,?)
       ON DUPLICATE KEY UPDATE
         donor_name=VALUES(donor_name),donor_email=VALUES(donor_email),
-        donor_phone=VALUES(donor_phone),type=VALUES(type),date=VALUES(date),status=VALUES(status)
-    `, [id,donorName,donorEmail,donorPhone,type,date,status]);
+        donor_phone=VALUES(donor_phone),type=VALUES(type),date=VALUES(date),
+        estimated_delivery_date=VALUES(estimated_delivery_date),status=VALUES(status)
+    `, [id,donorName,donorEmail,donorPhone,type,date,estimatedDeliveryDate,status]);
     await pool.execute("DELETE FROM pledge_items WHERE pledge_id=?", [id]);
     for (const it of (Array.isArray(b.pledgedItems)?b.pledgedItems:[])) {
       await pool.execute(
         "INSERT INTO pledge_items (pledge_id,item_id,item_name,quantity) VALUES (?,?,?,?)",
         [id, sanitize(it.itemId,60), sanitize(it.name,200), Math.max(0,parseInt(it.quantity)||0)]);
     }
-    // Return full list (matches old JSON server behaviour)
-    const pledges = await q("SELECT * FROM pledges ORDER BY created_at DESC");
-    const result  = [];
-    for (const p of pledges) {
-      const items = await q("SELECT * FROM pledge_items WHERE pledge_id=?", [p.id]);
-      result.push({
-        id:p.id, donorName:p.donor_name, donorEmail:p.donor_email, donorPhone:p.donor_phone,
-        type:p.type, date:p.date, status:p.status,
-        pledgedItems: items.map(it => ({ itemId:it.item_id, name:it.item_name, quantity:it.quantity })),
-      });
-    }
-    res.json(result);
+    res.json(await allInKindPledges());
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -401,14 +563,14 @@ app.put("/api/pledges/:id/status", async (req, res) => {
     const status = whitelist(req.body?.status, PLEDGE_STATUSES, null);
     if (!status) return res.status(400).json({ error: "invalid status" });
     await pool.execute("UPDATE pledges SET status=? WHERE id=?", [status, req.params.id]);
-    res.json({ id: req.params.id, status });
+    res.json(await allInKindPledges());
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.delete("/api/pledges/:id", async (req, res) => {
   try {
     await pool.execute("DELETE FROM pledges WHERE id=?", [req.params.id]);
-    res.json({ deleted: req.params.id });
+    res.json(await allInKindPledges());
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -663,8 +825,14 @@ async function allMedPledges() {
   for (const p of pledges) {
     const items = await q("SELECT * FROM medicine_pledge_items WHERE pledge_id=?", [p.id]);
     result.push({
-      id: p.id, donorName: p.donor_name, donorPhone: p.donor_phone, donorEmail: p.donor_email,
-      date: p.date, status: p.status, notes: p.notes,
+      id:                    p.id,
+      donorName:             p.donor_name,
+      donorPhone:            p.donor_phone,
+      donorEmail:            p.donor_email,
+      date:                  p.date,
+      estimatedDeliveryDate: p.estimated_delivery_date || "",
+      status:                p.status,
+      notes:                 p.notes,
       items: items.map(it => ({ medicineId: it.medicine_id, medicineName: it.medicine_name, quantity: it.quantity })),
     });
   }
@@ -678,16 +846,17 @@ app.get("/api/medicine_pledges", async (_req, res) => {
 app.post("/api/medicine_pledges", async (req, res) => {
   try {
     const b = req.body;
-    const donorName  = sanitize(b.donorName, 120);
-    const donorPhone = sanitizePhone(b.donorPhone);
-    const donorEmail = sanitize(b.donorEmail, 120);
+    const donorName             = sanitize(b.donorName, 120);
+    const donorPhone            = sanitizePhone(b.donorPhone);
+    const donorEmail            = sanitize(b.donorEmail, 120);
+    const estimatedDeliveryDate = sanitize(b.estimatedDeliveryDate, 80);
     if (!donorName) return res.status(400).json({ error: "donorName is required" });
     if (!donorPhone && !donorEmail) return res.status(400).json({ error: "phone or email required" });
     const id = sanitize(b.id, 40) || `MED-${Date.now()}`;
     await pool.execute(`
-      INSERT INTO medicine_pledges (id,donor_name,donor_phone,donor_email,date,status,notes)
-      VALUES (?,?,?,?,?,?,?)
-    `, [id,donorName,donorPhone,donorEmail,sanitize(b.date,80),
+      INSERT INTO medicine_pledges (id,donor_name,donor_phone,donor_email,date,estimated_delivery_date,status,notes)
+      VALUES (?,?,?,?,?,?,?,?)
+    `, [id,donorName,donorPhone,donorEmail,sanitize(b.date,80),estimatedDeliveryDate,
         whitelist(b.status,["pledged","received","cancelled"],"pledged"),sanitize(b.notes,500)]);
     for (const it of (Array.isArray(b.items)?b.items:[])) {
       await pool.execute(
@@ -774,8 +943,15 @@ async function allSuppliesPledges() {
   for (const p of pledges) {
     const items = await q("SELECT * FROM supplies_pledge_items WHERE pledge_id=?", [p.id]);
     result.push({
-      id: p.id, donorName: p.donor_name, donorPhone: p.donor_phone, donorEmail: p.donor_email,
-      categoryId: p.category_id, date: p.date, status: p.status, notes: p.notes,
+      id:                    p.id,
+      donorName:             p.donor_name,
+      donorPhone:            p.donor_phone,
+      donorEmail:            p.donor_email,
+      categoryId:            p.category_id,
+      date:                  p.date,
+      estimatedDeliveryDate: p.estimated_delivery_date || "",
+      status:                p.status,
+      notes:                 p.notes,
       items: items.map(it => ({ itemId:it.item_id, itemName:it.item_name, quantity:it.quantity, custom:it.custom })),
     });
   }
@@ -789,16 +965,17 @@ app.get("/api/supplies_pledges", async (_req, res) => {
 app.post("/api/supplies_pledges", async (req, res) => {
   try {
     const b = req.body;
-    const donorName  = sanitize(b.donorName, 120);
-    const donorPhone = sanitizePhone(b.donorPhone);
-    const donorEmail = sanitize(b.donorEmail, 120);
+    const donorName             = sanitize(b.donorName, 120);
+    const donorPhone            = sanitizePhone(b.donorPhone);
+    const donorEmail            = sanitize(b.donorEmail, 120);
+    const estimatedDeliveryDate = sanitize(b.estimatedDeliveryDate, 80);
     if (!donorName) return res.status(400).json({ error: "donorName is required" });
     if (!donorPhone && !donorEmail) return res.status(400).json({ error: "phone or email required" });
     const id = sanitize(b.id, 40) || `SUP-${Date.now()}`;
     await pool.execute(`
-      INSERT INTO supplies_pledges (id,donor_name,donor_phone,donor_email,category_id,date,status,notes)
-      VALUES (?,?,?,?,?,?,?,?)
-    `, [id,donorName,donorPhone,donorEmail,sanitize(b.categoryId,40),sanitize(b.date,80),
+      INSERT INTO supplies_pledges (id,donor_name,donor_phone,donor_email,category_id,date,estimated_delivery_date,status,notes)
+      VALUES (?,?,?,?,?,?,?,?,?)
+    `, [id,donorName,donorPhone,donorEmail,sanitize(b.categoryId,40),sanitize(b.date,80),estimatedDeliveryDate,
         whitelist(b.status,PLEDGE_STATUSES,"pledged"),sanitize(b.notes,500)]);
     for (const it of (Array.isArray(b.items)?b.items:[])) {
       await pool.execute(
@@ -1044,13 +1221,399 @@ app.delete("/api/news/:id", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ─── BANK ACCOUNTS & SITE SETTINGS (MySQL-Backed) ────────────────────────────
+
+const dataDir = path.join(__dirname, "data");
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+const settingsPath = path.join(dataDir, "site_settings.json");
+
+const DEFAULT_SETTINGS = {
+  bankAccounts: [
+    {
+      id: "bank_cbe",
+      bank: { am: "የኢትዮጵያ ንግድ ባንክ", en: "Commercial Bank of Ethiopia (CBE)" },
+      accountNumber: "1000275107518",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      logo: "",
+      sortOrder: 0,
+      isActive: true,
+    },
+    {
+      id: "bank_abyssinia",
+      bank: { am: "አቢሲንያ ባንክ", en: "Bank of Abyssinia" },
+      accountNumber: "77984852",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      logo: "",
+      sortOrder: 1,
+      isActive: true,
+    },
+    {
+      id: "bank_awash",
+      bank: { am: "አዋሽ ባንክ", en: "Awash Bank" },
+      accountNumber: "01303572131300",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      logo: "",
+      sortOrder: 2,
+      isActive: true,
+    },
+    {
+      id: "bank_bunna",
+      bank: { am: "ቡና ባንክ", en: "Bunna Bank" },
+      accountNumber: "2919601000145",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      logo: "",
+      sortOrder: 3,
+      isActive: true,
+    },
+    {
+      id: "bank_sinqee",
+      bank: { am: "ስንቄ ባንክ", en: "Sinquee Bank" },
+      accountNumber: "1106177681225",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      logo: "",
+      sortOrder: 4,
+      isActive: true,
+    },
+    {
+      id: "bank_telebirr",
+      bank: { am: "ቴሌብር (ሞባይል ገንዘብ)", en: "Telebirr (Mobile Money)" },
+      accountNumber: "0911004903",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር (ሚኪያስ ለገሰ)",
+      logo: "",
+      sortOrder: 5,
+      isActive: true,
+    },
+  ],
+  social: {
+    telegram: "https://t.me/Selihommentallyill",
+    facebook: "https://facebook.com/SelihomSupport",
+    tiktok: "https://tiktok.com/@selihomcharity",
+    youtube: "https://youtube.com/@selihomcharity",
+    instagram: "",
+    linkedin: "",
+  },
+  contact: {
+    phones: ["+251911004903", "+251953905050", "0118195444", "0904440157"],
+    email: "selihomc@gmail.com",
+    address: {
+      am: "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስቲያን ወደ ፍተሻ በሚወስደው መንገድ 300 ሜትር ዝቅ ብሎ፣ አዲስ አበባ",
+      en: "Near Entoto St. Raguel & Elias Church, 300 meters down on the road towards Fetesha, Addis Ababa, Ethiopia",
+    },
+  },
+  registration: {
+    number: "1113/2019",
+    date: "30/02/2011 ዓ.ም (Oct 30, 2018)",
+    agency: {
+      am: "የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ",
+      en: "Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations",
+    },
+  },
+  motto: {
+    am: "ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!",
+    en: "Kind hearts excel beautiful faces!",
+  },
+};
+
+// GET /api/bank_accounts
+app.get("/api/bank_accounts", async (_req, res) => {
+  try {
+    let rows = await q("SELECT * FROM bank_accounts WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC");
+    if (rows.length === 0) {
+      for (let i = 0; i < DEFAULT_SETTINGS.bankAccounts.length; i++) {
+        const b = DEFAULT_SETTINGS.bankAccounts[i];
+        const bid = `bank_${i + 1}`;
+        await q(
+          `INSERT IGNORE INTO bank_accounts (id, bank_name_en, bank_name_am, account_number, account_name, sort_order, is_active)
+           VALUES (?, ?, ?, ?, ?, ?, 1)`,
+          [bid, b.bank.en, b.bank.am, b.accountNumber, b.accountName, i]
+        );
+      }
+      rows = await q("SELECT * FROM bank_accounts WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC");
+    }
+    res.json(rows.map(rowToBankAccount).filter(Boolean));
+  } catch (err) {
+    res.json(DEFAULT_SETTINGS.bankAccounts);
+  }
+});
+
+// POST /api/bank_accounts
+app.post("/api/bank_accounts", async (req, res) => {
+  try {
+    const b = req.body || {};
+    const id = b.id || `bank_${Date.now()}`;
+    const nameEn = b.bank?.en || b.bankNameEn || (typeof b.bank === "string" ? b.bank : "");
+    const nameAm = b.bank?.am || b.bankNameAm || "";
+    const accNum = b.accountNumber || "";
+    const accName = b.accountName || "";
+    const sortOrder = b.sortOrder != null ? parseInt(b.sortOrder, 10) : 0;
+
+    await q(
+      `INSERT INTO bank_accounts (id, bank_name_en, bank_name_am, account_number, account_name, sort_order, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, 1)
+       ON DUPLICATE KEY UPDATE
+         bank_name_en = VALUES(bank_name_en),
+         bank_name_am = VALUES(bank_name_am),
+         account_number = VALUES(account_number),
+         account_name = VALUES(account_name),
+         sort_order = VALUES(sort_order)`,
+      [id, sanitize(nameEn, 120), sanitize(nameAm, 120), sanitize(accNum, 80), sanitize(accName, 200), sortOrder]
+    );
+
+    const rows = await q("SELECT * FROM bank_accounts WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC");
+    res.json(rows.map(rowToBankAccount).filter(Boolean));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/bank_accounts/:id
+app.delete("/api/bank_accounts/:id", async (req, res) => {
+  try {
+    await q("DELETE FROM bank_accounts WHERE id=?", [req.params.id]);
+    const rows = await q("SELECT * FROM bank_accounts WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC");
+    res.json(rows.map(rowToBankAccount).filter(Boolean));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/settings
+app.get("/api/settings", async (_req, res) => {
+  try {
+    let settingRow = await q1("SELECT * FROM site_settings WHERE setting_key = 'global' LIMIT 1");
+    if (!settingRow) {
+      await q(
+        `INSERT IGNORE INTO site_settings (
+          setting_key, org_name_en, org_name_am, motto_en, motto_am,
+          phones, email, address_en, address_am,
+          registration_number, registration_date, registration_agency_en, registration_agency_am,
+          telegram_url, facebook_url, tiktok_url, youtube_url, instagram_url, linkedin_url
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          "global",
+          "Selihom Mentally Ill People Support Association",
+          "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+          DEFAULT_SETTINGS.motto.en,
+          DEFAULT_SETTINGS.motto.am,
+          JSON.stringify(DEFAULT_SETTINGS.contact.phones),
+          DEFAULT_SETTINGS.contact.email,
+          DEFAULT_SETTINGS.contact.address.en,
+          DEFAULT_SETTINGS.contact.address.am,
+          DEFAULT_SETTINGS.registration.number,
+          DEFAULT_SETTINGS.registration.date,
+          DEFAULT_SETTINGS.registration.agency.en,
+          DEFAULT_SETTINGS.registration.agency.am,
+          DEFAULT_SETTINGS.social.telegram,
+          DEFAULT_SETTINGS.social.facebook,
+          DEFAULT_SETTINGS.social.tiktok,
+          DEFAULT_SETTINGS.social.youtube,
+          "",
+          "",
+        ]
+      );
+      settingRow = await q1("SELECT * FROM site_settings WHERE setting_key = 'global' LIMIT 1");
+    }
+
+    let bankRows = await q("SELECT * FROM bank_accounts WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC");
+    if (bankRows.length === 0) {
+      for (let i = 0; i < DEFAULT_SETTINGS.bankAccounts.length; i++) {
+        const b = DEFAULT_SETTINGS.bankAccounts[i];
+        const bid = `bank_${i + 1}`;
+        await q(
+          `INSERT IGNORE INTO bank_accounts (id, bank_name_en, bank_name_am, account_number, account_name, sort_order, is_active)
+           VALUES (?, ?, ?, ?, ?, ?, 1)`,
+          [bid, b.bank.en, b.bank.am, b.accountNumber, b.accountName, i]
+        );
+      }
+      bankRows = await q("SELECT * FROM bank_accounts WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC");
+    }
+
+    const payload = rowToSiteSettings(settingRow, bankRows);
+    try { fs.writeFileSync(settingsPath, JSON.stringify(payload, null, 2), "utf-8"); } catch {}
+    return res.json(payload);
+  } catch (err) {
+    if (fs.existsSync(settingsPath)) {
+      try {
+        return res.json(JSON.parse(fs.readFileSync(settingsPath, "utf-8")));
+      } catch {}
+    }
+    return res.json(DEFAULT_SETTINGS);
+  }
+});
+
+// POST /api/settings
+app.post("/api/settings", async (req, res) => {
+  try {
+    const payload = req.body || {};
+    const bankAccounts = Array.isArray(payload.bankAccounts) ? payload.bankAccounts : [];
+    const social = payload.social || {};
+    const contact = payload.contact || {};
+    const address = contact.address || {};
+    const reg = payload.registration || {};
+    const agency = reg.agency || {};
+    const motto = payload.motto || {};
+    const phones = Array.isArray(contact.phones) ? contact.phones : (contact.phone ? [contact.phone] : []);
+
+    // Update site_settings table
+    await q(
+      `INSERT INTO site_settings (
+        setting_key, motto_en, motto_am,
+        phones, email, address_en, address_am,
+        registration_number, registration_date, registration_agency_en, registration_agency_am,
+        telegram_url, facebook_url, tiktok_url, youtube_url, instagram_url, linkedin_url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        motto_en = VALUES(motto_en),
+        motto_am = VALUES(motto_am),
+        phones = VALUES(phones),
+        email = VALUES(email),
+        address_en = VALUES(address_en),
+        address_am = VALUES(address_am),
+        registration_number = VALUES(registration_number),
+        registration_date = VALUES(registration_date),
+        registration_agency_en = VALUES(registration_agency_en),
+        registration_agency_am = VALUES(registration_agency_am),
+        telegram_url = VALUES(telegram_url),
+        facebook_url = VALUES(facebook_url),
+        tiktok_url = VALUES(tiktok_url),
+        youtube_url = VALUES(youtube_url),
+        instagram_url = VALUES(instagram_url),
+        linkedin_url = VALUES(linkedin_url)`,
+      [
+        "global",
+        sanitize(motto.en || DEFAULT_SETTINGS.motto.en, 255),
+        sanitize(motto.am || DEFAULT_SETTINGS.motto.am, 255),
+        JSON.stringify(phones.map(p => sanitizePhone(p)).filter(Boolean)),
+        sanitize(contact.email || "selihome@gmail.com", 120),
+        sanitize(address.en || "", 1000),
+        sanitize(address.am || "", 1000),
+        sanitize(reg.number || "1113/2019", 80),
+        sanitize(reg.date || "Feb 03, 2020", 80),
+        sanitize(agency.en || "", 255),
+        sanitize(agency.am || "", 255),
+        sanitize(social.telegram || "", 255),
+        sanitize(social.facebook || "", 255),
+        sanitize(social.tiktok || "", 255),
+        sanitize(social.youtube || "", 255),
+        sanitize(social.instagram || "", 255),
+        sanitize(social.linkedin || "", 255),
+      ]
+    );
+
+    // Sync bank_accounts table
+    if (bankAccounts.length > 0) {
+      await q("DELETE FROM bank_accounts");
+      for (let i = 0; i < bankAccounts.length; i++) {
+        const b = bankAccounts[i];
+        const bid = b.id || `bank_${Date.now()}_${i}`;
+        const nameEn = b.bank?.en || b.bankNameEn || (typeof b.bank === "string" ? b.bank : "");
+        const nameAm = b.bank?.am || b.bankNameAm || "";
+        const accNum = b.accountNumber || "";
+        const accName = b.accountName || "";
+        const logo = b.logo || "";
+        if (accNum) {
+          await q(
+            `INSERT INTO bank_accounts (id, bank_name_en, bank_name_am, account_number, account_name, logo, sort_order, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 1)`,
+            [bid, sanitize(nameEn, 120), sanitize(nameAm, 120), sanitize(accNum, 80), sanitize(accName, 200), sanitize(logo, 255), i]
+          );
+        }
+      }
+    }
+
+    try { fs.writeFileSync(settingsPath, JSON.stringify(payload, null, 2), "utf-8"); } catch {}
+    res.json(payload);
+  } catch (err) {
+    console.error("Save settings error:", err);
+    try {
+      fs.writeFileSync(settingsPath, JSON.stringify(req.body, null, 2), "utf-8");
+      res.json(req.body);
+    } catch {
+      res.status(500).json({ error: err.message });
+    }
+  }
+});
+
+// POST /api/settings/reset
+app.post("/api/settings/reset", async (_req, res) => {
+  try {
+    await q(
+      `INSERT INTO site_settings (
+        setting_key, org_name_en, org_name_am, motto_en, motto_am,
+        phones, email, address_en, address_am,
+        registration_number, registration_date, registration_agency_en, registration_agency_am,
+        telegram_url, facebook_url, tiktok_url, youtube_url, instagram_url, linkedin_url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        org_name_en = VALUES(org_name_en),
+        org_name_am = VALUES(org_name_am),
+        motto_en = VALUES(motto_en),
+        motto_am = VALUES(motto_am),
+        phones = VALUES(phones),
+        email = VALUES(email),
+        address_en = VALUES(address_en),
+        address_am = VALUES(address_am),
+        registration_number = VALUES(registration_number),
+        registration_date = VALUES(registration_date),
+        registration_agency_en = VALUES(registration_agency_en),
+        registration_agency_am = VALUES(registration_agency_am),
+        telegram_url = VALUES(telegram_url),
+        facebook_url = VALUES(facebook_url),
+        tiktok_url = VALUES(tiktok_url),
+        youtube_url = VALUES(youtube_url),
+        instagram_url = VALUES(instagram_url),
+        linkedin_url = VALUES(linkedin_url)`,
+      [
+        "global",
+        "Selihom Mentally Ill People Support Association",
+        "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+        DEFAULT_SETTINGS.motto.en,
+        DEFAULT_SETTINGS.motto.am,
+        JSON.stringify(DEFAULT_SETTINGS.contact.phones),
+        DEFAULT_SETTINGS.contact.email,
+        DEFAULT_SETTINGS.contact.address.en,
+        DEFAULT_SETTINGS.contact.address.am,
+        DEFAULT_SETTINGS.registration.number,
+        DEFAULT_SETTINGS.registration.date,
+        DEFAULT_SETTINGS.registration.agency.en,
+        DEFAULT_SETTINGS.registration.agency.am,
+        DEFAULT_SETTINGS.social.telegram,
+        DEFAULT_SETTINGS.social.facebook,
+        DEFAULT_SETTINGS.social.tiktok,
+        DEFAULT_SETTINGS.social.youtube,
+        "",
+        "",
+      ]
+    );
+
+    await q("DELETE FROM bank_accounts");
+    for (let i = 0; i < DEFAULT_SETTINGS.bankAccounts.length; i++) {
+      const b = DEFAULT_SETTINGS.bankAccounts[i];
+      const bid = `bank_${i + 1}`;
+      await q(
+        `INSERT INTO bank_accounts (id, bank_name_en, bank_name_am, account_number, account_name, sort_order, is_active)
+         VALUES (?, ?, ?, ?, ?, ?, 1)`,
+        [bid, b.bank.en, b.bank.am, b.accountNumber, b.accountName, i]
+      );
+    }
+
+    try { fs.writeFileSync(settingsPath, JSON.stringify(DEFAULT_SETTINGS, null, 2), "utf-8"); } catch {}
+    res.json(DEFAULT_SETTINGS);
+  } catch (err) {
+    try {
+      fs.writeFileSync(settingsPath, JSON.stringify(DEFAULT_SETTINGS, null, 2), "utf-8");
+    } catch {}
+    res.json(DEFAULT_SETTINGS);
+  }
+});
+
 // ─── LEGACY FULL-DB EXPORT (admin uses this to download backup) ───────────────
 
 app.get(["/api/db","/api/db/download"], async (req, res) => {
   try {
     const [bookingRows, pledgeRows, volRows, needRows, slotRows, medRows,
            medPledgeRows, catRows, supPledgeRows, evtRows, volCatRows, newsRows,
-           apRow] = await Promise.all([
+           bankRows, settingRow, apRow] = await Promise.all([
       q("SELECT * FROM bookings ORDER BY created_at DESC"),
       q("SELECT * FROM pledges ORDER BY created_at DESC"),
       q("SELECT * FROM volunteers ORDER BY submitted_at DESC"),
@@ -1063,23 +1626,27 @@ app.get(["/api/db","/api/db/download"], async (req, res) => {
       q("SELECT * FROM event_pledges ORDER BY created_at DESC"),
       q("SELECT * FROM volunteer_categories ORDER BY sort_order"),
       q("SELECT * FROM news ORDER BY published_at DESC"),
+      q("SELECT * FROM bank_accounts ORDER BY sort_order ASC"),
+      q1("SELECT * FROM site_settings WHERE setting_key = 'global' LIMIT 1"),
       q1("SELECT * FROM admin_profile LIMIT 1"),
     ]);
     // Build full db shape
     const out = {
-      bookings:        bookingRows.map(rowToBooking),
-      pledges:         pledgeRows.map(r => ({id:r.id,donorName:r.donor_name,donorEmail:r.donor_email,donorPhone:r.donor_phone,type:r.type,date:r.date,status:r.status,pledgedItems:[]})),
-      volunteers:      volRows.map(rowToVolunteer),
-      inKindNeeds:     needRows.map(rowToNeed),
+      bookings:          bookingRows.map(rowToBooking),
+      pledges:           await allInKindPledges(),
+      volunteers:        volRows.map(rowToVolunteer),
+      inKindNeeds:       needRows.map(rowToNeed),
       availabilitySlots: slotRows.map(rowToSlot),
-      medicineItems:   medRows.map(rowToMed),
-      medicinePledges: await allMedPledges(),
-      supplyCategories:await allSupplyCategories(),
-      suppliesPledges: await allSuppliesPledges(),
-      eventPledges:    evtRows.map(rowToEvent),
-      volunteerRoles:  await allVolunteerRoles(),
-      news:            newsRows.map(rowToNews),
-      adminProfile:    apRow ? { name:apRow.name,email:apRow.email,role:apRow.role,phone:apRow.phone,username:apRow.username,passwordHash:apRow.password_hash } : null,
+      medicineItems:     medRows.map(rowToMed),
+      medicinePledges:   await allMedPledges(),
+      supplyCategories:  await allSupplyCategories(),
+      suppliesPledges:   await allSuppliesPledges(),
+      eventPledges:      evtRows.map(rowToEvent),
+      volunteerRoles:    await allVolunteerRoles(),
+      news:              newsRows.map(rowToNews),
+      bankAccounts:      bankRows.map(rowToBankAccount).filter(Boolean),
+      siteSettings:      rowToSiteSettings(settingRow, bankRows),
+      adminProfile:      apRow ? { name:apRow.name,email:apRow.email,role:apRow.role,phone:apRow.phone,username:apRow.username,passwordHash:apRow.password_hash } : null,
     };
     if (req.query.download==="true" || req.path.includes("download")) {
       res.setHeader("Content-Type","application/json");
@@ -1109,8 +1676,15 @@ app.get("*", (_req, res) => {
 });
 
 // ─── START ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+const isDirectRun = process.argv[1] && (
+  process.argv[1] === fileURLToPath(import.meta.url) ||
+  process.argv[1].endsWith("server.js")
+);
+
+if (isDirectRun) {
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
 
 export default app;

@@ -133,7 +133,7 @@ export default function GetInvolvedSection() {
     const areaMap: Record<string, VolunteerApplication["interestArea"]> = {
       "vcat-food": "kitchen",
       "vcat-medical": "medical",
-      "vcat-mental": "psychology",
+      "vcat-mental": "psychiatry",
       "vcat-education": "education",
     };
     const interestArea: VolunteerApplication["interestArea"] =

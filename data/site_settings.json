@@ -1,0 +1,109 @@
+{
+  "bankAccounts": [
+    {
+      "id": "bank_cbe",
+      "bank": {
+        "en": "Commercial Bank of Ethiopia (CBE)",
+        "am": "የኢትዮጵያ ንግድ ባንክ"
+      },
+      "accountNumber": "1000275107518",
+      "accountName": "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      "logo": "",
+      "sortOrder": 0,
+      "isActive": true
+    },
+    {
+      "id": "bank_abyssinia",
+      "bank": {
+        "en": "Bank of Abyssinia",
+        "am": "አቢሲንያ ባንክ"
+      },
+      "accountNumber": "77984852",
+      "accountName": "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      "logo": "",
+      "sortOrder": 1,
+      "isActive": true
+    },
+    {
+      "id": "bank_awash",
+      "bank": {
+        "en": "Awash Bank",
+        "am": "አዋሽ ባንክ"
+      },
+      "accountNumber": "01303572131300",
+      "accountName": "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      "logo": "",
+      "sortOrder": 2,
+      "isActive": true
+    },
+    {
+      "id": "bank_bunna",
+      "bank": {
+        "en": "Bunna Bank",
+        "am": "ቡና ባንክ"
+      },
+      "accountNumber": "2919601000145",
+      "accountName": "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      "logo": "",
+      "sortOrder": 3,
+      "isActive": true
+    },
+    {
+      "id": "bank_sinqee",
+      "bank": {
+        "en": "Sinquee Bank",
+        "am": "ስንቄ ባንክ"
+      },
+      "accountNumber": "1106177681225",
+      "accountName": "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      "logo": "",
+      "sortOrder": 4,
+      "isActive": true
+    },
+    {
+      "id": "bank_telebirr",
+      "bank": {
+        "en": "Telebirr (Mobile Money)",
+        "am": "ቴሌብር (ሞባይል ገንዘብ)"
+      },
+      "accountNumber": "0911004903",
+      "accountName": "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር (ሚኪያስ ለገሰ)",
+      "logo": "",
+      "sortOrder": 5,
+      "isActive": true
+    }
+  ],
+  "social": {
+    "telegram": "https://t.me/Selihommentallyill",
+    "facebook": "https://facebook.com/SelihomSupport",
+    "tiktok": "https://tiktok.com/@selihomcharity",
+    "youtube": "https://youtube.com/@selihomcharity",
+    "instagram": "",
+    "linkedin": ""
+  },
+  "contact": {
+    "phones": [
+      "+251911004903",
+      "+251953905050",
+      "0118195444",
+      "0904440157"
+    ],
+    "email": "selihomc@gmail.com",
+    "address": {
+      "en": "Near Entoto St. Raguel & Elias Church, 300 meters down on the road towards Fetesha, Addis Ababa, Ethiopia",
+      "am": "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስቲያን ወደ ፍተሻ በሚወስደው መንገድ 300 ሜትር ዝቅ ብሎ፣ አዲስ አበባ"
+    }
+  },
+  "registration": {
+    "number": "1113/2019",
+    "date": "30/02/2011 ዓ.ም (Oct 30, 2018)",
+    "agency": {
+      "en": "Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations",
+      "am": "የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ"
+    }
+  },
+  "motto": {
+    "en": "Kind hearts excel beautiful faces!",
+    "am": "ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!"
+  }
+}

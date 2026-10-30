@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
+    "test": "node tests/e2e_audit_test.js",
     "db:setup": "node -e \"require('dotenv').config(); const {execSync}=require('child_process'); const u=process.env.DB_USER||'root'; const p=process.env.DB_PASSWORD?'-p'+process.env.DB_PASSWORD:''; execSync('mysql -u '+u+' '+p+' < database/selihom_schema.sql',{stdio:'inherit'});\"",
     "db:seed": "node database/seed.js",
     "db:reset": "npm run db:setup && npm run db:seed"

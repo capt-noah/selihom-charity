@@ -216,7 +216,7 @@ export default function BookingSection() {
                   <Clock className="w-4 h-4 text-brand-yellow-400 shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-white block">{language === "am" ? "የስራ ሰዓት" : "Visiting Hours"}</strong>
-                    <span>{language === "am" ? "ሰኞ - ቅዳሜ፡ ጠዋቱ 9:00 - ቀኑ 5:00" : "Mon - Sat: 9:00 AM - 5:00 PM"}</span>
+                    <span>{language === "am" ? "ከሰኞ እስከ እሁድ፡ ከጠዋቱ 1:30 - ማታ 12:00" : "Mon - Sun: 7:30 AM - 6:00 PM"}</span>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">

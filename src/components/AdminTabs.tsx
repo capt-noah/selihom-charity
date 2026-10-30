@@ -15,7 +15,9 @@ import {
   Loader2, AlertCircle, CheckCircle2, Eye, EyeOff,
   RefreshCw, Globe, ChevronDown, ChevronUp,
   Search, Gift, Award, Upload, Image as ImageIcon,
-  Copy, ExternalLink, FileText,
+  Copy, ExternalLink, FileText, Settings, Building,
+  Phone, Mail, Share2, Send, Smartphone, Info,
+  ArrowUp, ArrowDown, RotateCcw,
 } from "lucide-react";
 import {
   getMedicineItems,    saveMedicineItem,    deleteMedicineItem,    MedicineItem,
@@ -25,6 +27,7 @@ import {
   getEventPledges,     updateEventPledgeStatus,    deleteEventPledge,  EventPledge,
   getVolunteerRoles,   saveVolunteerCategory,      deleteVolunteerCategory, VolunteerCategory,
   getNews,             saveArticle,         deleteArticle,         publishArticle, NewsArticle,
+  getSiteSettings,     saveSiteSettings,    resetSiteSettings,     SiteSettings, BankAccount,
   uploadImageFiles,    resolveImagePath,
 } from "../utils/adminStorage";
 import { useConfirmation } from "./ConfirmationModal";
@@ -88,7 +91,7 @@ function SectionHeader({ icon: Icon, title, subtitle, onAdd, addLabel, onRefresh
 // Phase 6A — Admin Medicine Tab
 // ══════════════════════════════════════════════════════════════════════════════
 
-export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: string; onPledgeTypeChange?: (type: "inkind" | "medicine" | "supplies") => void }) {
+export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: string; onPledgeTypeChange?: (type: "inkind" | "medicine" | "supplies" | "delivered_donors") => void }) {
   const { confirm, modal } = useConfirmation();
   const [medicines, setMedicines]     = useState<MedicineItem[]>([]);
   const [pledges,   setPledges]       = useState<MedicinePledge[]>([]);
@@ -115,15 +118,18 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
   const openAdd  = () => { setEditing(null); setForm({ name:"", monthlyQty:0, unitPrice:0, totalMonthly:0, patientsHelped:0, urgency:"Medium", description:{en:"",am:""} }); setShowForm(true); };
 
   const handleSave = async () => {
-    if (!form.name) return;
+    if (!form.name || !form.name.trim()) return;
+    const mQty = Number(form.monthlyQty) || 0;
+    const uPrice = Number(form.unitPrice) || 0;
+    const totM = Number(form.totalMonthly) || (mQty * uPrice);
     const item: MedicineItem = {
       id:             editing?.id || `med-${Date.now()}`,
-      name:           form.name!,
-      monthlyQty:     form.monthlyQty || 0,
-      unitPrice:      form.unitPrice  || 0,
-      totalMonthly:   form.totalMonthly || 0,
-      patientsHelped: form.patientsHelped || 0,
-      urgency:        form.urgency as MedicineItem["urgency"],
+      name:           form.name.trim(),
+      monthlyQty:     mQty,
+      unitPrice:      uPrice,
+      totalMonthly:   totM,
+      patientsHelped: Number(form.patientsHelped) || 0,
+      urgency:        (form.urgency as MedicineItem["urgency"]) || "Medium",
       description:    form.description || { en: "", am: "" },
     };
     await saveMedicineItem(item);
@@ -133,6 +139,12 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
   const del = async (id: string, name: string) => {
     if (!(await confirm(`Delete "${name}"?`))) return;
     await deleteMedicineItem(id); load();
+  };
+
+  const isMedicinePledgeOverdue = (p: MedicinePledge) => {
+    if ((p.status || "pledged") !== "pledged" || !p.estimatedDeliveryDate) return false;
+    const estTs = new Date(p.estimatedDeliveryDate).setHours(23, 59, 59, 999);
+    return !isNaN(estTs) && estTs < Date.now();
   };
 
   const visibleMedicines = medicines.filter((med) => {
@@ -145,7 +157,13 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
     const term = searchQuery.toLowerCase();
     const matchesSearch = !searchQuery ||
       `${pledge.id} ${pledge.donorName || ""} ${pledge.donorPhone || ""} ${pledge.donorEmail || ""} ${pledge.items?.map(i => i.medicineName).join(" ") || ""}`.toLowerCase().includes(term);
-    const matchesStatus = pledgeStatus === "all" || pledge.status === pledgeStatus;
+    const isOverdue = isMedicinePledgeOverdue(pledge);
+    const matchesStatus =
+      pledgeStatus === "all"
+        ? true
+        : pledgeStatus === "overdue"
+        ? isOverdue
+        : (pledge.status || "pledged") === pledgeStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -167,7 +185,7 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
               className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
             >
               <Gift className="w-4 h-4" />
-              <span>{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</span>
+              <span>{language === "am" ? "የዓይነት ቃልኪዳን" : "In-Kind"}</span>
             </button>
 
             <button
@@ -186,6 +204,15 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
             >
               <Package className="w-4 h-4" />
               <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("delivered_donors")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-brand-sky-50 text-brand-sky-800 border border-brand-sky-200 hover:bg-brand-sky-100"
+            >
+              <Award className="w-4 h-4 text-amber-500" />
+              <span>{language === "am" ? "⭐ ታማኝ ደጋፊዎች" : "⭐ Delivered Donors"}</span>
             </button>
           </div>
           <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
@@ -222,6 +249,7 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
               {subTab === "pledges" && (
                 <>
                   <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
+                  <option value="overdue">{language === "am" ? "ጊዜው ያለፈበት" : "Overdue"}</option>
                   <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
                   <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
                 </>
@@ -310,31 +338,71 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
       {/* Pledges list */}
       {subTab === "pledges" && (
         <div className="space-y-3">
-          {visiblePledges.map(p => (
-            <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex items-start justify-between gap-4">
-              <div className="space-y-1 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-xs font-black text-brand-sky-700 bg-brand-sky-50 border border-brand-sky-200 px-2 py-0.5 rounded-md">{p.id}</span>
-                  <StatusBadge status={p.status} map={BOOKING_STATUS_COLORS} />
+          {visiblePledges.map(p => {
+            const isOverdue = isMedicinePledgeOverdue(p);
+            return (
+              <div key={p.id} className={`bg-white border rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start justify-between gap-4 transition-all ${isOverdue ? "border-red-300 ring-1 ring-red-200 bg-red-50/20" : "border-gray-100"}`}>
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-black text-brand-sky-700 bg-brand-sky-50 border border-brand-sky-200 px-2 py-0.5 rounded-md">{p.id}</span>
+                    <StatusBadge status={p.status} map={BOOKING_STATUS_COLORS} />
+                    {isOverdue && (
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                        ⚠️ {language === "am" ? "ጊዜው ያለፈበት" : "Overdue"}
+                      </span>
+                    )}
+                  </div>
+                  <p className="font-serif font-bold text-sm text-brand-sky-950">{p.donorName}</p>
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 font-medium">
+                    <span>{p.donorPhone || p.donorEmail}</span>
+                    <span className="text-gray-300">•</span>
+                    <span>Pledged: {p.date}</span>
+                    {p.estimatedDeliveryDate && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <span className={isOverdue ? "text-red-700 font-bold bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200" : "text-brand-sky-800 font-semibold bg-brand-sky-50 px-1.5 py-0.5 rounded-md border border-brand-sky-100"}>
+                          📅 {language === "am" ? "የተገመተበት ቀን:" : "Est. Delivery:"} {p.estimatedDeliveryDate}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+                    {p.items.map(i => `${i.medicineName} ×${i.quantity}`).join(", ")}
+                  </p>
+                  {/* Quick Contact Shortcuts */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {p.donorPhone && (
+                      <a href={`tel:${p.donorPhone}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 transition-colors">
+                        <Phone className="w-3 h-3" /> {language === "am" ? "ደውል" : "Call"}
+                      </a>
+                    )}
+                    {p.donorPhone && (
+                      <a href={`https://wa.me/${p.donorPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-bold text-green-700 hover:text-green-800 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg border border-green-200 transition-colors">
+                        <span>💬 WhatsApp</span>
+                      </a>
+                    )}
+                    {p.donorEmail && (
+                      <a href={`mailto:${p.donorEmail}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-sky-700 hover:text-brand-sky-800 bg-brand-sky-50 hover:bg-brand-sky-100 px-2.5 py-1 rounded-lg border border-brand-sky-200 transition-colors">
+                        <Mail className="w-3 h-3" /> {language === "am" ? "ኢሜይል" : "Email"}
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <p className="font-serif font-bold text-sm text-brand-sky-950">{p.donorName}</p>
-                <p className="text-[11px] text-gray-500">{p.donorPhone || p.donorEmail} · {p.date}</p>
-                <p className="text-[11px] text-gray-700">{p.items.map(i => `${i.medicineName} ×${i.quantity}`).join(", ")}</p>
-              </div>
-              <div className="flex flex-col gap-1.5 shrink-0">
-                {["pledged","received","cancelled"].map(s => (
-                  <button key={s} onClick={async () => { await updateMedicinePledgeStatus(p.id, s as any); load(); }}
-                    className={`px-2.5 py-1 rounded-lg text-[9px] font-bold cursor-pointer transition-colors ${p.status===s?"bg-brand-sky-400 text-white":"bg-gray-50 text-gray-600 hover:bg-brand-sky-50 border border-gray-200"}`}>
-                    {s}
+                <div className="flex sm:flex-col gap-1.5 shrink-0 self-end sm:self-center">
+                  {["pledged","received","cancelled"].map(s => (
+                    <button key={s} onClick={async () => { await updateMedicinePledgeStatus(p.id, s as any); load(); }}
+                      className={`px-2.5 py-1 rounded-lg text-[9px] font-bold cursor-pointer transition-colors ${p.status===s?"bg-brand-sky-400 text-white":"bg-gray-50 text-gray-600 hover:bg-brand-sky-50 border border-gray-200"}`}>
+                      {s}
+                    </button>
+                  ))}
+                  <button onClick={async () => { if(await confirm(`Delete "${p.id}"?`)) { await deleteMedicinePledge(p.id); load(); } }}
+                    className="p-1 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg cursor-pointer border border-red-200 flex items-center justify-center transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
-                ))}
-                <button onClick={async () => { if(await confirm(`Delete "${p.id}"?`)) { await deleteMedicinePledge(p.id); load(); } }}
-                  className="p-1 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg cursor-pointer border border-red-200 flex items-center justify-center transition-colors">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {visiblePledges.length === 0 && <p className="text-center text-xs text-gray-400 py-10">No medicine pledges found.</p>}
         </div>
       )}
@@ -407,7 +475,7 @@ export function AdminMedicineTab({ language, onPledgeTypeChange }: { language: s
 // Phase 6B — Admin Supplies Tab
 // ══════════════════════════════════════════════════════════════════════════════
 
-export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: string; onPledgeTypeChange?: (type: "inkind" | "medicine" | "supplies") => void }) {
+export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: string; onPledgeTypeChange?: (type: "inkind" | "medicine" | "supplies" | "delivered_donors") => void }) {
   const { confirm, modal } = useConfirmation();
   const [categories, setCategories] = useState<SupplyCategory[]>([]);
   const [pledges,    setPledges]    = useState<any[]>([]);
@@ -423,10 +491,13 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
 
   const load = async () => {
     setLoading(true);
-    const [c, p] = await Promise.all([getSupplyCategories(), (await import("../utils/adminStorage")).getSuppliesPledges()]);
+    const [c, p] = await Promise.all([getSupplyCategories(), getSuppliesPledges()]);
     setCategories(c); setPledges(p); setLoading(false);
   };
   useEffect(() => { load(); }, []);
+
+  const openAddCat  = () => { setCatForm({ open:true, editing:null }); setCf({ nameEn:"", nameAm:"", icon:"Package", color:"bg-brand-sky-400" }); };
+  const openEditCat = (cat: SupplyCategory) => { setCatForm({ open:true, editing:cat }); setCf({ nameEn:cat.name.en, nameAm:cat.name.am, icon:cat.icon, color:cat.color }); };
 
   const saveCat = async () => {
     if (!cf.nameEn.trim()) return;
@@ -443,34 +514,45 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
   };
 
   const delCat = async (id: string, name: string) => {
-    if (!(await confirm(`Delete "${name}"?`))) return;
+    if (!(await confirm(`Delete category "${name}" and all its items?`))) return;
     await deleteSupplyCategory(id); load();
+  };
+
+  const openAddItem  = (catId: string) => { setItemForm({ open:true, catId, editing:null }); setItf({ nameEn:"", nameAm:"", neededQtyEn:"", neededQtyAm:"", impactEn:"", impactAm:"", urgency:"Medium" }); };
+  const openEditItem = (catId: string, item: SupplyItem) => {
+    setItemForm({ open:true, catId, editing:item });
+    setItf({ nameEn:item.name.en, nameAm:item.name.am, neededQtyEn:item.neededQty.en, neededQtyAm:item.neededQty.am, impactEn:item.impactDesc.en, impactAm:item.impactDesc.am, urgency:item.urgency });
   };
 
   const saveItem = async () => {
     if (!itf.nameEn.trim()) return;
-    const cat = categories.find(c => c.id === itemForm.catId);
+    const cat = categories.find((c) => c.id === itemForm.catId);
     if (!cat) return;
     const newItem: SupplyItem = {
-      id:           itemForm.editing?.id || `itm-${Date.now()}`,
-      name:         { en: itf.nameEn.trim(), am: itf.nameAm.trim() },
-      neededQty:    { en: itf.neededQtyEn.trim(), am: itf.neededQtyAm.trim() },
-      impactDesc:   { en: itf.impactEn.trim(), am: itf.impactAm.trim() },
-      urgency:      itf.urgency,
+      id:          itemForm.editing?.id || `itm-${Date.now()}`,
+      name:        { en: itf.nameEn.trim(), am: itf.nameAm.trim() },
+      neededQty:   { en: itf.neededQtyEn.trim(), am: itf.neededQtyAm.trim() },
+      impactDesc:  { en: itf.impactEn.trim(), am: itf.impactAm.trim() },
+      urgency:     itf.urgency,
     };
     const updatedItems = itemForm.editing
-      ? cat.items.map((i: SupplyItem) => i.id === newItem.id ? newItem : i)
+      ? cat.items.map((i: SupplyItem) => (i.id === newItem.id ? newItem : i))
       : [...cat.items, newItem];
     await saveSupplyCategory({ ...cat, items: updatedItems });
     setItemForm({ open:false, catId:"", editing:null }); load();
   };
 
   const delItem = async (catId: string, itemId: string, name: string) => {
-    if (!(await confirm(`Delete "${name}"?`))) return;
-    const cat = categories.find(c => c.id === catId);
+    if (!(await confirm(`Delete item "${name}"?`))) return;
+    const cat = categories.find((c) => c.id === catId);
     if (!cat) return;
-    await saveSupplyCategory({ ...cat, items: cat.items.filter((i: SupplyItem) => i.id !== itemId) });
-    load();
+    await saveSupplyCategory({ ...cat, items: cat.items.filter((i) => i.id !== itemId) }); load();
+  };
+
+  const isSuppliesPledgeOverdue = (p: any) => {
+    if ((p.status || "pledged") !== "pledged" || !p.estimatedDeliveryDate) return false;
+    const estTs = new Date(p.estimatedDeliveryDate).setHours(23, 59, 59, 999);
+    return !isNaN(estTs) && estTs < Date.now();
   };
 
   const visibleCategories = categories.filter((cat) => {
@@ -486,8 +568,14 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
   const visiblePledges = pledges.filter((pledge) => {
     const term = searchQuery.toLowerCase();
     const matchesSearch = !searchQuery ||
-      `${pledge.id} ${pledge.donorName || ""} ${pledge.donorPhone || ""} ${pledge.donorEmail || ""} ${pledge.items?.map((i: any) => `${i.itemName || ""} ${i.custom || ""}`).join(" ") || ""}`.toLowerCase().includes(term);
-    const matchesStatus = pledgeStatus === "all" || pledge.status === pledgeStatus;
+      `${pledge.id} ${pledge.donorName || ""} ${pledge.donorPhone || ""} ${pledge.donorEmail || ""} ${pledge.items?.map((i: any) => i.itemName).join(" ") || ""}`.toLowerCase().includes(term);
+    const isOverdue = isSuppliesPledgeOverdue(pledge);
+    const matchesStatus =
+      pledgeStatus === "all"
+        ? true
+        : pledgeStatus === "overdue"
+        ? isOverdue
+        : (pledge.status || "pledged") === pledgeStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -503,7 +591,7 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
               className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
             >
               <Gift className="w-4 h-4" />
-              <span>{language === "am" ? "ዓይነት እቃ" : "In-Kind"}</span>
+              <span>{language === "am" ? "የዓይነት ቃልኪዳን" : "In-Kind"}</span>
             </button>
 
             <button
@@ -522,6 +610,15 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
             >
               <Package className="w-4 h-4" />
               <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onPledgeTypeChange?.("delivered_donors")}
+              className="px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-brand-sky-50 text-brand-sky-800 border border-brand-sky-200 hover:bg-brand-sky-100"
+            >
+              <Award className="w-4 h-4 text-amber-500" />
+              <span>{language === "am" ? "⭐ ታማኝ ደጋፊዎች" : "⭐ Delivered Donors"}</span>
             </button>
           </div>
           <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center xl:justify-end">
@@ -558,6 +655,7 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
               {subTab === "pledges" && (
                 <>
                   <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
+                  <option value="overdue">{language === "am" ? "ጊዜው ያለፈበት" : "Overdue"}</option>
                   <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
                   <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
                 </>
@@ -674,31 +772,71 @@ export function AdminSuppliesTab({ language, onPledgeTypeChange }: { language: s
 
       {subTab === "pledges" && (
         <div className="space-y-3">
-          {visiblePledges.map((p: any) => (
-            <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex items-start justify-between gap-4">
-              <div className="space-y-1 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-xs font-black text-brand-sky-700 bg-brand-sky-50 border border-brand-sky-200 px-2 py-0.5 rounded-md">{p.id}</span>
-                  <StatusBadge status={p.status} map={BOOKING_STATUS_COLORS} />
+          {visiblePledges.map((p: any) => {
+            const isOverdue = isSuppliesPledgeOverdue(p);
+            return (
+              <div key={p.id} className={`bg-white border rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start justify-between gap-4 transition-all ${isOverdue ? "border-red-300 ring-1 ring-red-200 bg-red-50/20" : "border-gray-100"}`}>
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-black text-brand-sky-700 bg-brand-sky-50 border border-brand-sky-200 px-2 py-0.5 rounded-md">{p.id}</span>
+                    <StatusBadge status={p.status} map={BOOKING_STATUS_COLORS} />
+                    {isOverdue && (
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                        ⚠️ {language === "am" ? "ጊዜው ያለፈበት" : "Overdue"}
+                      </span>
+                    )}
+                  </div>
+                  <p className="font-serif font-bold text-sm text-brand-sky-950">{p.donorName}</p>
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 font-medium">
+                    <span>{p.donorPhone || p.donorEmail}</span>
+                    <span className="text-gray-300">•</span>
+                    <span>Pledged: {p.date}</span>
+                    {p.estimatedDeliveryDate && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <span className={isOverdue ? "text-red-700 font-bold bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200" : "text-brand-sky-800 font-semibold bg-brand-sky-50 px-1.5 py-0.5 rounded-md border border-brand-sky-100"}>
+                          📅 {language === "am" ? "የተገመተበት ቀን:" : "Est. Delivery:"} {p.estimatedDeliveryDate}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+                    {p.items?.map((i: any) => `${i.itemName||i.custom} ×${i.quantity}`).join(", ")}
+                  </p>
+                  {/* Quick Contact Shortcuts */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {p.donorPhone && (
+                      <a href={`tel:${p.donorPhone}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 transition-colors">
+                        <Phone className="w-3 h-3" /> {language === "am" ? "ደውል" : "Call"}
+                      </a>
+                    )}
+                    {p.donorPhone && (
+                      <a href={`https://wa.me/${p.donorPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-bold text-green-700 hover:text-green-800 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg border border-green-200 transition-colors">
+                        <span>💬 WhatsApp</span>
+                      </a>
+                    )}
+                    {p.donorEmail && (
+                      <a href={`mailto:${p.donorEmail}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-sky-700 hover:text-brand-sky-800 bg-brand-sky-50 hover:bg-brand-sky-100 px-2.5 py-1 rounded-lg border border-brand-sky-200 transition-colors">
+                        <Mail className="w-3 h-3" /> {language === "am" ? "ኢሜይል" : "Email"}
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <p className="font-serif font-bold text-sm text-brand-sky-950">{p.donorName}</p>
-                <p className="text-[11px] text-gray-500">{p.donorPhone || p.donorEmail} · {p.date}</p>
-                <p className="text-[11px] text-gray-600">{p.items?.map((i: any) => `${i.itemName||i.custom} ×${i.quantity}`).join(", ")}</p>
-              </div>
-              <div className="flex flex-col gap-1.5 shrink-0">
-                {["pledged","received","cancelled"].map(s => (
-                  <button key={s} onClick={async () => { await updateSuppliesPledgeStatus(p.id, s as any); load(); }}
-                    className={`px-2.5 py-1 rounded-lg text-[9px] font-bold cursor-pointer ${p.status===s?"bg-brand-sky-400 text-white":"bg-gray-50 text-gray-600 hover:bg-brand-sky-50 border border-gray-200"}`}>
-                    {s}
+                <div className="flex sm:flex-col gap-1.5 shrink-0 self-end sm:self-center">
+                  {["pledged","received","cancelled"].map(s => (
+                    <button key={s} onClick={async () => { await updateSuppliesPledgeStatus(p.id, s as any); load(); }}
+                      className={`px-2.5 py-1 rounded-lg text-[9px] font-bold cursor-pointer transition-colors ${p.status===s?"bg-brand-sky-400 text-white":"bg-gray-50 text-gray-600 hover:bg-brand-sky-50 border border-gray-200"}`}>
+                      {s}
+                    </button>
+                  ))}
+                  <button onClick={async () => { if(await confirm(`Delete "${p.id}"?`)){await deleteSuppliesPledge(p.id);load();} }}
+                    className="p-1 bg-red-50 text-red-500 rounded-lg cursor-pointer border border-red-200 flex items-center justify-center transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
-                ))}
-                <button onClick={async () => { if(await confirm(`Delete "${p.id}"?`)){await deleteSuppliesPledge(p.id);load();} }}
-                  className="p-1 bg-red-50 text-red-500 rounded-lg cursor-pointer border border-red-200 flex items-center justify-center">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {visiblePledges.length===0 && <p className="text-center text-xs text-gray-400 py-10">No supplies pledges found.</p>}
         </div>
       )}
@@ -1625,3 +1763,1007 @@ export function AdminNewsTab({ language }: { language: string }) {
     </div>
   );
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Admin Settings Tab (Site Configuration: Banks, Social Media, Contact & Legal)
+// ══════════════════════════════════════════════════════════════════════════════
+
+export function AdminSettingsTab({ language }: { language: string }) {
+  const { confirm, modal } = useConfirmation();
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [activeSubSection, setActiveSubSection] = useState<"banks" | "social" | "contact">("banks");
+
+  // Bank edit/add modal state
+  const [editingBankIndex, setEditingBankIndex] = useState<number | null>(null);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [bankForm, setBankForm] = useState<BankAccount>({
+    bank: { en: "", am: "" },
+    accountNumber: "",
+    accountName: "",
+  });
+
+  const loadSettings = async () => {
+    setLoading(true);
+    try {
+      const data = await getSiteSettings();
+      setSettings(data);
+    } catch (err) {
+      console.error("Failed to load settings:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const handleSaveAll = async () => {
+    if (!settings) return;
+    setSaving(true);
+    try {
+      const updated = await saveSiteSettings(settings);
+      setSettings(updated);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3500);
+    } catch (err) {
+      console.error("Failed to save settings:", err);
+      alert("Failed to save settings. Please check server connection.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleResetDefaults = async () => {
+    const isOk = await confirm("Are you sure you want to reset all site settings (Bank accounts, Social links, Contact info) to factory defaults?");
+    if (!isOk) return;
+    setSaving(true);
+    try {
+      const def = await resetSiteSettings();
+      setSettings(def);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3500);
+    } catch (err) {
+      console.error("Failed to reset settings:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Bank operations
+  const openAddBank = () => {
+    setEditingBankIndex(null);
+    setBankForm({
+      bank: { en: "", am: "" },
+      accountNumber: "",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    });
+    setShowBankModal(true);
+  };
+
+  const openEditBank = (index: number) => {
+    if (!settings) return;
+    setEditingBankIndex(index);
+    setBankForm({ ...settings.bankAccounts[index] });
+    setShowBankModal(true);
+  };
+
+  const handleSaveBank = () => {
+    if (!settings || !bankForm.accountNumber) return;
+    const list = [...settings.bankAccounts];
+    if (editingBankIndex !== null) {
+      list[editingBankIndex] = bankForm;
+    } else {
+      list.push(bankForm);
+    }
+    setSettings({ ...settings, bankAccounts: list });
+    setShowBankModal(false);
+  };
+
+  const handleDeleteBank = async (index: number) => {
+    if (!settings) return;
+    const target = settings.bankAccounts[index];
+    const ok = await confirm(`Remove bank account "${target.bank.en || target.bank.am} (${target.accountNumber})"?`);
+    if (!ok) return;
+    const list = settings.bankAccounts.filter((_, i) => i !== index);
+    setSettings({ ...settings, bankAccounts: list });
+  };
+
+  const handleMoveBank = (index: number, direction: "up" | "down") => {
+    if (!settings) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= settings.bankAccounts.length) return;
+    const list = [...settings.bankAccounts];
+    const temp = list[index];
+    list[index] = list[targetIndex];
+    list[targetIndex] = temp;
+    setSettings({ ...settings, bankAccounts: list });
+  };
+
+  // Phone operations
+  const handleAddPhone = () => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      contact: {
+        ...settings.contact,
+        phones: [...settings.contact.phones, ""],
+      },
+    });
+  };
+
+  const handleUpdatePhone = (index: number, val: string) => {
+    if (!settings) return;
+    const phones = [...settings.contact.phones];
+    phones[index] = val;
+    setSettings({
+      ...settings,
+      contact: { ...settings.contact, phones },
+    });
+  };
+
+  const handleDeletePhone = (index: number) => {
+    if (!settings) return;
+    const phones = settings.contact.phones.filter((_, i) => i !== index);
+    setSettings({
+      ...settings,
+      contact: { ...settings.contact, phones },
+    });
+  };
+
+  if (!settings && loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-16 bg-white border border-brand-sky-200 rounded-3xl">
+        <Loader2 className="w-8 h-8 text-brand-sky-500 animate-spin mb-3" />
+        <p className="text-xs font-bold text-brand-sky-600">Loading site configuration...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {modal}
+
+      {/* Header */}
+      <SectionHeader
+        icon={Settings}
+        title={language === "am" ? "የድርጅት መረጃ እና ቅንብሮች" : "Site Configuration & Settings"}
+        subtitle={
+          language === "am"
+            ? "የባንክና ቴሌብር አካውንቶች፣ ማህበራዊ ሚዲያ እና የመገኛ አድራሻዎች ማስተዳደሪያ"
+            : "Manage Bank/Telebirr accounts, social media links, and organization information"
+        }
+        onRefresh={loadSettings}
+        loading={loading}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleResetDefaults}
+              disabled={saving || loading}
+              className="px-3.5 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              title="Reset to default settings"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-gray-500" />
+              <span>{language === "am" ? "ወደ ነባሪ መልስ" : "Defaults"}</span>
+            </button>
+            <button
+              onClick={handleSaveAll}
+              disabled={saving || loading}
+              className="px-4 py-2 bg-brand-green-500 hover:bg-brand-green-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>{language === "am" ? "በማስቀመጥ ላይ..." : "Saving..."}</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{language === "am" ? "ቅንብሮቹን አስቀምጥ" : "Save Settings"}</span>
+                </>
+              )}
+            </button>
+          </div>
+        }
+      />
+
+      {/* Save Success Alert */}
+      <AnimatePresence>
+        {savedSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="p-4 bg-green-50 border border-green-200 rounded-2xl flex items-center justify-between text-green-800"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+              <div>
+                <p className="text-xs font-bold">
+                  {language === "am" ? "ቅንብሮቹ በተሳካ ሁኔታ ተቀምጠዋል!" : "Settings saved and published successfully!"}
+                </p>
+                <p className="text-[11px] text-green-600">
+                  {language === "am"
+                    ? "ለውጦቹ በዋናው ድረ-ገጽ ላይ ወዲያውኑ ይታያሉ።"
+                    : "Live changes are now active across the entire website."}
+                </p>
+              </div>
+            </div>
+            <button onClick={() => setSavedSuccess(false)} className="p-1 hover:bg-green-100 rounded-lg text-green-600">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Navigation Sub-tabs */}
+      <div className="flex items-center gap-2 border-b border-brand-sky-100 pb-3 overflow-x-auto">
+        <button
+          onClick={() => setActiveSubSection("banks")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            activeSubSection === "banks"
+              ? "bg-brand-sky-500 text-white shadow-sm"
+              : "bg-white text-brand-sky-700 hover:bg-brand-sky-50 border border-brand-sky-100"
+          }`}
+        >
+          <Building className="w-4 h-4" />
+          <span>{language === "am" ? "ባንክና ቴሌብር" : "Bank & Telebirr"}</span>
+          <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${activeSubSection === "banks" ? "bg-white/20 text-white" : "bg-brand-sky-100 text-brand-sky-700"}`}>
+            {settings?.bankAccounts.length || 0}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveSubSection("social")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            activeSubSection === "social"
+              ? "bg-brand-sky-500 text-white shadow-sm"
+              : "bg-white text-brand-sky-700 hover:bg-brand-sky-50 border border-brand-sky-100"
+          }`}
+        >
+          <Share2 className="w-4 h-4" />
+          <span>{language === "am" ? "ማህበራዊ ሚዲያ" : "Social Media Links"}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSubSection("contact")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            activeSubSection === "contact"
+              ? "bg-brand-sky-500 text-white shadow-sm"
+              : "bg-white text-brand-sky-700 hover:bg-brand-sky-50 border border-brand-sky-100"
+          }`}
+        >
+          <Phone className="w-4 h-4" />
+          <span>{language === "am" ? "አድራሻ፣ ስልክና ምዝገባ" : "Contact & Organization Info"}</span>
+        </button>
+      </div>
+
+      {/* ── Sub-Section: Banks ── */}
+      {activeSubSection === "banks" && settings && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-serif font-bold text-base text-brand-sky-950">
+                {language === "am" ? "የባንክና የቴሌብር አካውንቶች" : "Configured Bank & Mobile Money Accounts"}
+              </h3>
+              <p className="text-xs text-brand-sky-500">
+                {language === "am"
+                  ? "በልገሳ ክፍል (Donation Section) ውስጥ የሚታዩ የባንክ ቁጥሮች"
+                  : "Accounts displayed on the public donation page for direct deposits and transfers"}
+              </p>
+            </div>
+            <button
+              onClick={openAddBank}
+              className="px-3.5 py-2 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              {language === "am" ? "አዲስ ባንክ ጨምር" : "Add Account"}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {settings.bankAccounts.map((item, idx) => {
+              const isTelebirr =
+                item.bank.en.toLowerCase().includes("telebirr") ||
+                item.bank.am.includes("ቴሌብር");
+              return (
+                <div
+                  key={idx}
+                  className={`bg-white border rounded-2xl p-4 shadow-xs transition-all relative flex flex-col justify-between ${
+                    isTelebirr
+                      ? "border-emerald-200 bg-linear-to-br from-white to-emerald-50/30"
+                      : "border-brand-sky-100"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs ${
+                            isTelebirr
+                              ? "bg-emerald-500 text-white shadow-sm"
+                              : "bg-brand-sky-100 text-brand-sky-700"
+                          }`}
+                        >
+                          {isTelebirr ? <Smartphone className="w-4 h-4" /> : <Building className="w-4 h-4" />}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-brand-sky-950">
+                            {item.bank.en || item.bank.am}
+                          </h4>
+                          {item.bank.am && item.bank.am !== item.bank.en && (
+                            <p className="text-[11px] text-brand-sky-500 font-medium">{item.bank.am}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Move & Action buttons */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleMoveBank(idx, "up")}
+                          disabled={idx === 0}
+                          className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-700 disabled:opacity-20 cursor-pointer"
+                          title="Move up"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleMoveBank(idx, "down")}
+                          disabled={idx === settings.bankAccounts.length - 1}
+                          className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-700 disabled:opacity-20 cursor-pointer"
+                          title="Move down"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => openEditBank(idx)}
+                          className="p-1.5 hover:bg-brand-sky-50 rounded-lg text-brand-sky-600 transition-colors cursor-pointer"
+                          title="Edit"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBank(idx)}
+                          className="p-1.5 hover:bg-red-50 rounded-lg text-red-500 transition-colors cursor-pointer"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Account Number box */}
+                    <div className="p-3 bg-brand-sky-50/70 rounded-xl border border-brand-sky-100 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] text-brand-sky-500 uppercase font-black tracking-wider block">
+                          {isTelebirr ? "Telebirr Number" : "Account Number"}
+                        </span>
+                        <code className="text-sm font-black font-mono text-brand-sky-900 tracking-wide">
+                          {item.accountNumber}
+                        </code>
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(item.accountNumber);
+                          alert(`Copied ${item.accountNumber}`);
+                        }}
+                        className="p-1.5 hover:bg-brand-sky-200/50 rounded-lg text-brand-sky-600 transition-colors cursor-pointer"
+                        title="Copy account number"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Account Name */}
+                    {item.accountName && (
+                      <div className="text-[11px] text-brand-sky-600 font-medium">
+                        <span className="text-gray-400">Recipient Name:</span> {item.accountName}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Sub-Section: Social Media ── */}
+      {activeSubSection === "social" && settings && (
+        <div className="bg-white border border-brand-sky-100 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5">
+          <div>
+            <h3 className="font-serif font-bold text-base text-brand-sky-950">
+              {language === "am" ? "የማህበራዊ ሚዲያ አድራሻዎች" : "Official Social Media Channels"}
+            </h3>
+            <p className="text-xs text-brand-sky-500">
+              {language === "am"
+                ? "በግርጌ (Footer) እና በመገኛ ክፍል ውስጥ የሚታዩ አድራሻዎች"
+                : "Links displayed in the website header, footer, and contact sections"}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Telegram */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-brand-sky-900 flex items-center gap-1.5">
+                <Send className="w-3.5 h-3.5 text-sky-500" /> Telegram Channel / Group
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  placeholder="https://t.me/..."
+                  value={settings.social.telegram || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      social: { ...settings.social, telegram: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+                {settings.social.telegram && (
+                  <a
+                    href={settings.social.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-50 text-brand-sky-600 transition-colors shrink-0"
+                    title="Test Telegram link"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Facebook */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-brand-sky-900 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-blue-600" /> Facebook Page
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  placeholder="https://facebook.com/..."
+                  value={settings.social.facebook || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      social: { ...settings.social, facebook: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+                {settings.social.facebook && (
+                  <a
+                    href={settings.social.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-50 text-brand-sky-600 transition-colors shrink-0"
+                    title="Test Facebook link"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* TikTok */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-brand-sky-900 flex items-center gap-1.5">
+                <Share2 className="w-3.5 h-3.5 text-gray-800" /> TikTok Channel
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  placeholder="https://tiktok.com/@..."
+                  value={settings.social.tiktok || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      social: { ...settings.social, tiktok: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+                {settings.social.tiktok && (
+                  <a
+                    href={settings.social.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-50 text-brand-sky-600 transition-colors shrink-0"
+                    title="Test TikTok link"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* YouTube */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-brand-sky-900 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-red-600" /> YouTube Channel
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  placeholder="https://youtube.com/@..."
+                  value={settings.social.youtube || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      social: { ...settings.social, youtube: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+                {settings.social.youtube && (
+                  <a
+                    href={settings.social.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-50 text-brand-sky-600 transition-colors shrink-0"
+                    title="Test YouTube link"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Instagram */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-brand-sky-900 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-pink-600" /> Instagram Profile (Optional)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  placeholder="https://instagram.com/..."
+                  value={settings.social.instagram || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      social: { ...settings.social, instagram: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+                {settings.social.instagram && (
+                  <a
+                    href={settings.social.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-50 text-brand-sky-600 transition-colors shrink-0"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* LinkedIn / X */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-brand-sky-900 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-blue-700" /> LinkedIn / Other (Optional)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  placeholder="https://linkedin.com/..."
+                  value={settings.social.linkedin || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      social: { ...settings.social, linkedin: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+                {settings.social.linkedin && (
+                  <a
+                    href={settings.social.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 border border-brand-sky-200 rounded-xl hover:bg-brand-sky-50 text-brand-sky-600 transition-colors shrink-0"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Sub-Section: Contact & Organization Info ── */}
+      {activeSubSection === "contact" && settings && (
+        <div className="space-y-5">
+          {/* Phone Numbers */}
+          <div className="bg-white border border-brand-sky-100 rounded-2xl p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-sm text-brand-sky-950 flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-brand-sky-500" />
+                  {language === "am" ? "የስልክ ቁጥሮች" : "Direct Phone Lines"}
+                </h4>
+                <p className="text-[11px] text-brand-sky-500">
+                  {language === "am"
+                    ? "ጎብኝዎች እና ደጋፊዎች በቀጥታ የሚደውሉባቸው ቁጥሮች"
+                    : "Phone numbers displayed for callers and donors"}
+                </p>
+              </div>
+              <button
+                onClick={handleAddPhone}
+                className="px-3 py-1.5 bg-brand-sky-100 hover:bg-brand-sky-200 text-brand-sky-700 rounded-xl text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3 h-3" /> {language === "am" ? "ስልክ ጨምር" : "Add Phone"}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {settings.contact.phones.map((phone, pIdx) => (
+                <div key={pIdx} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => handleUpdatePhone(pIdx, e.target.value)}
+                    placeholder="+251..."
+                    className="flex-1 px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs font-mono font-bold text-brand-sky-900 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                  <button
+                    onClick={() => handleDeletePhone(pIdx)}
+                    disabled={settings.contact.phones.length <= 1}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-xl disabled:opacity-20 cursor-pointer"
+                    title="Remove phone number"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Email & Address */}
+          <div className="bg-white border border-brand-sky-100 rounded-2xl p-5 shadow-xs space-y-4">
+            <h4 className="font-bold text-sm text-brand-sky-950 flex items-center gap-2">
+              <Mail className="w-4 h-4 text-brand-sky-500" />
+              {language === "am" ? "ኢሜይል እና አድራሻ" : "Email & Physical Address"}
+            </h4>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  Official Email Address
+                </label>
+                <input
+                  type="email"
+                  value={settings.contact.email}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      contact: { ...settings.contact, email: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                    Physical Address (English)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={settings.contact.address.en}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        contact: {
+                          ...settings.contact,
+                          address: { ...settings.contact.address, en: e.target.value },
+                        },
+                      })
+                    }
+                    className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                    የአድራሻ ዝርዝር (አማርኛ)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={settings.contact.address.am}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        contact: {
+                          ...settings.contact,
+                          address: { ...settings.contact.address, am: e.target.value },
+                        },
+                      })
+                    }
+                    className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Legal Registration & Motto */}
+          <div className="bg-white border border-brand-sky-100 rounded-2xl p-5 shadow-xs space-y-4">
+            <h4 className="font-bold text-sm text-brand-sky-950 flex items-center gap-2">
+              <Award className="w-4 h-4 text-brand-sky-500" />
+              {language === "am" ? "የህጋዊ ምዝገባ መረጃ እና መሪ ቃል" : "Legal Registration & Organization Motto"}
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  Registration Number
+                </label>
+                <input
+                  type="text"
+                  value={settings.registration?.number || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      registration: {
+                        agency: settings.registration?.agency || { en: "", am: "" },
+                        date: settings.registration?.date || "",
+                        number: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs font-mono text-brand-sky-950 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  Registration Date
+                </label>
+                <input
+                  type="text"
+                  value={settings.registration?.date || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      registration: {
+                        agency: settings.registration?.agency || { en: "", am: "" },
+                        number: settings.registration?.number || "",
+                        date: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  Regulating Agency (English)
+                </label>
+                <input
+                  type="text"
+                  value={settings.registration?.agency.en || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      registration: {
+                        number: settings.registration?.number || "",
+                        date: settings.registration?.date || "",
+                        agency: {
+                          am: settings.registration?.agency.am || "",
+                          en: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  የመዘገበው ኤጀንሲ ስም (አማርኛ)
+                </label>
+                <input
+                  type="text"
+                  value={settings.registration?.agency.am || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      registration: {
+                        number: settings.registration?.number || "",
+                        date: settings.registration?.date || "",
+                        agency: {
+                          en: settings.registration?.agency.en || "",
+                          am: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden"
+                />
+              </div>
+            </div>
+
+            {/* Motto */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-brand-sky-50">
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  Motto (English)
+                </label>
+                <input
+                  type="text"
+                  value={settings.motto?.en || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      motto: {
+                        am: settings.motto?.am || "",
+                        en: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                  መሪ ቃል (አማርኛ)
+                </label>
+                <input
+                  type="text"
+                  value={settings.motto?.am || ""}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      motto: {
+                        en: settings.motto?.en || "",
+                        am: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal: Add / Edit Bank Account ── */}
+      <AnimatePresence>
+        {showBankModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-brand-sky-200 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                <h3 className="font-serif font-bold text-lg text-brand-sky-950">
+                  {editingBankIndex !== null ? "Edit Bank Account" : "Add New Account"}
+                </h3>
+                <button
+                  onClick={() => setShowBankModal(false)}
+                  className="p-1 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4 py-4">
+                {/* Bank name EN */}
+                <div>
+                  <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                    Bank / Service Name (English) *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Telebirr (Mobile Money), Commercial Bank of Ethiopia"
+                    value={bankForm.bank.en}
+                    onChange={(e) =>
+                      setBankForm({
+                        ...bankForm,
+                        bank: { ...bankForm.bank, en: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                </div>
+
+                {/* Bank name AM */}
+                <div>
+                  <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                    የባንክ / የአገልግሎት ስም (አማርኛ)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ለምሳሌ፡ ቴሌብር / Telebirr, የኢትዮጵያ ንግድ ባንክ"
+                    value={bankForm.bank.am}
+                    onChange={(e) =>
+                      setBankForm({
+                        ...bankForm,
+                        bank: { ...bankForm.bank, am: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                </div>
+
+                {/* Account Number */}
+                <div>
+                  <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                    Account / Phone Number *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 0911004903 or 1000275107518"
+                    value={bankForm.accountNumber}
+                    onChange={(e) =>
+                      setBankForm({
+                        ...bankForm,
+                        accountNumber: e.target.value.replace(/\s+/g, ""),
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs font-mono font-bold text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                </div>
+
+                {/* Account Holder Name */}
+                <div>
+                  <label className="text-xs font-bold text-brand-sky-900 block mb-1">
+                    Account Holder / Recipient Name (የሂሳቡ ባለቤት ስም)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. ሚኪያስ ለገሰ / ሰሊሆም (Mikiyas Legesse)"
+                    value={bankForm.accountName || ""}
+                    onChange={(e) =>
+                      setBankForm({
+                        ...bankForm,
+                        accountName: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs text-brand-sky-950 focus:outline-hidden focus:border-brand-sky-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setShowBankModal(false)}
+                  className="py-2.5 px-4 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveBank}
+                  disabled={!bankForm.accountNumber || (!bankForm.bank.en && !bankForm.bank.am)}
+                  className="py-2.5 px-5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  {editingBankIndex !== null ? "Update Account" : "Add Account"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+

@@ -30,7 +30,12 @@ import {
   Globe,
   RefreshCw,
   Pill,
-  Award
+  Award,
+  Settings,
+  LayoutDashboard,
+  Activity,
+  BarChart3,
+  AlertCircle
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { Booking, DonationPledge, VolunteerApplication, AdminProfile, InKindItem } from "../types";
@@ -54,7 +59,9 @@ import {
 import { sanitizeText, sanitizePhone, isValidEmail, isNonEmpty } from "../utils/sanitize";
 import selihomLogo from "../assets/images/selihom_logo.jpg";
 import AdminCalendar from "./AdminCalendar";
-import { AdminMedicineTab, AdminSuppliesTab, AdminEventsTab, AdminVolRolesTab, AdminNewsTab } from "./AdminTabs";
+import { AdminMedicineTab, AdminSuppliesTab, AdminEventsTab, AdminVolRolesTab, AdminNewsTab, AdminSettingsTab } from "./AdminTabs";
+import AdminAnalyticsDashboard from "./AdminAnalyticsDashboard";
+import AdminDeliveredDonors from "./AdminDeliveredDonors";
 import LoadingDots from "./LoadingDots";
 
 interface AdminDashboardProps {
@@ -72,6 +79,11 @@ interface ConfirmationModalConfig {
   newStatus?: string;
   statusLabel?: string;
   title?: string;
+  message?: string;
+}
+
+interface NotificationToast {
+  type: "success" | "error" | "info";
   message: string;
 }
 
@@ -91,8 +103,8 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
   const [authError, setAuthError] = useState("");
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<"bookings" | "pledges" | "volunteers" | "profile" | "calendar" | "events" | "news">("bookings");
-  const [pledgeAdminType, setPledgeAdminType] = useState<"inkind" | "medicine" | "supplies">("inkind");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "bookings" | "pledges" | "volunteers" | "profile" | "calendar" | "events" | "news" | "settings">("dashboard");
+  const [pledgeAdminType, setPledgeAdminType] = useState<"inkind" | "medicine" | "supplies" | "delivered_donors">("inkind");
   const [volunteerAdminType, setVolunteerAdminType] = useState<"applications" | "roles">("applications");
 
   // Admin Profile State
@@ -517,12 +529,24 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
     return matchesSearch && matchesStatus;
   });
 
+  const isPledgeOverdue = (p: DonationPledge) => {
+    if ((p.status || "pledged") !== "pledged" || !p.estimatedDeliveryDate) return false;
+    const estTs = new Date(p.estimatedDeliveryDate).setHours(23, 59, 59, 999);
+    return !isNaN(estTs) && estTs < Date.now();
+  };
+
   const filteredPledges = pledges.filter((p) => {
     const matchesSearch =
       p.donorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (p.donorPhone && p.donorPhone.includes(searchQuery));
-    const matchesStatus = statusFilter === "all" || (p.status || "pledged") === statusFilter;
+    const isOverdue = isPledgeOverdue(p);
+    const matchesStatus =
+      statusFilter === "all"
+        ? true
+        : statusFilter === "overdue"
+        ? isOverdue
+        : (p.status || "pledged") === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -664,6 +688,19 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           {/* Navigation Tabs Bar */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-brand-sky-200 shadow-xs">
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full sm:w-auto">
+              {/* Primary Dashboard / Analytics Tab */}
+              <button
+                onClick={() => { setActiveTab("dashboard"); setSearchQuery(""); setStatusFilter("all"); }}
+                className={`flex-1 sm:flex-initial px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
+                  activeTab === "dashboard"
+                    ? "bg-brand-sky-500 text-white shadow-md ring-2 ring-brand-sky-200"
+                    : "text-brand-sky-800 bg-brand-sky-50/70 hover:bg-brand-sky-100/70 border border-brand-sky-100"
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+                <span>{language === "am" ? "ዳሽቦርድ" : "Dashboard"}</span>
+              </button>
+
               <button
                 onClick={() => { setActiveTab("bookings"); setSearchQuery(""); setStatusFilter("all"); }}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 ${
@@ -704,10 +741,11 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 <span>{language === "am" ? "የቀን መቁጠሪያ" : "Calendar"}</span>
               </button>
 
-              {/* New tabs — 2nd row on mobile, inline on desktop */}
+              {/* Dynamic tabs */}
               {([
                 { key:"events",    icon:Users,   label:{ en:"Events",     am:"ድግሶች"   } },
                 { key:"news",      icon:FileText,label:{ en:"News",       am:"ዜናዎች"   } },
+                { key:"settings",  icon:Settings,label:{ en:"Settings",   am:"ቅንብሮች" } },
               ] as { key: string; icon: React.ComponentType<any>; label: { en: string; am: string } }[]).map(tab => {
                 const Icon = tab.icon;
                 return (
@@ -736,7 +774,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           </div>
 
           {/* Shared title, search, reload, and filter controls */}
-          {activeTab !== "profile" && activeTab !== "calendar" && activeTab !== "events" && activeTab !== "news" && (activeTab !== "pledges" || pledgeAdminType === "inkind") && (activeTab !== "volunteers" || volunteerAdminType === "applications") && (
+          {activeTab !== "dashboard" && activeTab !== "profile" && activeTab !== "calendar" && activeTab !== "events" && activeTab !== "news" && activeTab !== "settings" && (activeTab !== "pledges" || pledgeAdminType === "inkind") && (activeTab !== "volunteers" || volunteerAdminType === "applications") && (
             <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-brand-sky-200 shadow-xs space-y-3 sm:space-y-4">
               <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
                 {activeTab === "pledges" ? (
@@ -778,6 +816,19 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     >
                       <Package className="w-4 h-4" />
                       <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setPledgeAdminType("delivered_donors"); setSearchQuery(""); setStatusFilter("all"); }}
+                      className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        pledgeAdminType === "delivered_donors"
+                          ? "bg-brand-sky-500 text-white shadow-sm border border-brand-sky-600"
+                          : "bg-brand-sky-50 text-brand-sky-800 border border-brand-sky-200 hover:bg-brand-sky-100"
+                      }`}
+                    >
+                      <Award className="w-4 h-4 text-amber-500" />
+                      <span>{language === "am" ? "⭐ ታማኝ ደጋፊዎች" : "⭐ Delivered Donors"}</span>
                     </button>
                   </div>
                 ) : activeTab === "volunteers" ? (
@@ -843,6 +894,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                     </>}
                     {activeTab === "pledges" && pledgeSubTab === "pledges" && <>
                       <option value="pledged">{language === "am" ? "ቃልኪዳን" : "Pledged"}</option>
+                      <option value="overdue">{language === "am" ? "ጊዜው ያለፈበት" : "Overdue"}</option>
                       <option value="received">{language === "am" ? "ተቀበለ" : "Received"}</option>
                       <option value="cancelled">{language === "am" ? "ተሰርዟል" : "Cancelled"}</option>
                     </>}
@@ -909,6 +961,9 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 {activeTab === "pledges" && pledgeSubTab === "pledges" && (<>
                   <button onClick={() => setStatusFilter("pledged")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "pledged" ? "bg-amber-500 text-white shadow-xs" : "bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100"}`}>
                     {language === "am" ? `ቃልኪዳን (${pledges.filter(p=>(p.status||"pledged")==="pledged").length})` : `Pledged (${pledges.filter(p=>(p.status||"pledged")==="pledged").length})`}
+                  </button>
+                  <button onClick={() => setStatusFilter("overdue")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "overdue" ? "bg-rose-600 text-white shadow-xs" : "bg-rose-50 text-rose-900 border border-rose-200 hover:bg-rose-100"}`}>
+                    {language === "am" ? `ጊዜው ያለፈበት (${pledges.filter(isPledgeOverdue).length})` : `Overdue (${pledges.filter(isPledgeOverdue).length})`}
                   </button>
                   <button onClick={() => setStatusFilter("received")} className={`px-3 py-1.5 rounded-lg font-extrabold transition-all shrink-0 cursor-pointer ${statusFilter === "received" ? "bg-brand-green-500 text-white shadow-xs" : "bg-brand-green-50 text-brand-green-900 border border-brand-green-200 hover:bg-brand-green-100"}`}>
                     {language === "am" ? `ተቀበለ (${pledges.filter(p=>p.status==="received").length})` : `Received (${pledges.filter(p=>p.status==="received").length})`}
@@ -1035,24 +1090,41 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                           <span className="font-mono text-xs font-black text-brand-sky-950 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-md">
                             {item.id}
                           </span>
-                          <span
-                            className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-lg border ${
-                              item.status === "received"
-                                ? "bg-green-100 text-green-800 border-green-200"
-                                : item.status === "cancelled"
-                                ? "bg-red-100 text-red-800 border-red-200"
-                                : "bg-amber-100 text-amber-800 border-amber-200"
-                            }`}
-                          >
-                            {item.status || "pledged"}
-                          </span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {isPledgeOverdue(item) && (
+                              <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                                ⚠️ {language === "am" ? "ያለፈበት" : "Overdue"}
+                              </span>
+                            )}
+                            <span
+                              className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-lg border ${
+                                item.status === "received"
+                                  ? "bg-green-100 text-green-800 border-green-200"
+                                  : item.status === "cancelled"
+                                  ? "bg-red-100 text-red-800 border-red-200"
+                                  : "bg-amber-100 text-amber-800 border-amber-200"
+                              }`}
+                            >
+                              {item.status || "pledged"}
+                            </span>
+                          </div>
                         </div>
 
                         <div>
                           <h4 className="font-serif font-bold text-lg text-brand-sky-950 group-hover:text-brand-sky-700 transition-colors">
                             {item.donorName}
                           </h4>
-                          <p className="text-xs text-gray-500 font-medium mt-0.5">Pledged: {item.date}</p>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 font-medium mt-0.5">
+                            <span>Pledged: {item.date}</span>
+                            {item.estimatedDeliveryDate && (
+                              <>
+                                <span className="text-gray-300">•</span>
+                                <span className={isPledgeOverdue(item) ? "text-red-700 font-bold bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200" : "text-brand-sky-800 font-semibold bg-brand-sky-50 px-1.5 py-0.5 rounded-md border border-brand-sky-100"}>
+                                  📅 {language === "am" ? "የተገመተበት ቀን:" : "Est. Date:"} {item.estimatedDeliveryDate}
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
 
                         <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
@@ -1065,15 +1137,33 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                         </div>
                       </div>
 
-                      {/* Clean Primary Details Button */}
-                      <div className="pt-2 border-t border-gray-100">
+                      {/* Clean Primary Details & Contact Actions */}
+                      <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
                         <button
                           onClick={() => setDetailModal({ isOpen: true, type: "pledge", data: item })}
-                          className="w-full py-2.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                          className="flex-1 py-2.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                         >
                           <Eye className="w-4 h-4 text-brand-yellow-400" />
                           <span>{language === "am" ? "ዝርዝር" : "Details"}</span>
                         </button>
+                        {item.donorPhone && (
+                          <a
+                            href={`tel:${item.donorPhone}`}
+                            className="p-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl border border-emerald-200 transition-colors"
+                            title={language === "am" ? "ደውል" : "Call Donor"}
+                          >
+                            <Phone className="w-4 h-4" />
+                          </a>
+                        )}
+                        {item.donorEmail && (
+                          <a
+                            href={`mailto:${item.donorEmail}`}
+                            className="p-2.5 bg-brand-sky-50 hover:bg-brand-sky-100 text-brand-sky-700 rounded-xl border border-brand-sky-200 transition-colors"
+                            title={language === "am" ? "ኢሜይል ላክ" : "Send Email"}
+                          >
+                            <Mail className="w-4 h-4" />
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -1179,6 +1269,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
           {activeTab === "pledges" && pledgeAdminType === "medicine" && <AdminMedicineTab language={language} onPledgeTypeChange={setPledgeAdminType} />}
           {activeTab === "pledges" && pledgeAdminType === "supplies" && <AdminSuppliesTab language={language} onPledgeTypeChange={setPledgeAdminType} />}
+          {activeTab === "pledges" && pledgeAdminType === "delivered_donors" && <AdminDeliveredDonors language={language} onPledgeTypeChange={setPledgeAdminType} />}
 
           {/* TAB 3: VOLUNTEERS LIST */}
           {activeTab === "volunteers" && volunteerAdminType === "applications" && (
@@ -1481,6 +1572,11 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           </div>
           )}
 
+          {/* TAB 0: ANALYTICS DASHBOARD */}
+          {activeTab === "dashboard" && (
+            <AdminAnalyticsDashboard language={language} />
+          )}
+
           {/* TAB 5: CALENDAR */}
           {activeTab === "calendar" && (
             <AdminCalendar language={language} />
@@ -1491,6 +1587,9 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
           {/* TAB 10: NEWS */}
           {activeTab === "news" && <AdminNewsTab language={language} />}
+
+          {/* TAB 11: SETTINGS */}
+          {activeTab === "settings" && <AdminSettingsTab language={language} />}
 
         </main>
       )}
@@ -1802,27 +1901,57 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 <div className="space-y-3.5 sm:space-y-4">
                   <h4 className="font-serif font-bold text-xs sm:text-sm text-brand-sky-950 uppercase tracking-wider flex items-center gap-2">
                     <Gift className="w-4 h-4 text-brand-sky-700" />
-                    In-Kind Donation Pledge Details
+                    {language === "am" ? "የዓይነት ልገሳ ቃልኪዳን ዝርዝር" : "In-Kind Donation Pledge Details"}
                   </h4>
+
+                  {isPledgeOverdue(detailModal.data as DonationPledge) && (
+                    <div className="bg-rose-50 border border-rose-200 p-3 sm:p-3.5 rounded-xl text-xs text-rose-900 flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="block font-bold">
+                          {language === "am" ? "የቃልኪዳኑ የመድረሻ ጊዜ አልፏል!" : "Pledge Delivery is Overdue!"}
+                        </strong>
+                        <p className="text-[11px] text-rose-700 mt-0.5">
+                          {language === "am"
+                            ? `ለጋሹ የተገመተው የመድረሻ ቀን ${(detailModal.data as DonationPledge).estimatedDeliveryDate} ነበር። እባክዎ ለጋሹን በቀጥታ ያግኙ።`
+                            : `The donor specified an estimated delivery date of ${(detailModal.data as DonationPledge).estimatedDeliveryDate}. Please follow up to verify arrival.`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
                     <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
-                      <span className="text-gray-400 font-bold block mb-0.5">Donor Name</span>
+                      <span className="text-gray-400 font-bold block mb-0.5">{language === "am" ? "የለጋሽ ስም" : "Donor Name"}</span>
                       <span className="font-extrabold text-gray-900 text-xs sm:text-sm">{(detailModal.data as DonationPledge).donorName}</span>
                     </div>
 
                     <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
-                      <span className="text-gray-400 font-bold block mb-0.5">Pledge Date</span>
+                      <span className="text-gray-400 font-bold block mb-0.5">{language === "am" ? "ቃል የተገባበት ቀን" : "Pledge Date"}</span>
                       <span className="font-extrabold text-gray-900">{(detailModal.data as DonationPledge).date}</span>
                     </div>
 
                     <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
-                      <span className="text-gray-400 font-bold block mb-0.5">Donor Phone</span>
+                      <span className="text-gray-400 font-bold block mb-0.5">{language === "am" ? "የተገመተበት ቀን" : "Est. Delivery Date"}</span>
+                      <span className={`font-extrabold ${isPledgeOverdue(detailModal.data as DonationPledge) ? "text-rose-700" : "text-brand-sky-950"}`}>
+                        {(detailModal.data as DonationPledge).estimatedDeliveryDate || (language === "am" ? "አልተገለጸም" : "Not specified")}
+                      </span>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
+                      <span className="text-gray-400 font-bold block mb-0.5">{language === "am" ? "ሁኔታ" : "Status"}</span>
+                      <span className="font-extrabold text-brand-sky-950 capitalize">
+                        {(detailModal.data as DonationPledge).status || "pledged"}
+                      </span>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
+                      <span className="text-gray-400 font-bold block mb-0.5">{language === "am" ? "ስልክ ቁጥር" : "Donor Phone"}</span>
                       <span className="font-extrabold text-gray-900">{(detailModal.data as DonationPledge).donorPhone || "N/A"}</span>
                     </div>
 
                     <div className="bg-gray-50 p-3 sm:p-3.5 rounded-xl border border-gray-100">
-                      <span className="text-gray-400 font-bold block mb-0.5">Donor Email</span>
+                      <span className="text-gray-400 font-bold block mb-0.5">{language === "am" ? "ኢሜይል" : "Donor Email"}</span>
                       <span className="font-extrabold text-gray-900">{(detailModal.data as DonationPledge).donorEmail || "N/A"}</span>
                     </div>
                   </div>
@@ -1830,14 +1959,14 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   {/* Goods List */}
                   <div className="bg-gray-50 p-3.5 sm:p-4 rounded-2xl border border-gray-200 space-y-2">
                     <span className="text-xs font-extrabold text-gray-700 uppercase tracking-wider block">
-                      Pledged Goods & Supplies List
+                      {language === "am" ? "የተለገሱ እቃዎች ዝርዝር" : "Pledged Goods & Supplies List"}
                     </span>
                     <div className="space-y-1.5">
                       {(detailModal.data as DonationPledge).pledgedItems?.map((it, idx) => (
                         <div key={idx} className="flex items-center justify-between bg-white p-2.5 sm:p-3 rounded-xl border border-gray-200">
                           <span className="font-bold text-gray-900 text-xs">{it.name}</span>
                           <span className="font-black text-brand-sky-900 bg-brand-sky-50 border border-brand-sky-200 px-2.5 py-1 rounded-lg text-xs">
-                            Quantity: {it.quantity}
+                            {language === "am" ? "ብዛት:" : "Quantity:"} {it.quantity}
                           </span>
                         </div>
                       ))}

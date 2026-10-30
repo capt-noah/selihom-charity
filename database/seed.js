@@ -291,6 +291,80 @@ async function seed() {
     }
     console.log(`  ✓ news (${newsItems.length})`);
 
+    // ── 14. bank_accounts ─────────────────────────────────────
+    const defaultBanks = [
+      { id: "bank_cbe", nameEn: "Commercial Bank of Ethiopia (CBE)", nameAm: "የኢትዮጵያ ንግድ ባንክ", accNum: "1000275107518", accName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር" },
+      { id: "bank_abyssinia", nameEn: "Bank of Abyssinia", nameAm: "አቢሲንያ ባንክ", accNum: "77984852", accName: "Selihom Support Association" },
+      { id: "bank_awash", nameEn: "Awash Bank", nameAm: "አዋሽ ባንክ", accNum: "01303572131300", accName: "Selihom Support Association" },
+      { id: "bank_telebirr", nameEn: "Telebirr (Mobile Money)", nameAm: "ቴሌብር (ሞባይል ገንዘብ)", accNum: "0911004903", accName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር (ሚኪያስ ለገሰ)" },
+    ];
+    for (let bi = 0; bi < defaultBanks.length; bi++) {
+      const b = defaultBanks[bi];
+      await conn.execute(`
+        INSERT INTO bank_accounts
+          (id, bank_name_en, bank_name_am, account_number, account_name, sort_order, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, 1)
+        ON DUPLICATE KEY UPDATE
+          bank_name_en = VALUES(bank_name_en),
+          bank_name_am = VALUES(bank_name_am),
+          account_number = VALUES(account_number),
+          account_name = VALUES(account_name),
+          sort_order = VALUES(sort_order)
+      `, [b.id, b.nameEn, b.nameAm, b.accNum, b.accName, bi]);
+    }
+    console.log(`  ✓ bank_accounts (${defaultBanks.length})`);
+
+    // ── 15. site_settings ─────────────────────────────────────
+    await conn.execute(`
+      INSERT INTO site_settings (
+        setting_key, org_name_en, org_name_am, motto_en, motto_am,
+        phones, email, address_en, address_am,
+        registration_number, registration_date, registration_agency_en, registration_agency_am,
+        telegram_url, facebook_url, tiktok_url, youtube_url, instagram_url, linkedin_url
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        org_name_en = VALUES(org_name_en),
+        org_name_am = VALUES(org_name_am),
+        motto_en = VALUES(motto_en),
+        motto_am = VALUES(motto_am),
+        phones = VALUES(phones),
+        email = VALUES(email),
+        address_en = VALUES(address_en),
+        address_am = VALUES(address_am),
+        registration_number = VALUES(registration_number),
+        registration_date = VALUES(registration_date),
+        registration_agency_en = VALUES(registration_agency_en),
+        registration_agency_am = VALUES(registration_agency_am),
+        telegram_url = VALUES(telegram_url),
+        facebook_url = VALUES(facebook_url),
+        tiktok_url = VALUES(tiktok_url),
+        youtube_url = VALUES(youtube_url),
+        instagram_url = VALUES(instagram_url),
+        linkedin_url = VALUES(linkedin_url)
+    `, [
+      "global",
+      "Selihom Mentally Ill People Support Association",
+      "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+      "Kind hearts excel beautiful faces!",
+      "ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!",
+      JSON.stringify(["+251911004903", "+251953905050", "0118195444"]),
+      "selihome@gmail.com",
+      "Near Entoto St. Raguel and Elias Church, on the road leading toward Fetesha, Addis Ababa, Ethiopia",
+      "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስትያን ወደ ፍተሻ በሚወስደው መንገድ፣ አዲስ አበባ",
+      "1113/2019",
+      "Feb 03, 2020",
+      "Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations",
+      "የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ",
+      "https://t.me/Selihommentallyill",
+      "https://facebook.com/SelihomSupport",
+      "https://tiktok.com/@selihomcharity",
+      "https://youtube.com/@selihomcharity",
+      "",
+      "",
+    ]);
+    console.log("  ✓ site_settings (global)");
+
     console.log("\n✓ Seed complete.\n");
   } catch (err) {
     console.error("Seed failed:", err.message);

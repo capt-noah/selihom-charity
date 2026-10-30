@@ -4,7 +4,6 @@ import {
   Package,
   CheckCircle2,
   AlertCircle,
-  Loader2,
   Plus,
   X,
   ChevronDown,
@@ -12,8 +11,9 @@ import {
   Minus,
   UtensilsCrossed,
   Droplets,
-  Stethoscope,
   Brain,
+  Pill,
+  Calendar,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import {
@@ -30,13 +30,14 @@ import {
   isNonEmpty,
 } from "../utils/sanitize";
 import LoadingDots from "./LoadingDots";
+import MedicinePledge from "./MedicinePledge";
 
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
   UtensilsCrossed,
   Droplets,
-  Stethoscope,
   Brain,
   Package,
+  Pill,
 };
 
 const URGENCY_DOT: Record<string, string> = {
@@ -50,6 +51,232 @@ const URGENCY_BADGE: Record<string, string> = {
   Medium: "bg-amber-100 text-amber-700 border-amber-200",
   Low: "bg-brand-sky-100 text-brand-sky-700 border-brand-sky-200",
 };
+
+// ── Built-in default single-word categories (Food, Hygiene, Psychiatry) ────────
+const DEFAULT_CATEGORIES: SupplyCategory[] = [
+  {
+    id: "cat-food",
+    name: { en: "Food", am: "ምግብ" },
+    icon: "UtensilsCrossed",
+    color: "bg-amber-500",
+    items: [
+      {
+        id: "food-1",
+        name: { en: "Teff & Grain Flour (Sacks)", am: "ጤፍ እና የእህል ዱቄት (ጆንያ)" },
+        neededQty: { en: "50 Sacks / Month", am: "በወር 50 ጆንያ" },
+        urgency: "High",
+        impactDesc: {
+          en: "Essential staple food for daily meals for 200+ beneficiaries.",
+          am: "ለ200+ ተጠቃሚዎች የዕለት ተዕለት እንጀራና ምግብ ማዘጋጃ።",
+        },
+      },
+      {
+        id: "food-2",
+        name: { en: "Cooking Oil (5L Cans)", am: "የምግብ ዘይት (ባለ 5 ሊትር)" },
+        neededQty: { en: "40 Cans / Month", am: "በወር 40 ጄሪካን" },
+        urgency: "High",
+        impactDesc: {
+          en: "Daily cooking and meal preparation.",
+          am: "ለምግብ ዝግጅትና ወጥ ማብሰያ።",
+        },
+      },
+      {
+        id: "food-3",
+        name: { en: "Lentils, Split Peas & Beans", am: "ምስር፣ ሽምብራና ባቄላ (ጥራጥሬ)" },
+        neededQty: { en: "30 Sacks", am: "30 ጆንያ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "High protein pulses for nutritional balance.",
+          am: "የተመጣጠነ የፕሮቲን ምግብ ምንጭ።",
+        },
+      },
+      {
+        id: "food-4",
+        name: { en: "Pasta, Macaroni & Rice", am: "ፓስታ፣ መኮሮኒና ሩዝ" },
+        neededQty: { en: "25 Cartons", am: "25 ካርቶን" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Quick carbohydrates and hearty dinner meals.",
+          am: "ለእራትና ለቁርስ የሚሆኑ ምግቦች።",
+        },
+      },
+      {
+        id: "food-5",
+        name: { en: "Sugar, Salt & Spices", am: "ስኳር፣ ጨው እና ቅመማቅመም" },
+        neededQty: { en: "15 Sacks / Packets", am: "15 ጆንያ/ፓኬት" },
+        urgency: "Low",
+        impactDesc: {
+          en: "Essential condiments for balanced kitchen prep.",
+          am: "የወጥ ቤት ማጣፈጫና ማዘጋጃ ግብአቶች።",
+        },
+      },
+    ],
+  },
+  {
+    id: "cat-hygiene",
+    name: { en: "Hygiene", am: "ንጽህና" },
+    icon: "Droplets",
+    color: "bg-brand-sky-500",
+    items: [
+      {
+        id: "hyg-1",
+        name: { en: "Body & Laundry Soap Bars", am: "የገላ እና የልብስ ሳሙና" },
+        neededQty: { en: "300 Bars / Month", am: "በወር 300 ፍሬ" },
+        urgency: "High",
+        impactDesc: {
+          en: "Maintains personal hygiene and disease prevention.",
+          am: "የተጠቃሚዎችን ንጽህና ለመጠበቅና ከበሽታ ለመከላከል የሚያስፈልግ።",
+        },
+      },
+      {
+        id: "hyg-2",
+        name: { en: "Toothpaste & Toothbrushes", am: "የጥርስ ብሩሽ እና ሳሙና" },
+        neededQty: { en: "200 Sets", am: "200 ስብስብ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Daily oral hygiene and dental health care.",
+          am: "የአፍና የጥርስ ንጽህና ለመጠበቅ።",
+        },
+      },
+      {
+        id: "hyg-3",
+        name: { en: "Hair Shampoo & Conditioners", am: "የፀጉር ሻምፖና ቅባት" },
+        neededQty: { en: "100 Bottles", am: "100 ጠርሙስ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Regular hair washing and grooming sessions.",
+          am: "ለተጠቃሚዎች ሳምንታዊ የፀጉር እንክብካቤ።",
+        },
+      },
+      {
+        id: "hyg-4",
+        name: { en: "Sanitary Pads (Dignity Kits)", am: "የሴቶች ንጽህና መጠበቂያ (ሞዴስ)" },
+        neededQty: { en: "150 Packs / Month", am: "በወር 150 ፓኬት" },
+        urgency: "High",
+        impactDesc: {
+          en: "Dignified menstrual hygiene care for female beneficiaries.",
+          am: "ለሴት ታካሚዎች ወርሃዊ የንጽህና መጠበቂያ።",
+        },
+      },
+      {
+        id: "hyg-5",
+        name: { en: "Disinfectants, Bleach & Detergent", am: "የወለል ማጽጃ፣ በረኪናና ዱቄት ሳሙና" },
+        neededQty: { en: "50 Large Cans", am: "50 ትላልቅ ጀሪካን" },
+        urgency: "High",
+        impactDesc: {
+          en: "Sanitising center dorms, bathrooms, and clinic rooms.",
+          am: "የማዕከሉን ክፍሎች፣ መታጠቢያዎችንና ግቢውን ንጹህ ለማድረግ።",
+        },
+      },
+    ],
+  },
+  {
+    id: "cat-psychiatry",
+    name: { en: "Psychiatry", am: "ስነ-አእምሮ" },
+    icon: "Brain",
+    color: "bg-purple-600",
+    items: [
+      {
+        id: "psy-1",
+        name: { en: "Art & Drawing Therapy Supplies", am: "የስዕልና የፈጠራ ቴራፒ ቁሳቁሶች" },
+        neededQty: { en: "50 Sets", am: "50 ስብስብ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Helps patients express emotions, relieve stress, and rebuild focus.",
+          am: "ስሜትን ለመግለጽ፣ ውጥረትን ለመቀነስና አእምሮን ለማረጋጋት።",
+        },
+      },
+      {
+        id: "psy-2",
+        name: { en: "Sensory & Stress Relief Tools", am: "የጭንቀት ማስታገሻና የስሜት መረጋጊያ እቃዎች" },
+        neededQty: { en: "40 Units", am: "40 ፍሬ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Reduces anxiety episodes and aids sensory grounding.",
+          am: "ጭንቀትንና ፍርሃትን ለመቀነስ የሚረዱ የቴራፒ እቃዎች።",
+        },
+      },
+      {
+        id: "psy-3",
+        name: { en: "Calming Weighted Blankets", am: "የእንቅልፍና የመረጋጊያ ከባድ ብርድልብሶች" },
+        neededQty: { en: "30 Blankets", am: "30 ብርድልብስ" },
+        urgency: "High",
+        impactDesc: {
+          en: "Helps traumatized and recovering individuals sleep peacefully.",
+          am: "የጭንቀትና የእንቅልፍ እጦት ያለባቸው ታካሚዎች በሰላም እንዲተኙ ይረዳል።",
+        },
+      },
+      {
+        id: "psy-4",
+        name: { en: "Cognitive Rehabilitation Games & Puzzles", am: "የአእምሮ ማነቃቂያ ጨዋታዎችና እንቆቅልሾች" },
+        neededQty: { en: "25 Sets", am: "25 ስብስብ" },
+        urgency: "Low",
+        impactDesc: {
+          en: "Rebuilds memory, logic, and social problem-solving skills.",
+          am: "የማስታወስ ችሎታንና ማህበራዊ ግንኙነትን ለማዳበር።",
+        },
+      },
+    ],
+  },
+  {
+    id: "cat-supplies",
+    name: { en: "Supplies", am: "ቁሳቁስ" },
+    icon: "Package",
+    color: "bg-teal-600",
+    items: [
+      {
+        id: "sup-1",
+        name: { en: "Warm Blankets & Bedding Sets", am: "ሞቅ ያሉ ብርድልብሶችና የመኝታ አንሶላዎች" },
+        neededQty: { en: "150 Sets", am: "150 ስብስብ" },
+        urgency: "High",
+        impactDesc: {
+          en: "Provides warmth and comfort for 200+ rescued and elderly residents in cold Entoto weather.",
+          am: "በእንጦጦ ብርድ ወቅት ለህሙማንና ለአዛውንቶች ሞቅ ያለ መኝታ ለማዘጋጀት።",
+        },
+      },
+      {
+        id: "sup-2",
+        name: { en: "Clothing, Jackets & Habesha Attire", am: "ንጹህ አልባሳት፣ ጃኬቶችና ባህላዊ ልብሶች" },
+        neededQty: { en: "200 Sets", am: "200 ስብስብ" },
+        urgency: "High",
+        impactDesc: {
+          en: "Dignified, clean clothing for newly rescued beneficiaries and holiday events.",
+          am: "ከጎዳና ለተነሱ ተጠቃሚዎች ንጹህ ልብስና ለበዓላት የሚሆኑ አልባሳት።",
+        },
+      },
+      {
+        id: "sup-3",
+        name: { en: "Kitchen Cookware, Pots & Utensils", am: "የወጥ ቤት ድስቶች፣ ሰሃኖችና የመመገቢያ እቃዎች" },
+        neededQty: { en: "20 Large Sets", am: "20 ትላልቅ ስብስብ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Cooking and serving nutritious daily meals for the entire shelter.",
+          am: "የዕለት ምግብ ለማብሰልና ለተጠቃሚዎች ለማቅረብ የሚረዱ የወጥ ቤት ቁሳቁሶች።",
+        },
+      },
+      {
+        id: "sup-4",
+        name: { en: "Shoes, Slippers & Socks", am: "ጫማዎች፣ ነጠላ ጫማና ካልሲዎች" },
+        neededQty: { en: "150 Pairs", am: "150 ጥንድ" },
+        urgency: "Medium",
+        impactDesc: {
+          en: "Protects residents from injuries, fungal infections, and cold ground.",
+          am: "የእግር ቁስለትንና በሽታን ለመከላከል ለተጠቃሚዎች የሚታደል።",
+        },
+      },
+      {
+        id: "sup-5",
+        name: { en: "Stationery, Notebooks & Learning Toolkits", am: "የጽህፈት መሳሪያዎች፣ ደብተርና የስልጠና እቃዎች" },
+        neededQty: { en: "100 Packs", am: "100 ፓኬት" },
+        urgency: "Low",
+        impactDesc: {
+          en: "Supports vocational training, life skills, and children's education.",
+          am: "ለተጠቃሚዎች የሙያ ስልጠናና ለህጻናት ትምህርት ድጋፍ የሚውል።",
+        },
+      },
+    ],
+  },
+];
 
 // ── Single supply item row ─────────────────────────────────────────────────────
 function SupplyRow({
@@ -84,7 +311,7 @@ function SupplyRow({
       >
         {/* Urgency dot */}
         <span
-          className={`w-2 h-2 rounded-full shrink-0 ${URGENCY_DOT[item.urgency]}`}
+          className={`w-2 h-2 rounded-full shrink-0 ${URGENCY_DOT[item.urgency] || "bg-brand-sky-400"}`}
         />
 
         {/* Name */}
@@ -99,7 +326,7 @@ function SupplyRow({
 
         {/* Urgency badge */}
         <span
-          className={`hidden sm:inline text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${URGENCY_BADGE[item.urgency]}`}
+          className={`hidden sm:inline text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${URGENCY_BADGE[item.urgency] || "bg-gray-100 text-gray-700"}`}
         >
           {item.urgency}
         </span>
@@ -133,14 +360,16 @@ function SupplyRow({
           >
             <div className="px-4 pb-4 pt-1 border-t border-gray-100 space-y-3">
               {/* Impact description */}
-              <p className="text-xs text-brand-sky-700 font-medium bg-brand-sky-50 border border-brand-sky-100 px-3 py-2 rounded-xl">
-                {t(item.impactDesc)}
-              </p>
+              {item.impactDesc && (
+                <p className="text-xs text-brand-sky-700 font-medium bg-brand-sky-50 border border-brand-sky-100 px-3 py-2 rounded-xl">
+                  {t(item.impactDesc)}
+                </p>
+              )}
 
               {/* Needed quantity */}
               <div className="flex items-center justify-between text-xs text-gray-500">
                 <span className="font-bold uppercase tracking-wider text-[10px]">
-                  {language === "am" ? "ፍላጎት" : "Needed"}
+                  {language === "am" ? "የሚያስፈልግ መጠን" : "Needed Quantity"}
                 </span>
                 <span className="font-black text-brand-sky-950">
                   {t(item.neededQty)}
@@ -156,7 +385,7 @@ function SupplyRow({
                 }`}
               >
                 <span className="text-xs font-bold text-gray-600">
-                  {language === "am" ? "ብዛት" : "Pledge quantity"}
+                  {language === "am" ? "የቃልኪዳን ብዛት" : "Pledge quantity"}
                 </span>
                 <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-0.5">
                   <button
@@ -192,13 +421,15 @@ function SupplyRow({
   );
 }
 
-// ── Main component ─────────────────────────────────────────────────────────────
+// ── Main In-Kind / Supplies Pledge Component ──────────────────────────────────
 export default function SuppliesPledge() {
   const { language, t } = useLanguage();
 
-  const [categories, setCategories] = useState<SupplyCategory[]>([]);
+  const [categories, setCategories] = useState<SupplyCategory[]>(DEFAULT_CATEGORIES);
   const [loading, setLoading] = useState(true);
-  const [activeCatId, setActiveCatId] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<
+    "food" | "hygiene" | "medicine" | "psychiatry" | "supplies"
+  >("food");
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [customItems, setCustomItems] = useState<
     { id: string; name: string; qty: number }[]
@@ -206,9 +437,11 @@ export default function SuppliesPledge() {
   const [showCustom, setShowCustom] = useState(false);
   const [customName, setCustomName] = useState("");
 
+  // Contact form & Estimated Delivery Date
   const [donorName, setDonorName] = useState("");
   const [donorPhone, setDonorPhone] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
+  const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -217,14 +450,39 @@ export default function SuppliesPledge() {
   useEffect(() => {
     getSupplyCategories()
       .then((cats) => {
-        setCategories(cats);
-        if (cats.length > 0) setActiveCatId(cats[0].id);
+        if (cats && cats.length > 0) {
+          // Normalize server categories to filter out equipment and map properly
+          const cleanCats = cats.filter((c) => {
+            const nameEn = (c.name?.en || "").toLowerCase();
+            return !nameEn.includes("equipment");
+          });
+          if (cleanCats.length > 0) {
+            setCategories(cleanCats);
+          }
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const activeCategory = categories.find((c) => c.id === activeCatId);
+  // Map active tab to active category
+  const activeCategory =
+    categories.find((c) => {
+      const nameEn = (c.name?.en || "").toLowerCase();
+      if (activeTab === "food") return nameEn.includes("food") || c.id === "cat-food";
+      if (activeTab === "hygiene") return nameEn.includes("hygiene") || c.id === "cat-hygiene";
+      if (activeTab === "psychiatry") return nameEn.includes("psychiatry") || nameEn.includes("therapy") || c.id === "cat-psychiatry";
+      if (activeTab === "supplies") return nameEn.includes("supplies") || nameEn.includes("ቁሳቁስ") || c.id === "cat-supplies";
+      return false;
+    }) ||
+    DEFAULT_CATEGORIES.find((c) => {
+      if (activeTab === "food") return c.id === "cat-food";
+      if (activeTab === "hygiene") return c.id === "cat-hygiene";
+      if (activeTab === "psychiatry") return c.id === "cat-psychiatry";
+      if (activeTab === "supplies") return c.id === "cat-supplies";
+      return false;
+    }) ||
+    categories[0];
 
   const changeQty = (itemId: string, delta: number) =>
     setQuantities((p) => ({
@@ -255,7 +513,7 @@ export default function SuppliesPledge() {
     .filter(([, qty]) => qty > 0)
     .map(([itemId, qty]) => {
       let itemName = "";
-      for (const cat of categories) {
+      for (const cat of [...categories, ...DEFAULT_CATEGORIES]) {
         const found = cat.items.find((it: SupplyItem) => it.id === itemId);
         if (found) {
           itemName = t(found.name);
@@ -280,6 +538,7 @@ export default function SuppliesPledge() {
     const cleanName = sanitizeText(donorName, 120);
     const cleanPhone = sanitizePhone(donorPhone);
     const cleanEmail = sanitizeText(donorEmail, 120);
+    const cleanDate = sanitizeText(estimatedDeliveryDate, 80);
 
     if (!isNonEmpty(cleanName)) {
       setError(language === "am" ? "ስምዎን ያስገቡ።" : "Please enter your name.");
@@ -307,6 +566,14 @@ export default function SuppliesPledge() {
       );
       return;
     }
+    if (!cleanDate) {
+      setError(
+        language === "am"
+          ? "የሚያስረክቡበትን ግምታዊ ቀን ይምረጡ።"
+          : "Please specify an estimated delivery date.",
+      );
+      return;
+    }
 
     setSubmitting(true);
     const pledge: SuppliesPledgeType = {
@@ -314,13 +581,14 @@ export default function SuppliesPledge() {
       donorName: cleanName,
       donorPhone: cleanPhone,
       donorEmail: cleanEmail,
-      categoryId: activeCatId,
+      categoryId: activeCategory?.id || activeTab,
       items: allSelected,
       date: new Date().toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
       }),
+      estimatedDeliveryDate: cleanDate,
       status: "pledged",
       notes: sanitizeText(notes, 500),
     };
@@ -345,13 +613,13 @@ export default function SuppliesPledge() {
         </span>
         <h3 className="font-serif text-2xl font-bold text-brand-sky-950">
           {language === "am"
-            ? "ምስጋና! ቃልኪዳንዎ ደርሶናል።"
-            : "Thank you! Pledge received."}
+            ? "ምስጋና! የዓይነት ቃልኪዳንዎ ደርሶናል።"
+            : "Thank you! In-kind pledge received."}
         </h3>
         <p className="text-gray-500 text-sm leading-relaxed">
           {language === "am"
-            ? "አስተዳደር ቡድናችን ብዙም ሳይቆይ ያናጋጥዎናል።"
-            : "Our team will contact you shortly to arrange the supply delivery."}
+            ? `እናመሰግናለን ${submitted.donorName}! ግምታዊ የማድረሻ ቀንዎ (${submitted.estimatedDeliveryDate}) ላይ በመመስረት የአስተዳደር ቡድናችን ያገኝዎታል።`
+            : `Thank you ${submitted.donorName}! We have recorded your estimated delivery date (${submitted.estimatedDeliveryDate}) and our team will be in touch.`}
         </p>
         <button
           onClick={() => {
@@ -361,6 +629,8 @@ export default function SuppliesPledge() {
             setDonorName("");
             setDonorPhone("");
             setDonorEmail("");
+            setEstimatedDeliveryDate("");
+            setNotes("");
           }}
           className="px-6 py-2.5 bg-brand-sky-400 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-brand-sky-500 cursor-pointer transition-colors"
         >
@@ -375,227 +645,331 @@ export default function SuppliesPledge() {
       <div className="flex items-center justify-center py-16 gap-2 text-brand-sky-400">
         <LoadingDots />
         <span className="text-sm font-medium">
-          {language === "am" ? "በመጫን ላይ..." : "Loading..."}
+          {language === "am" ? "በመጫን ላይ..." : "Loading categories..."}
         </span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Category tabs */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {categories.map((cat) => {
-          const Icon = ICON_MAP[cat.icon] || Package;
-          const isActive = activeCatId === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCatId(cat.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                isActive
-                  ? `${cat.color} text-white border-transparent shadow-md`
-                  : "bg-white text-brand-sky-700 border-brand-sky-200 hover:border-brand-sky-400 hover:bg-brand-sky-50"
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span>{t(cat.name)}</span>
-            </button>
-          );
-        })}
+    <div className="space-y-8">
+      {/* ── Strict Single-Word Category Options Bar: Food, Hygiene, Medicine, Psychiatry, Supplies ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5 max-w-4xl mx-auto">
+        {/* 1. Food (ምግብ) */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("food")}
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
+            activeTab === "food"
+              ? "bg-amber-500 text-white border-transparent shadow-md ring-2 ring-amber-200"
+              : "bg-white text-amber-900 border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+          }`}
+        >
+          <UtensilsCrossed className="w-4 h-4 shrink-0" />
+          <span>{language === "am" ? "ምግብ" : "Food"}</span>
+        </button>
+
+        {/* 2. Hygiene (ንጽህና) */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("hygiene")}
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
+            activeTab === "hygiene"
+              ? "bg-brand-sky-500 text-white border-transparent shadow-md ring-2 ring-brand-sky-200"
+              : "bg-white text-brand-sky-900 border-brand-sky-200 hover:border-brand-sky-400 hover:bg-brand-sky-50"
+          }`}
+        >
+          <Droplets className="w-4 h-4 shrink-0" />
+          <span>{language === "am" ? "ንጽህና" : "Hygiene"}</span>
+        </button>
+
+        {/* 3. Medicine (መድሃኒት) */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("medicine")}
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
+            activeTab === "medicine"
+              ? "bg-rose-500 text-white border-transparent shadow-md ring-2 ring-rose-200"
+              : "bg-white text-rose-900 border-rose-200 hover:border-rose-400 hover:bg-rose-50"
+          }`}
+        >
+          <Pill className="w-4 h-4 shrink-0" />
+          <span>{language === "am" ? "መድሃኒት" : "Medicine"}</span>
+        </button>
+
+        {/* 4. Psychiatry (ስነ-አእምሮ) */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("psychiatry")}
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
+            activeTab === "psychiatry"
+              ? "bg-purple-600 text-white border-transparent shadow-md ring-2 ring-purple-200"
+              : "bg-white text-purple-900 border-purple-200 hover:border-purple-400 hover:bg-purple-50"
+          }`}
+        >
+          <Brain className="w-4 h-4 shrink-0" />
+          <span>{language === "am" ? "ስነ-አእምሮ" : "Psychiatry"}</span>
+        </button>
+
+        {/* 5. Supplies (ቁሳቁስ) */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("supplies")}
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer border col-span-2 sm:col-span-1 ${
+            activeTab === "supplies"
+              ? "bg-teal-600 text-white border-transparent shadow-md ring-2 ring-teal-200"
+              : "bg-white text-teal-900 border-teal-200 hover:border-teal-400 hover:bg-teal-50"
+          }`}
+        >
+          <Package className="w-4 h-4 shrink-0" />
+          <span>{language === "am" ? "ቁሳቁስ" : "Supplies"}</span>
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        <div className="space-y-4">
-          {/* Selection counter */}
-          {allSelected.length > 0 && (
-            <div className="flex items-center justify-between bg-brand-sky-50 border border-brand-sky-200 rounded-xl px-4 py-2.5">
-              <span className="text-xs font-bold text-brand-sky-700">
-                {allSelected.length}{" "}
-                {language === "am" ? "እቃዎች ተምርጠዋል" : "item(s) selected"}
-              </span>
-            </div>
-          )}
+      {/* ── Render Medicine View with Dynamic Goal Scale & Top Minimalistic Goal Card ── */}
+      {activeTab === "medicine" ? (
+        <div className="bg-rose-50/20 p-2 sm:p-4 rounded-3xl border border-rose-100">
+          <MedicinePledge />
+        </div>
+      ) : (
+        /* ── Render Standard Category Supplies View (Food, Hygiene, Psychiatry, Supplies) ── */
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="space-y-4">
+            {/* Selection counter */}
+            {allSelected.length > 0 && (
+              <div className="flex items-center justify-between bg-brand-sky-50 border border-brand-sky-200 rounded-xl px-4 py-2.5">
+                <span className="text-xs font-bold text-brand-sky-700">
+                  {allSelected.length}{" "}
+                  {language === "am" ? "እቃዎች ተመርጠዋል" : "item(s) selected"}
+                </span>
+              </div>
+            )}
 
-          {/* Item rows */}
-          {activeCategory && (
-            <div className="space-y-2 h-80 overflow-y-scroll pr-2 scrollbar-subtle">
-              {activeCategory.items.map((item: SupplyItem) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 1 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <SupplyRow
-                    item={item}
-                    qty={quantities[item.id] || 0}
-                    language={language}
-                    t={t}
-                    onChangeQty={changeQty}
-                  />
-                </motion.div>
-              ))}
-
-              {/* Add custom item */}
-              <div className="rounded-2xl border-2 border-dashed border-brand-sky-200 bg-white hover:border-brand-sky-400 transition-colors">
-                {showCustom ? (
-                  <div className="p-4 space-y-2">
-                    <input
-                      type="text"
-                      value={customName}
-                      onChange={(e) => setCustomName(e.target.value)}
-                      placeholder={
-                        language === "am"
-                          ? "ሌላ እቃ ስም..."
-                          : "Custom item name..."
-                      }
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
-                      onKeyDown={(e) =>
-                        e.key === "Enter" && (e.preventDefault(), addCustom())
-                      }
-                      autoFocus
+            {/* Item rows */}
+            {activeCategory && (
+              <div className="space-y-2.5 max-h-96 overflow-y-auto pr-2 scrollbar-thin">
+                {activeCategory.items.map((item: SupplyItem) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <SupplyRow
+                      item={item}
+                      qty={quantities[item.id] || 0}
+                      language={language}
+                      t={t}
+                      onChangeQty={changeQty}
                     />
-                    <div className="flex gap-2">
+                  </motion.div>
+                ))}
+
+                {/* Add custom item */}
+                <div className="rounded-2xl border-2 border-dashed border-brand-sky-200 bg-white hover:border-brand-sky-400 transition-colors">
+                  {showCustom ? (
+                    <div className="p-4 space-y-2">
+                      <input
+                        type="text"
+                        value={customName}
+                        onChange={(e) => setCustomName(e.target.value)}
+                        placeholder={
+                          language === "am"
+                            ? "ሌላ እቃ ስም..."
+                            : "Custom item name..."
+                        }
+                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && (e.preventDefault(), addCustom())
+                        }
+                        autoFocus
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={addCustom}
+                          className="flex-1 py-2 bg-brand-sky-400 text-white rounded-xl text-xs font-bold cursor-pointer hover:bg-brand-sky-500 transition-colors"
+                        >
+                          {language === "am" ? "ጨምር" : "Add"}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowCustom(false);
+                            setCustomName("");
+                          }}
+                          className="px-3 py-2 border border-gray-200 text-gray-500 rounded-xl text-xs cursor-pointer hover:bg-gray-50 transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setShowCustom(true)}
+                      className="w-full flex items-center gap-2 px-4 py-3.5 text-xs font-bold text-brand-sky-600 hover:text-brand-sky-800 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      {language === "am" ? "ሌላ እቃ ጨምር" : "Add a custom item"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Custom items list */}
+            {customItems.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-brand-sky-500">
+                  {language === "am" ? "ሌሎች እቃዎች" : "Custom Items"}
+                </p>
+                {customItems.map((it) => (
+                  <div
+                    key={it.id}
+                    className="flex items-center gap-3 bg-white border-2 border-brand-sky-200 rounded-2xl px-4 py-3"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-brand-sky-400 shrink-0" />
+                    <span className="text-sm font-semibold text-brand-sky-950 flex-1">
+                      {it.name}
+                    </span>
+                    <div className="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 p-0.5">
                       <button
-                        onClick={addCustom}
-                        className="flex-1 py-2 bg-brand-sky-400 text-white rounded-xl text-xs font-bold cursor-pointer hover:bg-brand-sky-500 transition-colors"
+                        onClick={() => changeCustomQty(it.id, -1)}
+                        className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand-sky-600 rounded-md cursor-pointer"
                       >
-                        {language === "am" ? "ጨምር" : "Add"}
+                        <Minus className="w-3.5 h-3.5" />
                       </button>
+                      <span className="text-sm font-black text-brand-sky-950 min-w-[28px] text-center">
+                        {it.qty}
+                      </span>
                       <button
-                        onClick={() => {
-                          setShowCustom(false);
-                          setCustomName("");
-                        }}
-                        className="px-3 py-2 border border-gray-200 text-gray-500 rounded-xl text-xs cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => changeCustomQty(it.id, 1)}
+                        className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand-sky-600 rounded-md cursor-pointer"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => setShowCustom(true)}
-                    className="w-full flex items-center gap-2 px-4 py-3.5 text-xs font-bold text-brand-sky-500 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    {language === "am" ? "ሌላ እቃ ጨምር" : "Add a custom item"}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Custom items list */}
-          {customItems.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-brand-sky-500">
-                {language === "am" ? "ሌሎች እቃዎች" : "Custom Items"}
-              </p>
-              {customItems.map((it) => (
-                <div
-                  key={it.id}
-                  className="flex items-center gap-3 bg-white border-2 border-brand-sky-200 rounded-2xl px-4 py-3"
-                >
-                  <span className="w-2 h-2 rounded-full bg-brand-sky-400 shrink-0" />
-                  <span className="text-sm font-semibold text-brand-sky-950 flex-1">
-                    {it.name}
-                  </span>
-                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 p-0.5">
-                    <button
-                      onClick={() => changeCustomQty(it.id, -1)}
-                      className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand-sky-600 rounded-md cursor-pointer"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="text-sm font-black text-brand-sky-950 min-w-[28px] text-center">
-                      {it.qty}
-                    </span>
-                    <button
-                      onClick={() => changeCustomQty(it.id, 1)}
-                      className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand-sky-600 rounded-md cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Contact form */}
-        <div className="bg-white border-2 border-brand-sky-200 rounded-3xl p-6 shadow-xl">
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <h3 className="font-serif font-bold text-base text-brand-sky-950">
-              {language === "am" ? "የእርስዎ መረጃ" : "Your Contact Info"}
-            </h3>
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
+                ))}
               </div>
             )}
-            <input
-              type="text"
-              required
-              value={donorName}
-              onChange={(e) => setDonorName(e.target.value)}
-              placeholder={language === "am" ? "ሙሉ ስም *" : "Full Name *"}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
-            />
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="tel"
-                value={donorPhone}
-                onChange={(e) => setDonorPhone(e.target.value)}
-                placeholder={language === "am" ? "ስልክ" : "Phone"}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
-              />
-              <input
-                type="email"
-                value={donorEmail}
-                onChange={(e) => setDonorEmail(e.target.value)}
-                placeholder={language === "am" ? "ኢሜይል" : "Email"}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
-              />
-            </div>
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={
-                language === "am" ? "ማስታወሻ (አማራጭ)" : "Notes (optional)"
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none resize-none"
-            />
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
-              <span className="text-xs font-bold text-brand-sky-700 bg-brand-sky-50 border border-brand-sky-200 rounded-xl px-3 py-3 text-center sm:text-left">
-                {language === "am" ? "የተመረጡ" : "Selected items"}:{" "}
-                {allSelected.length}
-              </span>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 py-3 bg-brand-sky-400 hover:bg-brand-sky-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {submitting ? (
-                  <>
-                    <LoadingDots label={language === "am" ? "በመላክ..." : "Sending..."} className="justify-center" />
-                    {language === "am" ? "በመላክ..." : "Sending..."}
-                  </>
-                ) : (
-                  <>
-                    <Package className="w-4 h-4" />
-                    {language === "am" ? "ቃልኪዳን ላክ" : "Submit Pledge"}
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+          </div>
+
+          {/* Contact form & Estimated Delivery Date */}
+          <div className="bg-white border-2 border-brand-sky-200 rounded-3xl p-6 shadow-xl space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              <h3 className="font-serif font-bold text-base text-brand-sky-950">
+                {language === "am" ? "የእርስዎ መረጃና የማስረከቢያ ቀን" : "Contact & Delivery Date"}
+              </h3>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                  {language === "am" ? "ሙሉ ስም *" : "Full Name *"}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={donorName}
+                  onChange={(e) => setDonorName(e.target.value)}
+                  placeholder={language === "am" ? "ስምዎን ያስገቡ" : "Enter full name"}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                    {language === "am" ? "ስልክ ቁጥር *" : "Phone *"}
+                  </label>
+                  <input
+                    type="tel"
+                    value={donorPhone}
+                    onChange={(e) => setDonorPhone(e.target.value)}
+                    placeholder="09..."
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                    {language === "am" ? "ኢሜይል (አማራጭ)" : "Email (Optional)"}
+                  </label>
+                  <input
+                    type="email"
+                    value={donorEmail}
+                    onChange={(e) => setDonorEmail(e.target.value)}
+                    placeholder="name@domain.com"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none font-medium"
+                  />
+                </div>
+              </div>
+
+              {/* Estimated Delivery Date Picker */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-brand-sky-900 mb-1">
+                  <Calendar className="w-3.5 h-3.5 inline mr-1 text-brand-sky-500" />
+                  {language === "am" ? "የሚያስረክቡበት ግምታዊ ቀን *" : "Estimated Delivery Date *"}
+                </label>
+                <input
+                  type="date"
+                  required
+                  min={new Date().toISOString().split("T")[0]}
+                  value={estimatedDeliveryDate}
+                  onChange={(e) => setEstimatedDeliveryDate(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-brand-sky-50/50 border border-brand-sky-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none font-bold text-brand-sky-950 cursor-pointer"
+                />
+                <span className="text-[10px] text-gray-400 block mt-1">
+                  {language === "am"
+                    ? "እቃውን መቼ ለማድረስ ወይም ለማስረከብ ያቅዳሉ?"
+                    : "When do you plan to bring or send these supplies to Selihom?"}
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                  {language === "am" ? "ማስታወሻ (አማራጭ)" : "Notes (Optional)"}
+                </label>
+                <textarea
+                  rows={2}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder={
+                    language === "am" ? "ተጨማሪ መልእክት..." : "Notes or drop-off details..."
+                  }
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none resize-none font-medium"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                <span className="text-xs font-bold text-brand-sky-700 bg-brand-sky-50 border border-brand-sky-200 rounded-xl px-3.5 py-3 text-center sm:text-left">
+                  {language === "am" ? "የተመረጡ እቃዎች" : "Selected items"}:{" "}
+                  <strong className="text-brand-sky-950 font-black">{allSelected.length}</strong>
+                </span>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 py-3.5 bg-brand-sky-400 hover:bg-brand-sky-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {submitting ? (
+                    <LoadingDots label={language === "am" ? "በመላክ..." : "Submitting..."} className="justify-center" />
+                  ) : (
+                    <>
+                      <Package className="w-4 h-4" />
+                      <span>{language === "am" ? "ቃልኪዳን ላክ" : "Submit Pledge"}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -36,7 +36,7 @@ export const SELIHOM_INFO = {
   },
   registration: {
     number: "1113/2019",
-    date: "Feb 03, 2020",
+    date: "30/02/2011 ዓ.ም (Oct 30, 2018)",
     agency: {
       am: "የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ",
       en: "Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations"
@@ -44,47 +44,48 @@ export const SELIHOM_INFO = {
     certificateImage: officialCertificate
   },
   about: {
-    founder: { am: "ሚኪያስ ለገሰ", en: "Mikiyas Legesse" },
+    founder: { am: "አቶ ሚኪያስ ለገሰ (መስራች እና ዋና ስራ አስኪያጅ)", en: "Mr. Mikiyas Legesse (Founder & General Manager)" },
     history: {
       title: { am: "አመሰራረት", en: "Our Story" },
       summary: {
-        am: "ሰሊሆም ማህበር የተመሰረተው በአቶ ሚኪያስ ለገሰ አባታቸውን በአዕምሮ ህመም ምክንያት ካጡ በኋላ ነው። በዚህ ሀዘን በመነሳት፣ በጎዳና ላይ የሚኖሩ የአዕምሮ ህሙማንን ማንሳት ጀመሩ። በሺንቁር ቅዱስ ሚካኤል ቤተክርስቲያን አቅራቢያ አነስተኛ የተከራየች ቤት በመጀመር፣ እሳቸውና በጎ ፈቃደኞች ጫማ በመወልወል፣ መኪና በማጠብና እርዳታ በመሰብሰብ ገቢ ያሰባስቡ ነበር። ድርጅቱ እያደገ ሲመጣ ወደ እንጦጦ ራጉኤል ቤተክርስቲያን አቅራቢያ ተዛውሮ አሁን ላይ 200 አካባቢ ተጠቃሚዎችን የሚረዳ ሲሆን፣ ከእነዚህም ውስጥ 85% ያህሉ ከፍተኛ መሻሻል አሳይተዋል።",
-        en: "Selihom was founded by Mikiyas Legesse after losing his father to mental illness. Motivated by this tragedy, he began rescuing people living on the streets with mental illness. Starting with a small rented house near St. Michael Church in Shinkur, he and volunteers raised funds by cleaning shoes, washing cars, and collecting donations. As the organization grew, it relocated near Entoto Raguel Church, where it now serves around 200 beneficiaries, with approximately 85% showing significant recovery."
+        am: "ሰሊሆም ማህበር የተመሰረተው በአቶ ሚኪያስ ለገሰ አባታቸውን በአዕምሮ ህመም ምክንያት ካጡ በኋላ ነው። በዚህ ሀዘን በመነሳት፣ በጎዳና ላይ የሚኖሩ የአዕምሮ ህሙማንን ማንሳት ጀመሩ። በሺንቁር ቅዱስ ሚካኤል ቤተክርስቲያን አቅራቢያ አነስተኛ የተከራየች ቤት በመጀመር፣ እሳቸውና በጎ ፈቃደኞች ጫማ በመወልወል፣ መኪና በማጠብና እርዳታ በመሰብሰብ ገቢ ያሰባስቡ ነበር። ድርጅቱ እያደገ ሲመጣ ወደ እንጦጦ ራጉኤል ቤተክርስቲያን አቅራቢያ ተዛውሮ አሁን ላይ 200 እስከ 400 ተጠቃሚዎችን የሚረዳ ሲሆን፣ ከእነዚህም ውስጥ 85% ያህሉ ከፍተኛ መሻሻል አሳይተዋል።",
+        en: "Selihom was founded by Mikiyas Legesse after losing his father to mental illness. Motivated by this tragedy, he began rescuing people living on the streets with mental illness. Starting with a small rented house near St. Michael Church in Shinkur, he and volunteers raised funds by cleaning shoes, washing cars, and collecting donations. As the organization grew, it relocated near Entoto Raguel Church, where it now serves 200 to 400 beneficiaries, with approximately 85% showing significant recovery."
       }
     },
     vision: {
       title: { am: "ራዕይ", en: "Vision" },
       content: {
-        am: "ለአዕምሮ ህሙማንና ተጋላጭ አዛውንቶች የህክምና፣ የስነ-ልቦና እና የማህበራዊ ድጋፍ በመስጠት በህብረተሰቡ ውስጥ ጤናማና ክብር ያለው ህይወት እንዲኖሩ ማድረግ።",
-        en: "To provide medical, psychological, and social support to people with mental illness and vulnerable elderly citizens so they can live healthy, dignified lives within society."
+        am: "በደረሰባቸው የአእምሮ ህመም ምክንያት እብድ..በሽተኛ.. ወዘተ ተብለው ለሰው ልጅ ሁሉ ባልተገባ ሁኔታ ውሎና አዳራቸው በቆሸሸ እና በተጠላ ስፍራ ሆኖ ቆሻሻዎችን እየተመገቡ በህመም እና በረሃብ ሰውነታቸው የተጎሳቆለ እንዲሁም በእድሜያቸው መግፋት ሸክም ሆኖባቸው ጧሪ እና ተንከባካቢ በማጣት በጎዳና ላይ የዋሉ አዛውንቶችንና የሀገር ባለውለታዎችን ወደ ማእከሉ በማስገባት ፍቅር እና እንክብካቤ እንዲያገኙ ማድረግ የሰሊሆም ታላቁ ራእይ ነው።",
+        en: "To bring individuals who, due to mental illness, have been stigmatized and left in inhumane conditions—spending their days in rejected places, feeding on waste, their bodies devastated by illness and hunger—as well as elderly citizens and national elders abandoned without care, into our center so that they receive genuine love, dignified care, and healing: this is Selihom's greatest vision."
       }
     },
     mission: {
       title: { am: "ተልዕኮ", en: "Mission" },
       content: {
-        am: "የአዕምሮ ህሙማንን ከጎዳና በማንሳት ሕክምና፣ ምክር፣ የሙያ ስልጠናና ድጋፍ መስጠት፣ እንዲሁም ተንከባካቢ የሌላቸውን አዛውንቶች መንከባከብ።",
-        en: "To rescue people with mental illness from the streets, provide treatment, counseling, vocational training, and support while also caring for abandoned elderly people."
+        am: "በአእምሮ ህመም፣ በስጋዊ ቁስለት፣ በሰው ሰራሽና በተፈጥሮ አደጋ፣ በረሃብ እና ደጋፊ በማጣት ምክንያት ወደ ማእከላችን ያስገባናቸውን ህሙማኖች በምናደርግላቸው እንክብካቤ እንዲያገኙ በምናደርገው ህክምና የጤና ለውጥ እንዲያመጡ በትጋት መስራት፤ የጤና ለውጥ ያመጡ ህሙማኖችንም ከስነ-አእምሮ ባለሙያዎች ጋር ትስስር በመፍጠር ከገቡበት የአእምሮ ዝቅታ እንዲወጡ አጠንክረን መስራት እና ወደ አእምሮ ከፍታ ማምጣት ታላቅ ተልእኳችን ነው።",
+        en: "To work tirelessly so that the patients brought to our center due to mental illness, physical wounds, crises, hunger, and lack of support experience true health transformation through compassionate care and medical treatment; and to connect recovered patients with psychiatric professionals to lift them out of psychological despair and guide them to mental elevation: this is our highest mission."
       }
     },
     objectives: {
       title: { am: "ዓላማ", en: "Objectives" },
       content: {
-        am: "ያገገሙ ሰዎችን በሙያ ስልጠና፣ በትብብርና በስራ እድሎች በማብቃት በራሳቸው የሚቆሙና ለማህበረሰቡ አርአያ እንዲሆኑ ማድረግ።",
-        en: "To empower recovered beneficiaries through vocational training, partnerships, and employment opportunities so they become self-sufficient and role models in society."
+        am: "ማእከላችን በሚያደርግላቸው እንክብካቤ እንዲያገኙ በምናስችለው ህክምና ወደ ቀድሞ ጤናቸው የተመለሱ ህሙማኖችን ከተለያዩ የሙያ ተቋማት እና ማህበራት እንዲሁም ግለሰቦች ጋር ትስስር በመፍጠር የተለያዩ ስልጠናዎችን እንዲያገኙ ማስቻል፣ በሚያገኙት ስልጠናም የተለያዩ የሙያ ስራዎችን የሚሰሩበትን ሁኔታ ማመቻቸት እና በሚሰሩባቸው ስራዎች ራሳቸውንም ሆነ በዙሪያቸው ያሉ ወገኖችን እንዲጠቅሙ ማድረግና ለብዙዎች አርአያ የሚሆንበትን እድል በህይወታቸው ውስጥ እንዲፈጠር ማስቻል የሰሊሆም የአእምሮ ህሙማን መርጃ ማህበር አላማ ነው።",
+        en: "To connect patients who have restored their health through the care and treatment provided at our center with vocational institutes, associations, and supportive individuals to receive diverse skills training; to facilitate opportunities for them to engage in professional trades so they can support themselves and benefit those around them; and to enable them to become inspirational role models in society: this is the foremost objective of Selihom."
       }
     }
   },
   contact: {
     address: {
-      am: "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስትያን ወደ ፍተሻ በሚወስደው መንገድ፣ አዲስ አበባ",
-      en: "Near Entoto St. Raguel and Elias Church, on the road leading toward Fetesha, Addis Ababa, Ethiopia"
+      am: "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስቲያን ወደ ፍተሻ በሚወስደው መንገድ 300 ሜትር ዝቅ ብሎ፣ አዲስ አበባ",
+      en: "Near Entoto St. Raguel & Elias Church, 300 meters down on the road towards Fetesha, Addis Ababa, Ethiopia"
     },
     phones: [
       "+251911004903",
       "+251953905050",
-      "0118195444"
+      "0118195444",
+      "0904440157"
     ],
-    email: "selihome@gmail.com",
+    email: "selihomc@gmail.com",
     social: {
       telegram: "https://t.me/Selihommentallyill",
       facebook: "https://facebook.com/SelihomSupport"
@@ -101,22 +102,36 @@ export const BANK_ACCOUNTS: BankAccount[] = [
   {
     bank: { am: "አቢሲንያ ባንክ", en: "Bank of Abyssinia" },
     accountNumber: "77984852",
-    accountName: "Selihom Support Association"
+    accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር"
   },
   {
     bank: { am: "አዋሽ ባንክ", en: "Awash Bank" },
     accountNumber: "01303572131300",
-    accountName: "Selihom Support Association"
+    accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር"
+  },
+  {
+    bank: { am: "ቡና ባንክ", en: "Bunna Bank" },
+    accountNumber: "2919601000145",
+    accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር"
+  },
+  {
+    bank: { am: "ስንቄ ባንክ", en: "Sinquee Bank" },
+    accountNumber: "1106177681225",
+    accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር"
+  },
+  {
+    bank: { am: "ቴሌብር (ሞባይል ገንዘብ)", en: "Telebirr (Mobile Money)" },
+    accountNumber: "0911004903",
+    accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር (ሚኪያስ ለገሰ)"
   }
 ];
 
 export const VALUES: ValueItem[] = [
-  { id: "val-1", title: { am: "ግልጽነት", en: "Transparency" }, description: { am: "ሁሉንም ሀብቶችና እርዳታዎች በግልጽነት ለህዝብ ማሳወቅ።", en: "Complete public accountability and clear reporting of all donations." } },
-  { id: "val-2", title: { am: "ቅንነት", en: "Integrity" }, description: { am: "በፍቅርና በታማኝነት ማህበረሰቡን ማገልገል።", en: "Serving with genuine love, truthfulness, and unwavering dedication." } },
-  { id: "val-3", title: { am: "ቤተሰባዊነት", en: "Family Spirit" }, description: { am: "ሁሉንም ተጠቃሚዎች እንደ አንድ ቤተሰብ መንከባከብ።", en: "Caring for every beneficiary as our beloved family member." } },
-  { id: "val-4", title: { am: "የላቀ አገልግሎት", en: "Excellence in Service" }, description: { am: "ከፍተኛ ጥራት ያለው ሕክምናና ድጋፍ መስጠት።", en: "Providing top-quality medical, psychiatric, and social care." } },
-  { id: "val-5", title: { am: "ያለ አድሎ ድጋፍ", en: "Non-discriminatory Support" }, description: { am: "ማንኛውንም ሰው ያለ አድሎ በእኩልነት መርዳት።", en: "Serving all human beings regardless of ethnicity or background." } },
-  { id: "val-6", title: { am: "በእውቀትና በእምነት መመራት", en: "Guided by Knowledge and Faith" }, description: { am: "በሙያዊ እውቀትና በእምነት ማህበረሰቡን መምራት።", en: "Combining professional mental healthcare with compassionate faith." } }
+  { id: "val-1", title: { am: "ግልጸኝነት", en: "Transparency" }, description: { am: "ሁሉንም ሀብቶችና እርዳታዎች በግልጽነት ለህዝብ ማሳወቅ።", en: "Complete public accountability and clear reporting of all donations and resources." } },
+  { id: "val-2", title: { am: "ቅንነት", en: "Sincerity & Integrity" }, description: { am: "በፍቅርና በታማኝነት ማህበረሰቡን ማገልገል።", en: "Serving with genuine love, truthfulness, and unwavering dedication to every resident." } },
+  { id: "val-3", title: { am: "በእዉቀትና በእምነት መመራት", en: "Guided by Knowledge & Faith" }, description: { am: "በሙያዊ እውቀትና በእምነት ማህበረሰቡን መምራት።", en: "Combining professional psychiatric and medical healthcare with compassionate faith." } },
+  { id: "val-4", title: { am: "ያለ አድሎ ድጋፍ ማድረግ", en: "Non-discriminatory Support" }, description: { am: "ማንኛውንም ሰው ያለ አድሎ በእኩልነት መርዳት።", en: "Serving all human beings equally with open arms regardless of background or condition." } },
+  { id: "val-5", title: { am: "የላቀ አገልግሎት መስጠት", en: "Excellence in Service" }, description: { am: "ከፍተኛ ጥራት ያለው ሕክምናና እንክብካቤ መስጠት።", en: "Providing top-quality medical, psychiatric, and compassionate rehabilitation." } }
 ];
 
 export const INITIATIVES: Initiative[] = [
@@ -184,85 +199,130 @@ export const INITIATIVES: Initiative[] = [
 
 export const TRANSFORMATION_STORIES: TransformationStory[] = [
   {
-    id: "story-1",
-    name: { am: "የህክምናና የስነ-ልቦና ተሃድሶ", en: "Psychiatric Care & Recovery" },
-    status: { am: "ሙሉ በሙሉ ያገገመች", en: "Fully Recovered & Restored" },
+    id: "story-wondwossen",
+    name: { am: "ወንደሰን ከበደ", en: "Wondwossen Kebede" },
+    status: { am: "ሙሉ በሙሉ ያገገመ • የመስተንግዶ መሪ", en: "Fully Recovered • Resident Dining Lead" },
     storyBefore: {
-      am: "በጎዳና ላይ ተጥላ ያለ ተንከባካቢና ህክምና በከፍተኛ ችግር ውስጥ ትኖር የነበረች።",
-      en: "Living on street pavements with untreated illness and no shelter or support."
+      am: "ማእከላችን ከመምጣቱ በፊት በከባድ የአእምሮ ህመም ምክንያት በጎዳና ላይ ያለ መጠለያና ምግብ ይኖር ነበር።",
+      en: "Lived on harsh city streets suffering from severe untreated mental illness without shelter, food, or dignity."
     },
     storyAfter: {
-      am: "በሰሊሆም ማህበር ሙሉ የህክምና፣ የምግብና የስነ-ልቦና ድጋፍ አግኝታ አሁን በደስታና በሰላም ትኖራለች።",
-      en: "Provided psychiatric treatment, warm clothing, and holistic care at Selihom. Now peaceful and healthy."
+      am: "ማእከላችን ከገባ በኋላ የምግብ፣ የመጠለያ፣ የአልባሳትና የመድሃኒት ድጋፍ ተደርጎለት በጥሩ ጤንነት ላይ ይገኛል፤ አሁን በማእከሉ የቁርስ፣ ምሳና እራት መስተንግዶ ላይ ይሰራል!",
+      en: "Received complete psychiatric care, housing, nutrition, and recovery monitoring. Now in excellent health, proudly leading resident dining service!"
     },
-    image: person1Img,
-    imagePosition: "object-center"
+    image: person4Img,
+    imagePosition: "object-top"
   },
   {
-    id: "story-2",
-    name: { am: "የጤናና የህይወት መታደስ", en: "Restoration of Health & Joy" },
-    status: { am: "ያገገመችና በደስታ የምትኖር", en: "Rehabilitated & Thriving" },
+    id: "story-birqineh",
+    name: { am: "ብርቅነህ ከበደ", en: "Birqineh Kebede" },
+    status: { am: "ያገገመ • የህሙማን ተንከባካቢ", en: "Fully Recovered • Inpatient Caregiver" },
     storyBefore: {
-      am: "በጎዳና ላይ በከፍተኛ ተስፋ መቁረጥ፣ ህመም እና ጭንቀት ውስጥ ተጥላ የነበረች።",
-      en: "Found in severe distress and vulnerability living on open street corners."
+      am: "ማእከላችን ከመምጣቱ በፊት በጎዳና ላይ ተጥሎ በከፍተኛ ህመም እና ችግር ውስጥ ይኖር ነበር።",
+      en: "Abandoned on the street in deep distress, suffering without medical care, clothing, or physical support."
     },
     storyAfter: {
-      am: "የአዕምሮ ህክምናና ፍቅር አግኝታ ሙሉ በሙሉ በመዳኗ አሁን በንጹህ ባህላዊ አልባሳት አጊጣ በደስታ ትኖራለች።",
-      en: "Received full psychiatric care and family warmth. Now beautifully dressed in traditional Habesha attire with a joyful smile."
-    },
-    image: person3Img,
-    imagePosition: "object-center"
-  },
-  {
-    id: "story-3",
-    name: { am: "የተሃድሶና የእንክብካቤ ስኬት", en: "Rehabilitation & Dignity" },
-    status: { am: "ያገገመና የተቋቋመ", en: "Recovered & Reintegrated" },
-    storyBefore: {
-      am: "በአዕምሮ ህመም ምክንያት በጎዳና ላይ ተጥሎ ይኖር የነበረ።",
-      en: "Lived on street curbs struggling with severe untreated illness."
-    },
-    storyAfter: {
-      am: "በሰሊሆም ሙሉ ህክምና አግኝቶ ጤንነቱ ተመልሶ በክብር የሚኖር።",
-      en: "Restored to complete health, clean-shaven, well-dressed, and living with dignity."
+      am: "የምግብ፣ የመጠለያ፣ የአልባሳትና የመድሃኒት ክትትል ተደርጎለት ሙሉ በሙሉ ድኗል፤ አሁን አዲስ የሚገቡ ህሙማንን በማእከሉ ውስጥ በመንከባከብ ያገለግላል!",
+      en: "Healed through compassionate psychiatric treatment, nutrition, and love. Now works full-time as a dedicated caregiver for incoming patients!"
     },
     image: person2Img,
     imagePosition: "object-top"
   },
   {
-    id: "story-4",
-    name: { am: "የሙሉ ተሃድሶና ስራ ጉዞ", en: "Full Recovery & Reintegration" },
-    status: { am: "ሙሉ በሙሉ ያገገመና በስራ ላይ ያለ", en: "Fully Recovered & Working" },
+    id: "story-menur",
+    name: { am: "መኑር ሰማ", en: "Menur Sema" },
+    status: { am: "ያገገመ • የብረት ብየዳ ባለሙያ", en: "Fully Recovered • Skilled Metal Welder" },
     storyBefore: {
-      am: "በጎዳና ላይ በቆሻሻ ቦታዎች ተጥሎ በከፍተኛ ህመም ውስጥ ይኖር የነበረ።",
-      en: "Suffered on city streets without shelter, proper food, or medical attention."
+      am: "በአእምሮ ህመም ምክንያት በጎዳና ላይ ተጥሎ በከፍተኛ ረሃብና እንክብካቤ እጦት ይኖር ነበር።",
+      en: "Lived on the streets battling acute mental distress, extreme hunger, and cold mountain weather."
     },
     storyAfter: {
-      am: "በማህበሩ የህክምናና ተሃድሶ ድጋፍ አግኝቶ አሁን ሙሉ በሙሉ አግግሞ በሱፍ ልብስ አጊጦ የሚኖር።",
-      en: "Rehabilitated and fully healed. Now neatly groomed, wearing a blue formal suit, and filled with hope."
+      am: "በሰሊሆም ሙሉ የህክምናና የተሃድሶ ድጋፍ አግኝቶ ጤንነቱ ተመልሷል፤ የሙያ ስልጠና ወስዶ አሁን በብረት ብየዳ ሙያ ላይ ተሰማርቶ በራሱ ይኖራል!",
+      en: "Restored to complete health at Selihom. Received vocational training and is now an independently employed professional metal welder!"
+    },
+    image: person1Img,
+    imagePosition: "object-center"
+  },
+  {
+    id: "story-fisseha",
+    name: { am: "ፍስሃ ሞገስ", en: "Fisseha Moges" },
+    status: { am: "ያገገመ • ባለሙያ ሹፌር", en: "Fully Recovered • Professional Driver" },
+    storyBefore: {
+      am: "ማእከላችን ከመምጣቱ በፊት በጎዳና ላይ ተስፋ ቆርጦ በከፍተኛ ህመም ውስጥ ይኖር ነበር።",
+      en: "Endured street life with debilitating mental illness, without clean clothing, sanitation, or family."
+    },
+    storyAfter: {
+      am: "የምግብ፣ የመጠለያ፣ የአልባሳትና የመድሃኒት ድጋፍ አግኝቶ በጥሩ ጤንነት ላይ ይገኛል፤ አሁን በሹፍርና ሙያ ላይ ተሰማርቶ ራሱንና ሌሎችን ይረዳል!",
+      en: "Fully rehabilitated through daily psychiatric care and warm shelter. Now thriving as a licensed professional driver!"
+    },
+    image: person3Img,
+    imagePosition: "object-center"
+  },
+  {
+    id: "story-nesru",
+    name: { am: "ነስሩ መሃመድ", en: "Nesru Mohammed" },
+    status: { am: "ያገገመ • የጥበቃ ባለሙያ", en: "Fully Recovered • Facility Security Officer" },
+    storyBefore: {
+      am: "ማእከላችን ከመምጣቱ በፊት በጎዳና ላይ ተጥሎ በከፍተኛ አደጋ ውስጥ ይኖር ነበር።",
+      en: "Struggled on street curbs without safety, shelter, or psychiatric medical assistance."
+    },
+    storyAfter: {
+      am: "በማእከላችን ህክምናና ፍቅር አግኝቶ በጥሩ ጤንነት ላይ ይገኛል፤ አሁን በማእከሉ የጥበቃ ስራ ላይ በታማኝነት ይሰራል!",
+      en: "Healed through continuous medical monitoring and shelter care. Now employed as a trusted security officer on campus!"
+    },
+    image: person2Img,
+    imagePosition: "object-top"
+  },
+  {
+    id: "story-mustefa",
+    name: { am: "ሙስጠፋ ከድር", en: "Mustefa Kedir" },
+    status: { am: "ያገገመ • የጥበቃ ባለሙያ", en: "Fully Recovered • Center Security Officer" },
+    storyBefore: {
+      am: "ማእከላችን ከመምጣቱ በፊት በጎዳና ላይ ይኖር ነበር፤ በህመም እና በረሃብ ሰውነቱ ተጎሳቁሎ የነበረ።",
+      en: "Survived on the streets with untreated illness and malnutrition, rejected by society."
+    },
+    storyAfter: {
+      am: "የምግብ፣ የመጠለያና የመድሃኒት ክትትል ተደርጎለት ሙሉ ጤንነቱ ተመልሷል፤ አሁን በማእከሉ በጥበቃ ስራ ላይ ይሰራል!",
+      en: "Completely recovered through loving care, psychiatric medicine, and nourishment. Now proudly works in center security!"
     },
     image: person4Img,
     imagePosition: "object-top"
+  },
+  {
+    id: "story-alemayehu",
+    name: { am: "አለማየሁ ገ/ጻዲቅ", en: "Alemayehu G/Tsadik" },
+    status: { am: "ያገገመ • የጥበቃ ባለሙያ", en: "Fully Recovered • Campus Safety Officer" },
+    storyBefore: {
+      am: "ማእከላችን ከመምጣቱ በፊት በጎዳና ላይ ይኖር የነበረ ወገናችን ነው።",
+      en: "Lived on open streets without a caregiver or access to medical care."
+    },
+    storyAfter: {
+      am: "በሰሊሆም ሙሉ እንክብካቤ፣ አልባሳትና ህክምና አግኝቶ በጥሩ የጤንነት ሁኔታ ላይ ይገኛል፤ አሁን በማእከሉ በጥበቃ ስራ ላይ ይሰራል!",
+      en: "Restored to full physical and mental strength at Selihom. Now employed in safety and security for the center!"
+    },
+    image: person1Img,
+    imagePosition: "object-center"
   }
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: "test-1",
-    name: "Abebe Wale",
-    role: { am: "ያገገመ ተጠቃሚና በጎ ፈቃደኛ", en: "Recovered Beneficiary & Volunteer" },
+    name: "Wondwossen Kebede (ወንደሰን ከበደ)",
+    role: { am: "ያገገመ ተጠቃሚና የማእከሉ ሰራተኛ", en: "Recovered Beneficiary & Shelter Staff" },
     quote: {
-      am: "ሰሊሆም ከጎዳና አንስቶ ህይወቴን መልሶልኛል። አሁን እኔም ሌሎችን ለመርዳት በጎ ፈቃደኛ ሆኛለሁ።",
-      en: "Selihom rescued me from the street and gave me my life back. Now I volunteer to help others heal."
+      am: "ሰሊሆም ከጎዳና አንስቶ ህይወቴን መልሶልኛል። አሁን እኔም ሌሎችን ለመርዳትና ለማገልገል በመስተንግዶ ስራ ላይ ደስተኛ ሆኛለሁ።",
+      en: "Selihom rescued me from the street and gave me my life back. Now I find deep joy serving food and caring for others at the center."
     },
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop"
+    avatar: person4Img
   },
   {
     id: "test-2",
     name: "Almaz Tesfaye",
     role: { am: "የማህበረሰብ በጎ ፈቃደኛ", en: "Regular Community Volunteer, Addis Ababa" },
     quote: {
-      am: "በየሳምንቱ ሰሊሆም ሲመጡ የአዕምሮ ህሙማን ሲድኑና ወደ ሰብአዊ ክብራቸው ሲመለሱ ማየት ትልቅ ደስታ ነው።",
-      en: "Seeing people with mental illness heal and regain their human dignity every week brings unspeakable joy."
+      am: "ከሰኞ እስከ እሁድ ሰሊሆም ሲመጡ የአዕምሮ ህሙማን ሲድኑ፣ ንጹህ ልብስ ለብሰው ወደ ሰብአዊ ክብራቸው ሲመለሱ ማየት ትልቅ ደስታ ነው።",
+      en: "Seeing people with mental illness heal, receive clean clothes, and regain their human dignity brings unspeakable joy every week."
     },
     avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=150&auto=format&fit=crop"
   },
@@ -271,8 +331,8 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Dr. Semere Kebede",
     role: { am: "የህክምና በጎ ፈቃደኛ አማካሪ", en: "Volunteer Medical Consultant" },
     quote: {
-      am: "የሰሊሆም ግልጽነትና ቁርጠኝነት ልዩ ነው። የሚደረገው እያንዳንዱ እርዳታ በቀጥታ ለህሙማኑ ሕክምና ይውላል።",
-      en: "Selihom's transparency and dedication are exceptional. Every single donation goes directly to beneficiary medical care."
+      am: "የሰሊሆም ግልጽነትና ቁርጠኝነት ልዩ ነው። የሚደረገው እያንዳንዱ እርዳታ በቀጥታ ለህሙማኑ ሕክምና፣ መድኃኒትና ምግብ ይውላል።",
+      en: "Selihom's transparency and dedication are exceptional. Every single donation goes directly to beneficiary medical care, psychiatric medicines, and nutrition."
     },
     avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=150&auto=format&fit=crop"
   }
@@ -281,55 +341,55 @@ export const TESTIMONIALS: Testimonial[] = [
 export const IN_KIND_ITEMS: InKindItem[] = [
   {
     id: "ik-1",
-    name: { am: "ጤፍና የእህል እቃዎች", en: "Teff & Food Grains (Sacks)" },
+    name: { am: "ጤፍና የምግብ እህል", en: "Teff & Food Grains (Quintals)" },
     category: "Food",
-    neededQuantity: { am: "50 ጆንያ ጤፍ", en: "50 Sacks of Teff" },
+    neededQuantity: { am: "50 ኩንታል ጤፍ / ወር", en: "50 Quintals / month" },
     urgency: "High",
     description: {
-      am: "ለ200 ተጠቃሚዎች ዕለታዊ ምግብ ለማዘጋጀት የሚሆን ጤፍ፣ ምስር፣ ስንዴና ዘይት።",
-      en: "Teff grain, lentils, split peas, wheat flour, and cooking oil to feed 200 beneficiaries daily."
+      am: "ለ400 ተጠቃሚዎች ዕለታዊ ትኩስ እንጀራና ምግብ ለማዘጋጀት የሚሆን ጤፍ፣ ምስር፣ ስንዴና ዘይት።",
+      en: "Teff grain, cooking oil, lentils, split peas, and wheat flour to feed 400 beneficiaries daily."
     }
   },
   {
     id: "ik-2",
     name: { am: "የህክምናና መድሃኒት አቅርቦት", en: "Psychiatric & Medical Supplies" },
     category: "Medical",
-    neededQuantity: { am: "ለ100 ሰዎች ህክምና", en: "Monthly Medical Care Kits" },
+    neededQuantity: { am: "የ48 ዓይነት መድሃኒቶች አቅርቦት", en: "48 Core Medicines Inventory" },
     urgency: "High",
     description: {
-      am: "ለአዕምሮ ህሙማን አስፈላጊ የሆኑ መድሃኒቶች፣ የቁስል ማከሚያዎችና የመጀመሪያ እርዳታ እቃዎች።",
-      en: "Essential psychiatric medications, wound care supplies, vitamins, and first aid kits."
+      am: "ለአእምሮ ህሙማን አስፈላጊ የሆኑ 48 ዓይነት ሳይካትሪና ሜዲካል መድሃኒቶች፣ ቁስል ማከሚያና አልኮል።",
+      en: "48 essential psychiatric and clinical medications, wound dressing plaster, and surgical antiseptics."
     }
   },
   {
     id: "ik-3",
-    name: { am: "የአልባሳትና ብርድልብስ ድጋፍ", en: "Warm Clothing & Blankets" },
+    name: { am: "የአልባሳትና ብርድልብስ ድጋፍ", en: "Warm Clothing & Heavy Blankets" },
     category: "Clothing",
-    neededQuantity: { am: "150 ብርድልብሶችና ልብሶች", en: "150 Blankets & Sweaters" },
+    neededQuantity: { am: "150 ብርድልብሶችና 200 አልባሳት", en: "150 Blankets & 200 Clothes" },
     urgency: "High",
     description: {
-      am: "ለአዛውንቶችና ለህሙማን የሚሆኑ ሞቅ ያሉ ብርድልብሶች፣ ጃኬቶችና ንጹህ ልብሶች።",
-      en: "Warm blankets, jackets, coats, and clean clothes for elderly and rescued beneficiaries."
+      am: "የእንጦጦን ቅዝቃዜ ለመቋቋም የሚሆኑ ወፍራም ብርድልብሶች፣ ጃኬቶች፣ ጫማዎችና ንጹህ ልብሶች።",
+      en: "Warm heavy blankets, winter jackets, walking shoes, and clean clothes for rescued residents."
     }
   },
   {
     id: "ik-4",
     name: { am: "የንፅህና መጠበቂያ እቃዎች", en: "Hygiene & Sanitation Kits" },
     category: "Hygiene",
-    neededQuantity: { am: "200 የንፅህና ስብስቦች", en: "200 Personal Hygiene Sets" },
-    urgency: "Medium",
+    neededQuantity: { am: "600 ሳሙና፣ 50 ፓኬት ዳይፐር", en: "600 Soaps, 50 Diaper Packs" },
+    urgency: "High",
     description: {
-      am: "ሳሙና፣ ሻምፖ፣ የጥርስ ብሩሽ፣ ፎጣዎችና የፅዳት እቃዎች።",
-      en: "Body soaps, shampoos, toothbrushes, toothpaste, towels, and laundry detergents."
+      am: "የአዋቂ ዳይፐር፣ ዋይፕስ፣ የገላና የልብስ ሳሙና፣ ኦሞና ሶፍት።",
+      en: "Adult and child diapers, wet wipes, bath soap bars, laundry detergent, and toilet paper."
     }
   }
 ];
 
 export const TIME_SLOTS = [
-  "09:00 AM - 10:30 AM",
-  "11:00 AM - 12:30 PM",
-  "02:00 PM - 03:30 PM",
-  "04:00 PM - 05:30 PM"
+  "07:30 AM - 10:00 AM",
+  "10:00 AM - 12:30 PM",
+  "01:30 PM - 03:30 PM",
+  "03:30 PM - 06:00 PM"
 ];
 
 export const VISIT_TYPES = [
@@ -347,8 +407,8 @@ export const FAQS = [
       en: "Is Selihom an officially registered organization?"
     },
     answer: {
-      am: "አዎ! ሰሊሆም ማህበር በኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ በምዝገባ ቁጥር 1113/2019 (የመዝገብ ቁጥር 6131) በህግ የተመዘገበና ፍቃድ ያለው በጎ አድራጎት ድርጅት ነው።",
-      en: "Yes! Selihom is officially registered under Registration No. 1113/2019 (Code 6131) with the Federal Democratic Republic of Ethiopia Civil Society Organizations Agency."
+      am: "አዎ! ሰሊሆም ማህበር በኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ በምዝገባ ቁጥር 1113/2019 (በ30/02/2011 ዓ.ም) በህግ የተመዘገበና ፍቃድ ያለው በጎ አድራጎት ማህበር ነው።",
+      en: "Yes! Selihom is officially registered under Registration No. 1113/2019 (issued Oct 30, 2018 / 30/02/2011 E.C.) with the Federal Democratic Republic of Ethiopia Civil Society Organizations Agency."
     }
   },
   {
@@ -357,49 +417,49 @@ export const FAQS = [
       en: "Where and how was the organization founded?"
     },
     answer: {
-      am: "ድርጅቱ የተመሰረተው በአቶ ሚኪያስ ለገሰ አባታቸውን በአዕምሮ ህመም ምክንያት ካጡ በኋላ በወሰዱት ቁርጠኝነት ነው። በሽቁር ቅዱስ ሚካኤል አቅራቢያ አነስተኛ ቤት ተከራይተው ጫማ በመወልወልና መኪና በማጠብ ነበር ስራውን የጀመሩት።",
-      en: "It was founded by Mikiyas Legesse after losing his father to mental illness. He started with a small rented room near St. Michael Church in Shinkur, raising funds through shoe-shining and car washing."
+      am: "ድርጅቱ የተመሰረተው በአቶ ሚኪያስ ለገሰ አባታቸውን በአዕምሮ ህመም ምክንያት ካጡ በኋላ በወሰዱት ቁርጠኝነት ነው። በሽቁር ቅዱስ ሚካኤል አቅራቢያ አነስተኛ ቤት ተከራይተው ጫማ በመወልወልና መኪና በማጠብ ነበር ስራውን የጀመሩት። አሁን በእንጦጦ ራጉኤል ማእከሉ 400 ያህል ተጠቃሚዎችን ይንከባከባል።",
+      en: "It was founded by Mikiyas Legesse after losing his father to mental illness. He started with a small rented room near St. Michael Church in Shinkur, raising funds through shoe-shining and car washing. Today, the center near Entoto Raguel supports up to 400 beneficiaries."
     }
   },
   {
     question: {
-      am: "እርዳታዎችን ወይም የገንዘብ ድጋፍን እንዴት መስጠት እችላለሁ?",
-      en: "How can I make a financial or in-kind donation?"
+      am: "እርዳታዎችን ወይም የገንዘብ ድጋፍን በየትኞቹ ባንኮች መስጠት እችላለሁ?",
+      en: "Which official bank accounts can I use for donations?"
     },
     answer: {
-      am: "በኢትዮጵያ ንግድ ባንክ (1000275107518)፣ በአቢሲንያ ባንክ (77984852) ወይም በአዋሽ ባንክ (01303572131300) የባንክ ሂሳብ ቁጥሮቻችን ድጋፍ ማድረግ ይችላሉ። እንዲሁም ምግብ፣ አልባሳትና መድሃኒት በዓይነት መስጠት ይቻላል።",
-      en: "You can transfer directly to our official bank accounts: Commercial Bank of Ethiopia (1000275107518), Abyssinia Bank (77984852), or Awash Bank (01303572131300), or deliver in-kind items to our shelter."
+      am: "በኢትዮጵያ ንግድ ባንክ (1000275107518)፣ በአቢሲንያ ባንክ (77984852)፣ በአዋሽ ባንክ (01303572131300)፣ በቡና ባንክ (2919601000145)፣ በስንቄ ባንክ (1106177681225) ወይም በቴሌብር (0911004903) 'ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር' በሚለው ይፋዊ ስም ድጋፍ ማድረግ ይችላሉ።",
+      en: "You can transfer directly to our official accounts under 'ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር': CBE (1000275107518), Abyssinia Bank (77984852), Awash Bank (01303572131300), Bunna Bank (2919601000145), Sinquee Bank (1106177681225), or Telebirr (0911004903)."
     }
   },
   {
     question: {
-      am: "ማህበሩን በአካል ጎብኝቼ ማየት እችላለሁ?",
-      en: "Can I schedule a visit to the Selihom shelter?"
+      am: "ማህበሩን በአካል ጎብኝቼ ማየት እችላለሁ? የጉብኝት ሰዓቱ መቼ ነው?",
+      en: "Can I schedule a visit to the Selihom shelter? What are the hours?"
     },
     answer: {
-      am: "አዎ! በማንኛውም ጊዜ ከእንጦጦ ቅዱስ ራጉኤል ቤተክርስቲያን አቅራቢያ የሚገኘውን ማዕከላችንን መጎብኘት ይችላሉ። በድረ-ገጻችን ላይ ባለው የጉብኝት ቅጽ በመጠቀም ቀድመው ቀጠሮ መያዝ ይችላሉ።",
-      en: "Absolutely! You are welcome to visit our shelter near Entoto St. Raguel Church. You can use our online booking form on this website to schedule a visit in advance."
+      am: "አዎ! ከሰኞ እስከ እሁድ ከጠዋቱ 1፡30 እስከ ማታ 12፡00 ድረስ ከእንጦጦ ቅዱስ ራጉኤል ቤተክርስቲያን ወደ ፍተሻ በሚወስደው መንገድ 300 ሜትር ዝቅ ብሎ የሚገኘውን ማዕከላችንን መጎብኘት ይችላሉ። በድረ-ገጻችን ላይ ባለው የጉብኝት ቅጽ በመጠቀም ቀድመው ቀጠሮ መያዝ ይችላሉ።",
+      en: "Yes! Visitors are welcome Monday to Sunday from 7:30 AM to 6:00 PM at our shelter located near Entoto St. Raguel Church (300m down towards Fetesha). You can use our online booking form on this website to reserve a time slot."
     }
   }
 ];
 
 export const STATS = [
   {
-    number: "75%",
-    label: { am: "የአዕምሮ ህሙማን", en: "Psychiatric Patients" },
-    description: { am: "የአዕምሮ ህክምና፣ የመድሃኒትና የተሃድሶ ድጋፍ የሚያገኙ ተጠቃሚዎች", en: "Beneficiaries receiving psychiatric care, medication, and rehabilitation" },
+    number: "400+",
+    label: { am: "የተደገፉ ወገኖች", en: "Beneficiaries Supported" },
+    description: { am: "የአዕምሮ ህክምና፣ የመድሃኒት፣ የምግብና የተሃድሶ ድጋፍ የሚያገኙ ተጠቃሚዎች", en: "Residents receiving psychiatric care, medication, food, and rehabilitation" },
     icon: "Stethoscope"
   },
   {
-    number: "17%",
-    label: { am: "አዛውንቶች", en: "Elderly Citizens" },
-    description: { am: "መጠለያ፣ ምግብና የእንክብካቤ ድጋፍ የሚያገኙ ተጋላጭ አዛውንቶች", en: "Vulnerable senior citizens receiving housing, nutrition, and dignity care" },
+    number: "85%",
+    label: { am: "የማገገም ስኬት", en: "Health Recovery Rate" },
+    description: { am: "ከከባድ የአእምሮ ዝቅታ ወጥተው ወደ ጤናና ስራ የተመለሱ ተጠቃሚዎች", en: "Beneficiaries who successfully recovered from street trauma and began working" },
     icon: "Home"
   },
   {
-    number: "8%",
-    label: { am: "ሕጻናት", en: "Children" },
-    description: { am: "በትምህርት፣ በምግብና በማህበራዊ ድጋፍ የሚረዱ ህጻናት", en: "Orphaned and vulnerable children supported with education and meals" },
+    number: "100%",
+    label: { am: "ነጻ ህክምናና መጠለያ", en: "Free Care & Shelter" },
+    description: { am: "ሁለንተናዊ የዕለት ተዕለት እንክብካቤ፣ 3 ጊዜ ትኩስ ምግብና ሙያ ስልጠና", en: "Daily warm shelter, 3 nutritious hot meals, clothing, and vocational training" },
     icon: "GraduationCap"
   }
 ];

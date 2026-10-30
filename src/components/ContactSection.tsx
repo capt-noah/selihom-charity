@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import {
   MapPin,
@@ -11,10 +11,20 @@ import {
 } from "lucide-react";
 import { SELIHOM_INFO } from "../data";
 import { useLanguage } from "../context/LanguageContext";
+import { getSiteSettings, SiteSettings } from "../utils/adminStorage";
 
 export default function ContactSection() {
   const { t, language } = useLanguage();
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings).catch(() => {});
+  }, []);
+
+  const phones = settings?.contact?.phones?.length ? settings.contact.phones : SELIHOM_INFO.contact.phones;
+  const email = settings?.contact?.email || SELIHOM_INFO.contact.email;
+  const address = settings?.contact?.address || SELIHOM_INFO.contact.address;
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -84,7 +94,7 @@ export default function ContactSection() {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {SELIHOM_INFO.contact.phones.map((phone) => (
+                {phones.map((phone) => (
                   <div
                     key={phone}
                     className="flex flex-col gap-2 p-3 bg-brand-sky-50 rounded-xl border border-brand-sky-100 hover:border-brand-sky-300 transition-colors"
@@ -126,11 +136,11 @@ export default function ContactSection() {
                 ))}
                 <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
                   <a
-                    href={`mailto:${SELIHOM_INFO.contact.email}`}
+                    href={`mailto:${email}`}
                     className="inline-flex items-center gap-1.5 font-semibold text-brand-sky-700 hover:text-brand-sky-500"
                   >
                     <Mail className="w-4 h-4" />
-                    {SELIHOM_INFO.contact.email}
+                    {email}
                   </a>
                   <span className="inline-flex items-center gap-1.5 text-gray-500">
                     <MessageCircle className="w-4 h-4 text-brand-green-500" />
@@ -160,7 +170,7 @@ export default function ContactSection() {
                     : "Shelter Map (Entoto)"}
                 </h3>
                 <p className="text-xs text-gray-500">
-                  {t(SELIHOM_INFO.contact.address)}
+                  {t(address)}
                 </p>
               </div>
             </div>

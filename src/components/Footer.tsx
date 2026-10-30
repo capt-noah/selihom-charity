@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, ShieldCheck, Award } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 import { SELIHOM_INFO, IMAGES } from "../data";
+import { getSiteSettings, SiteSettings } from "../utils/adminStorage";
 
 interface FooterProps {
   onOpenAdmin: () => void;
@@ -11,6 +12,19 @@ interface FooterProps {
 export default function Footer({ onOpenAdmin }: FooterProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings).catch(() => {});
+  }, []);
+
+  const phones = settings?.contact?.phones?.length ? settings.contact.phones : SELIHOM_INFO.contact.phones;
+  const email = settings?.contact?.email || SELIHOM_INFO.contact.email;
+  const address = settings?.contact?.address || SELIHOM_INFO.contact.address;
+  const telegram = settings?.social?.telegram || SELIHOM_INFO.contact.social.telegram;
+  const facebook = settings?.social?.facebook || SELIHOM_INFO.contact.social.facebook;
+  const tiktok = settings?.social?.tiktok;
+  const youtube = settings?.social?.youtube;
 
   return (
     <footer className="bg-brand-sky-50 text-brand-sky-950 pt-20 pb-10 border-t border-brand-sky-200">
@@ -28,7 +42,7 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
                   {t(SELIHOM_INFO.name)}
                 </span>
                 <span className="text-[10px] text-brand-sky-500 font-extrabold uppercase tracking-widest mt-1 block">
-                  {language === "am" ? "የሀገር በቀል በጎ አድራጎት ድርጅት" : "Rehabilitation NGO · Reg No. 6131"}
+                  {language === "am" ? "የሀገር በቀል በጎ አድራጎት ማህበር" : "Civil Society NGO · Reg No. 1113/2019"}
                 </span>
               </div>
             </button>
@@ -48,14 +62,30 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
                 {language === "am" ? "የሶሻል ሚዲያ ገጾቻችን" : "Follow Us"}
               </span>
               <div className="flex gap-2 flex-wrap">
-                <a href={SELIHOM_INFO.contact.social.telegram} target="_blank" rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-lg border border-brand-sky-300 bg-white hover:bg-brand-sky-400 hover:text-white hover:border-brand-sky-400 text-brand-sky-700 text-xs font-bold transition-all shadow-xs">
-                  Telegram
-                </a>
-                <a href={SELIHOM_INFO.contact.social.facebook} target="_blank" rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-lg border border-brand-sky-300 bg-white hover:bg-brand-sky-400 hover:text-white hover:border-brand-sky-400 text-brand-sky-700 text-xs font-bold transition-all shadow-xs">
-                  Facebook
-                </a>
+                {telegram && (
+                  <a href={telegram} target="_blank" rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg border border-brand-sky-300 bg-white hover:bg-brand-sky-400 hover:text-white hover:border-brand-sky-400 text-brand-sky-700 text-xs font-bold transition-all shadow-xs">
+                    Telegram
+                  </a>
+                )}
+                {facebook && (
+                  <a href={facebook} target="_blank" rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg border border-brand-sky-300 bg-white hover:bg-brand-sky-400 hover:text-white hover:border-brand-sky-400 text-brand-sky-700 text-xs font-bold transition-all shadow-xs">
+                    Facebook
+                  </a>
+                )}
+                {tiktok && (
+                  <a href={tiktok} target="_blank" rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg border border-brand-sky-300 bg-white hover:bg-brand-sky-400 hover:text-white hover:border-brand-sky-400 text-brand-sky-700 text-xs font-bold transition-all shadow-xs">
+                    TikTok
+                  </a>
+                )}
+                {youtube && (
+                  <a href={youtube} target="_blank" rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg border border-brand-sky-300 bg-white hover:bg-brand-sky-400 hover:text-white hover:border-brand-sky-400 text-brand-sky-700 text-xs font-bold transition-all shadow-xs">
+                    YouTube
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -68,20 +98,20 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
             <div className="space-y-3 text-xs text-brand-sky-800">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-brand-sky-400 shrink-0 mt-0.5" />
-                <span>{t(SELIHOM_INFO.contact.address)}</span>
+                <span>{t(address)}</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-brand-sky-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  {SELIHOM_INFO.contact.phones.map((phone, idx) => (
+                  {phones.map((phone, idx) => (
                     <a key={idx} href={`tel:${phone.replace(/\s/g, "")}`} className="block hover:text-brand-sky-500 transition-colors font-medium">{phone}</a>
                   ))}
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-brand-sky-400 shrink-0" />
-                <a href={`mailto:${SELIHOM_INFO.contact.email}`} className="hover:text-brand-sky-500 transition-colors font-medium">
-                  {SELIHOM_INFO.contact.email}
+                <a href={`mailto:${email}`} className="hover:text-brand-sky-500 transition-colors font-medium">
+                  {email}
                 </a>
               </div>
             </div>
@@ -96,7 +126,7 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
               <div className="flex gap-2.5 items-start bg-white p-3.5 rounded-2xl border border-brand-sky-200 shadow-xs">
                 <ShieldCheck className="w-5 h-5 text-brand-sky-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-xs font-bold block text-brand-sky-950">{language === "am" ? "የምዝገባ ቁጥር 6131" : "Registration No. 6131"}</span>
+                  <span className="text-xs font-bold block text-brand-sky-950">{language === "am" ? "የምዝገባ ቁጥር 1113/2019" : "Registration No. 1113/2019"}</span>
                   <span className="text-[10px] text-brand-sky-600 block leading-tight mt-0.5">
                     {language === "am" ? "ህጋዊ ፍቃድ ያለው ድርጅት" : "Officially registered non-profit."}
                   </span>

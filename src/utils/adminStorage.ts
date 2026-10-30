@@ -1,4 +1,4 @@
-import { Booking, DonationPledge, VolunteerApplication, AdminProfile, InKindItem } from "../types";
+import { Booking, DonationPledge, VolunteerApplication, AdminProfile, InKindItem, BankAccount } from "../types";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 export const getApiUrl = (endpoint: string): string => {
@@ -253,6 +253,7 @@ export interface MedicinePledge {
   donorEmail: string;
   items: { medicineId: string; medicineName: string; quantity: number }[];
   date: string;
+  estimatedDeliveryDate?: string;
   status: "pledged" | "received" | "cancelled";
   notes: string;
 }
@@ -306,6 +307,7 @@ export interface SuppliesPledge {
   categoryId: string;
   items: { itemId: string; itemName: string; quantity: number; custom: string }[];
   date: string;
+  estimatedDeliveryDate?: string;
   status: "pledged" | "received" | "cancelled";
   notes: string;
 }
@@ -437,3 +439,170 @@ export const publishArticle = async (id: string, isPublished: boolean): Promise<
 
 export const deleteArticle = async (id: string): Promise<NewsArticle[]> =>
   apiFetch<NewsArticle[]>(`/api/news/${encodeURIComponent(id)}`, { method: "DELETE" });
+
+// ─── SITE SETTINGS ────────────────────────────────────────────────────────────
+
+export type { BankAccount } from "../types";
+
+export interface SiteSettings {
+  bankAccounts: BankAccount[];
+  social: {
+    telegram?: string;
+    facebook?: string;
+    tiktok?: string;
+    youtube?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  contact: {
+    phones: string[];
+    email: string;
+    address: {
+      en: string;
+      am: string;
+    };
+  };
+  registration?: {
+    agency?: { en: string; am: string };
+    date?: string;
+    number?: string;
+  };
+  motto?: {
+    en: string;
+    am: string;
+  };
+}
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  bankAccounts: [
+    {
+      bank: { am: "የኢትዮጵያ ንግድ ባንክ", en: "Commercial Bank of Ethiopia (CBE)" },
+      accountNumber: "1000275107518",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    },
+    {
+      bank: { am: "አቢሲንያ ባንክ", en: "Bank of Abyssinia" },
+      accountNumber: "77984852",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    },
+    {
+      bank: { am: "አዋሽ ባንክ", en: "Awash Bank" },
+      accountNumber: "01303572131300",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    },
+    {
+      bank: { am: "ቡና ባንክ", en: "Bunna Bank" },
+      accountNumber: "2919601000145",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    },
+    {
+      bank: { am: "ስንቄ ባንክ", en: "Sinquee Bank" },
+      accountNumber: "1106177681225",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር",
+    },
+    {
+      bank: { am: "ቴሌብር (ሞባይል ገንዘብ)", en: "Telebirr (Mobile Money)" },
+      accountNumber: "0911004903",
+      accountName: "ሰሊሆም የአዕምሮ ህሙማን መርጃ ማህበር (ሚኪያስ ለገሰ)",
+    },
+  ],
+  social: {
+    telegram: "https://t.me/Selihommentallyill",
+    facebook: "https://facebook.com/SelihomSupport",
+    tiktok: "https://tiktok.com/@selihomcharity",
+    youtube: "https://youtube.com/@selihomcharity",
+    instagram: "",
+    linkedin: "",
+  },
+  contact: {
+    phones: ["+251911004903", "+251953905050", "0118195444", "0904440157"],
+    email: "selihomc@gmail.com",
+    address: {
+      am: "ከእንጦጦ ቅዱስ ራጉኤል ወኤልያስ ቤተክርስቲያን ወደ ፍተሻ በሚወስደው መንገድ 300 ሜትር ዝቅ ብሎ፣ አዲስ አበባ",
+      en: "Near Entoto St. Raguel & Elias Church, 300 meters down on the road towards Fetesha, Addis Ababa, Ethiopia",
+    },
+  },
+  registration: {
+    number: "1113/2019",
+    date: "30/02/2011 ዓ.ም (Oct 30, 2018)",
+    agency: {
+      am: "የኢትዮጵያ ፌደራላዊ ዲሞክራሲያዊ ሪፐብሊክ የሲቪል ማህበረሰብ ድርጅቶች ኤጀንሲ",
+      en: "Federal Democratic Republic of Ethiopia Agency for Civil Society Organizations",
+    },
+  },
+  motto: {
+    am: "ደግ ልቦች ከውብ ፊቶች ይበልጣሉ!",
+    en: "Kind hearts excel beautiful faces!",
+  },
+};
+
+const SETTINGS_STORAGE_KEY = "selihom_site_settings";
+
+export const getBankAccounts = async (): Promise<BankAccount[]> => {
+  try {
+    return await apiFetch<BankAccount[]>("/api/bank_accounts");
+  } catch {
+    const s = await getSiteSettings();
+    return s.bankAccounts || DEFAULT_SITE_SETTINGS.bankAccounts;
+  }
+};
+
+export const saveBankAccount = async (account: BankAccount): Promise<BankAccount[]> => {
+  return apiFetch<BankAccount[]>("/api/bank_accounts", {
+    method: "POST",
+    body: JSON.stringify(account),
+  });
+};
+
+export const deleteBankAccount = async (id: string): Promise<BankAccount[]> => {
+  return apiFetch<BankAccount[]>(`/api/bank_accounts/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+};
+
+export const getSiteSettings = async (): Promise<SiteSettings> => {
+  try {
+    const res = await apiFetch<SiteSettings>("/api/settings");
+    if (res && res.bankAccounts && Array.isArray(res.bankAccounts)) {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(res));
+      return res;
+    }
+  } catch {
+    // API not responding or offline
+  }
+
+  const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch {
+      // JSON parse fallback
+    }
+  }
+  return DEFAULT_SITE_SETTINGS;
+};
+
+export const saveSiteSettings = async (settings: SiteSettings): Promise<SiteSettings> => {
+  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+  try {
+    const res = await apiFetch<SiteSettings>("/api/settings", {
+      method: "POST",
+      body: JSON.stringify(settings),
+    });
+    return res;
+  } catch {
+    return settings;
+  }
+};
+
+export const resetSiteSettings = async (): Promise<SiteSettings> => {
+  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SITE_SETTINGS));
+  try {
+    const res = await apiFetch<SiteSettings>("/api/settings/reset", {
+      method: "POST",
+    });
+    return res;
+  } catch {
+    return DEFAULT_SITE_SETTINGS;
+  }
+};

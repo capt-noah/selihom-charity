@@ -42,6 +42,9 @@ export default function TransformationsSection() {
                     className={`w-full h-full object-cover ${story.imagePosition || "object-center"} group-hover:scale-105 transition-transform duration-700`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-sky-950 via-brand-sky-950/20 to-transparent pointer-events-none" />
                   <div className="absolute bottom-4 left-5 right-5 z-10">
+                    <span className="inline-block mb-1.5 px-3 py-0.5 bg-brand-yellow-400 text-brand-sky-950 text-[11px] font-black rounded-full shadow-sm">
+                      {t(story.status)}
+                    </span>
                     <h3 className="font-serif font-extrabold text-2xl sm:text-3xl text-white drop-shadow-md">{t(story.name)}</h3>
                   </div>
                 </div>

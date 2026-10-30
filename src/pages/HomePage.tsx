@@ -180,7 +180,7 @@ export default function HomePage() {
                 transition={{ delay: 0.45, duration: 0.6 }}
                 className="flex flex-wrap justify-center lg:justify-start gap-3 pt-2"
               >
-                <StatPill icon={Users} value="200+" label={language === "am" ? "ዕለታዊ ተጠቃሚዎች" : "Daily Beneficiaries"} color="bg-brand-sky-100 text-brand-sky-600" />
+                <StatPill icon={Users} value="400+" label={language === "am" ? "ዕለታዊ ተጠቃሚዎች" : "Daily Beneficiaries"} color="bg-brand-sky-100 text-brand-sky-600" />
                 <StatPill icon={Heart} value="85%"  label={language === "am" ? "የማገገም መጠን"     : "Recovery Rate"}        color="bg-brand-green-100 text-brand-green-600" />
                 <StatPill icon={Award} value="6+"   label={language === "am" ? "ሽልማቶች"           : "Awards"}               color="bg-brand-yellow-100 text-brand-yellow-600" />
               </motion.div>
