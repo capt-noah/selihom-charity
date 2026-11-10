@@ -1,6 +1,6 @@
 -- ============================================================
 -- Selihom Charity - Full Production Database Dump
--- Generated: 2026-10-30T18:42:16.627Z
+-- Generated: 2026-11-10T07:10:08.138Z
 -- Character Set: utf8mb4 / utf8mb4_unicode_ci
 -- Compatible with MySQL 5.7+, MySQL 8.0+, MariaDB 10+
 -- Note: Database name agnostic (safe to import on portfolio_db or selihom)
