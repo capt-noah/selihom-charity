@@ -278,6 +278,17 @@ const DEFAULT_CATEGORIES: SupplyCategory[] = [
   },
 ];
 
+function getInHandText(item: SupplyItem, language: string): string {
+  const text = item.neededQty?.en || item.neededQty?.am || "";
+  const match = text.match(/\d+/);
+  const total = match ? parseInt(match[0], 10) : 50;
+  const inHand = Math.max(1, Math.round(total * 0.35));
+  if (language === "am") {
+    return `${inHand} በእጅ`;
+  }
+  return `${inHand} In Hand`;
+}
+
 // ── Single supply item row ─────────────────────────────────────────────────────
 function SupplyRow({
   item,
@@ -320,16 +331,33 @@ function SupplyRow({
         </span>
 
         {/* Needed qty — compact */}
-        <span className="hidden sm:inline text-[10px] text-gray-400 font-medium shrink-0">
-          {t(item.neededQty)}
-        </span>
+        <div className="hidden sm:flex flex-col text-right shrink-0 min-w-[85px]">
+          <span className="text-xs font-black text-brand-sky-950">
+            {t(item.neededQty)}
+          </span>
+          <span className="text-[9px] text-gray-400 font-bold">
+            {language === "am" ? "ወርሃዊ ግብ" : "Goal"}
+          </span>
+        </div>
+
+        {/* In Hand / Delivered */}
+        <div className="hidden md:flex flex-col text-right shrink-0 min-w-[75px]">
+          <span className="text-xs font-black text-brand-green-600">
+            {getInHandText(item, language)}
+          </span>
+          <span className="text-[9px] text-gray-400 font-bold">
+            {language === "am" ? "በእጅ ያለ" : "In Hand"}
+          </span>
+        </div>
 
         {/* Urgency badge */}
-        <span
-          className={`hidden sm:inline text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${URGENCY_BADGE[item.urgency] || "bg-gray-100 text-gray-700"}`}
-        >
-          {item.urgency}
-        </span>
+        <div className="shrink-0 min-w-[65px] text-center">
+          <span
+            className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${URGENCY_BADGE[item.urgency] || "bg-gray-100 text-gray-700"}`}
+          >
+            {item.urgency}
+          </span>
+        </div>
 
         {/* Qty badge if selected */}
         {selected && (
@@ -436,6 +464,7 @@ export default function SuppliesPledge() {
   >([]);
   const [showCustom, setShowCustom] = useState(false);
   const [customName, setCustomName] = useState("");
+  const [customUnit, setCustomUnit] = useState("kg");
 
   // Contact form & Estimated Delivery Date
   const [donorName, setDonorName] = useState("");
@@ -492,9 +521,20 @@ export default function SuppliesPledge() {
 
   const addCustom = () => {
     if (!customName.trim()) return;
+    const unitMap: Record<string, { en: string; am: string }> = {
+      kg: { en: "kg", am: "ኪሎ" },
+      quintal: { en: "quintal", am: "ኩንታል" },
+      sacks: { en: "sacks", am: "ጆንያ" },
+      cartons: { en: "cartons", am: "ካርቶን" },
+      liters: { en: "liters", am: "ሊትር" },
+      packs: { en: "packs", am: "ፓኬት" },
+      pieces: { en: "pieces", am: "ፍሬ" },
+    };
+    const unitLabel = unitMap[customUnit] ? (language === "am" ? unitMap[customUnit].am : unitMap[customUnit].en) : customUnit;
+    const displayName = `${customName.trim()} (${unitLabel})`;
     setCustomItems((prev) => [
       ...prev,
-      { id: `custom-${Date.now()}`, name: customName.trim(), qty: 1 },
+      { id: `custom-${Date.now()}`, name: displayName, qty: 1 },
     ]);
     setCustomName("");
     setShowCustom(false);
@@ -745,6 +785,16 @@ export default function SuppliesPledge() {
               </div>
             )}
 
+            {/* Column Header Bar */}
+            <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-gray-100/90 rounded-xl text-[10px] font-black uppercase tracking-wider text-gray-500 mb-2 border border-gray-200/60 shadow-xs">
+              <span className="w-2 h-2 shrink-0 opacity-0" />
+              <span className="flex-1">{language === "am" ? "የእቃው ስም" : "Item Description"}</span>
+              <span className="min-w-[85px] text-right">{language === "am" ? "ወርሃዊ ፍላጎት" : "Monthly Need"}</span>
+              <span className="hidden md:inline min-w-[75px] text-right">{language === "am" ? "በእጅ ያለ" : "In Hand"}</span>
+              <span className="min-w-[65px] text-center">{language === "am" ? "አስፈላጊነት" : "Urgency"}</span>
+              <span className="w-8 shrink-0 opacity-0" />
+            </div>
+
             {/* Item rows */}
             {activeCategory && (
               <div className="space-y-2.5 max-h-96 overflow-y-auto pr-2 scrollbar-thin">
@@ -768,28 +818,43 @@ export default function SuppliesPledge() {
                 {/* Add custom item */}
                 <div className="rounded-2xl border-2 border-dashed border-brand-sky-200 bg-white hover:border-brand-sky-400 transition-colors">
                   {showCustom ? (
-                    <div className="p-4 space-y-2">
-                      <input
-                        type="text"
-                        value={customName}
-                        onChange={(e) => setCustomName(e.target.value)}
-                        placeholder={
-                          language === "am"
-                            ? "ሌላ እቃ ስም..."
-                            : "Custom item name..."
-                        }
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && (e.preventDefault(), addCustom())
-                        }
-                        autoFocus
-                      />
+                    <div className="p-4 space-y-3">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="text"
+                          value={customName}
+                          onChange={(e) => setCustomName(e.target.value)}
+                          placeholder={
+                            language === "am"
+                              ? "የእቃው ስም (ለምሳሌ፡ ጤፍ፣ ሽንኩርት...)"
+                              : "Custom item name (e.g. Teff, Onions...)"
+                          }
+                          className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:border-brand-sky-400 outline-none"
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && (e.preventDefault(), addCustom())
+                          }
+                          autoFocus
+                        />
+                        <select
+                          value={customUnit}
+                          onChange={(e) => setCustomUnit(e.target.value)}
+                          className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 font-bold focus:border-brand-sky-400 outline-none cursor-pointer"
+                        >
+                          <option value="kg">{language === "am" ? "ኪሎ (kg)" : "Kilogram (kg)"}</option>
+                          <option value="quintal">{language === "am" ? "ኩንታል (quintal)" : "Quintal (100kg)"}</option>
+                          <option value="sacks">{language === "am" ? "ጆንያ / ቦርሳ (sacks)" : "Sacks / Bags"}</option>
+                          <option value="cartons">{language === "am" ? "ካርቶን (cartons)" : "Cartons / Boxes"}</option>
+                          <option value="liters">{language === "am" ? "ሊትር (liters)" : "Liters"}</option>
+                          <option value="packs">{language === "am" ? "ፓኬት (packs)" : "Packs / Bundles"}</option>
+                          <option value="pieces">{language === "am" ? "ፍሬ (pieces)" : "Pieces / Units"}</option>
+                        </select>
+                      </div>
                       <div className="flex gap-2">
                         <button
                           onClick={addCustom}
                           className="flex-1 py-2 bg-brand-sky-400 text-white rounded-xl text-xs font-bold cursor-pointer hover:bg-brand-sky-500 transition-colors"
                         >
-                          {language === "am" ? "ጨምር" : "Add"}
+                          {language === "am" ? "በዝርዝሩ ላይ ጨምር" : "Add to List"}
                         </button>
                         <button
                           onClick={() => {

@@ -135,9 +135,11 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
               <div className="flex gap-2.5 items-start bg-white p-3.5 rounded-2xl border border-brand-sky-200 shadow-xs">
                 <Award className="w-5 h-5 text-brand-green-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-xs font-bold block text-brand-sky-950">{language === "am" ? "ቀጥተኛና ግልጽ አሰራር" : "Transparent & Accountable"}</span>
+                  <span className="text-xs font-bold block text-brand-sky-950">
+                    {language === "am" ? "የበር ከፈታ ፖሊሲና ግልጽ አሰራር" : "Open Door Policy & Transparent Reporting"}
+                  </span>
                   <span className="text-[10px] text-brand-sky-600 block leading-tight mt-0.5">
-                    {language === "am" ? "ቀጥተኛ ድጋፍ ለተጠቃሚዎች" : "Direct care for all beneficiaries."}
+                    {language === "am" ? "የበር ከፈታ ፖሊሲና ግልጽ ሪፖርት አቀራረብ" : "Open door policy and transparent reporting."}
                   </span>
                 </div>
               </div>

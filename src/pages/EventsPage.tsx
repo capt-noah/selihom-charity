@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Heart, Cake, HeartHandshake, Star, Sparkles,
   Calendar, Phone, Mail, User, MessageSquare,
-  CheckCircle2, AlertCircle, Loader2, ArrowRight,
+  CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowLeft,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { saveEventPledge, EventPledge } from "../utils/adminStorage";
@@ -37,9 +38,21 @@ const EVENT_TYPES: { id: EventType; icon: React.ComponentType<any>; label: { en:
 
 export default function EventsPage() {
   const { language } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [step, setStep] = useState<"type" | "form" | "success">("type");
-  const [selectedType, setSelectedType] = useState<EventType>("birthday");
+  const stepParam = searchParams.get("step") as "type" | "form" | "success" | null;
+  const typeParam = searchParams.get("type") as EventType | null;
+
+  const step: "type" | "form" | "success" = stepParam || "type";
+  const selectedType: EventType = (typeParam && EVENT_TYPES.some(e => e.id === typeParam)) ? typeParam : "birthday";
+
+  const setStep = (newStep: "type" | "form" | "success", newType?: EventType) => {
+    const params: Record<string, string> = { step: newStep };
+    if (newType || selectedType) {
+      params.type = newType || selectedType;
+    }
+    setSearchParams(params);
+  };
 
   const [name,          setName]          = useState("");
   const [phone,         setPhone]         = useState("");
@@ -51,7 +64,7 @@ export default function EventsPage() {
   const [submitting,    setSubmitting]    = useState(false);
   const [submitted,     setSubmitted]     = useState<EventPledge | null>(null);
 
-  const selectedDef = EVENT_TYPES.find(e => e.id === selectedType)!;
+  const selectedDef = EVENT_TYPES.find(e => e.id === selectedType) || EVENT_TYPES[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,7 +168,7 @@ export default function EventsPage() {
                     const Icon = evt.icon;
                     const isSelected = selectedType === evt.id;
                     return (
-                      <motion.button key={evt.id} onClick={() => setSelectedType(evt.id)}
+                      <motion.button key={evt.id} onClick={() => setStep("form", evt.id)}
                         whileHover={{ scale:1.02 }} whileTap={{ scale:0.98 }}
                         className={`text-left p-6 rounded-3xl border-2 cursor-pointer transition-all ${
                           isSelected
@@ -168,22 +181,19 @@ export default function EventsPage() {
                         <h3 className="font-serif font-bold text-lg text-brand-sky-950 mb-2">
                           {language === "am" ? evt.label.am : evt.label.en}
                         </h3>
-                        <p className="text-xs text-gray-500 leading-relaxed">
+                        <p className="text-xs text-gray-500 leading-relaxed mb-3">
                           {language === "am" ? evt.desc.am : evt.desc.en}
                         </p>
-                        {isSelected && (
-                          <div className="mt-3 flex items-center gap-1.5 text-xs font-bold text-brand-sky-600">
-                            <CheckCircle2 className="w-4 h-4" />
-                            {language === "am" ? "ተመርጧል" : "Selected"}
-                          </div>
-                        )}
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-brand-sky-600">
+                          <span>{language === "am" ? "ዝርዝር ይሙሉ →" : "Fill Details →"}</span>
+                        </div>
                       </motion.button>
                     );
                   })}
                 </div>
 
                 <div className="text-center">
-                  <button onClick={() => setStep("form")}
+                  <button onClick={() => setStep("form", selectedType)}
                     className="inline-flex items-center gap-2 px-8 py-4 bg-brand-sky-400 hover:bg-brand-sky-500 text-white font-bold text-sm uppercase tracking-wider rounded-2xl cursor-pointer shadow-xl shadow-brand-sky-400/25 hover:-translate-y-0.5 transition-all">
                     {language === "am" ? "ቀጥ ወደ ዝርዝር" : "Continue to Details"}
                     <ArrowRight className="w-4 h-4" />
@@ -197,15 +207,26 @@ export default function EventsPage() {
               <motion.div key="form" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
                 className="max-w-xl mx-auto space-y-6">
 
+                {/* Back button */}
+                <button
+                  type="button"
+                  onClick={() => setStep("type")}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-sky-700 hover:text-brand-sky-950 cursor-pointer transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {language === "am" ? "ወደ ክብረ-በዓላት ምርጫ ተመለስ" : "Back to Occasion Types"}
+                </button>
+
                 {/* Selected type recap */}
-                <div className={`flex items-center gap-3 p-4 rounded-2xl ${selectedDef.color} text-white`}>
+                <div className={`flex items-center gap-3 p-4 rounded-2xl ${selectedDef.color} text-white shadow-md`}>
                   <selectedDef.icon className="w-6 h-6 shrink-0" />
-                  <div>
+                  <div className="flex-1">
                     <span className="font-bold text-sm block">{language === "am" ? selectedDef.label.am : selectedDef.label.en}</span>
-                    <button onClick={() => setStep("type")} className="text-[10px] text-white/70 hover:text-white underline cursor-pointer">
-                      {language === "am" ? "ቀይር" : "Change"}
-                    </button>
+                    <span className="text-[11px] text-white/80 block">{language === "am" ? selectedDef.desc.am : selectedDef.desc.en}</span>
                   </div>
+                  <button onClick={() => setStep("type")} className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full font-bold text-white transition-colors cursor-pointer">
+                    {language === "am" ? "ቀይር" : "Change"}
+                  </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="bg-white border-2 border-brand-sky-100 rounded-3xl p-6 shadow-xl space-y-5">

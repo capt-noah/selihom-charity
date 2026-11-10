@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Users,
   Handshake,
+  Cake,
   X,
   Send,
   HeartHandshake,
@@ -221,6 +222,23 @@ export default function GetInvolvedSection() {
       ],
     },
     {
+      id: "events",
+      icon: Cake,
+      primary: false,
+      title: { am: "ልዩ ቀናትን እያከበሩ መመገብ", en: "Celebrate & Sponsor Meals" },
+      description: {
+        am: "ልደት፣ ሰርግ ወይም መታሰቢያ ቀንዎን ለተጠቃሚዎቻችን ምግብ በማጋራት ያክብሩ።",
+        en: "Celebrate your birthday, wedding, or anniversary by sharing a warm meal with residents.",
+      },
+      badge: { am: "ክብረ-በዓላት", en: "Celebrations & Events" },
+      ctaText: { am: "ክብረ-በዓል ያስመዝግቡ →", en: "Book Event →" },
+      tags: [
+        { am: "ልደት", en: "Birthday" },
+        { am: "ሰርግ", en: "Wedding" },
+        { am: "ዓመት በዓል", en: "Anniversary" },
+      ],
+    },
+    {
       id: "partner",
       icon: Handshake,
       primary: false,
@@ -286,15 +304,20 @@ export default function GetInvolvedSection() {
           </motion.p>
         </div>
 
-        {!isModalOpen && <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {!isModalOpen && <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {tracks.map((track, idx) => {
             const Icon = track.icon;
-            const handleClick = () =>
-              track.id === "volunteer"
-                ? setIsModalOpen(true)
-                : document
-                    .getElementById("contact")
-                    ?.scrollIntoView({ behavior: "smooth" });
+            const handleClick = () => {
+              if (track.id === "volunteer") {
+                setIsModalOpen(true);
+              } else if (track.id === "events") {
+                navigate("/events");
+              } else {
+                document
+                  .getElementById("contact")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }
+            };
 
             return (
               <motion.div
