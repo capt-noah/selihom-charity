@@ -619,9 +619,107 @@ export const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "gal-award7",
     type: "image",
-    title: { am: "\u12e8\u121b\u1205\u1260\u1228\u1230\u1263\u12ca \u12d0\u130d\u120d\u130e\u1275 \u123d\u120d\u121b\u1275", en: "Community Service Honour" },
+    title: { am: "የማህበረሰብ አገልግሎት ሽልማት", en: "Community Service Honour" },
     category: "mental-health",
     url: award7Img,
-    description: { am: "\u12a8\u1270\u1245\u1233\u121b\u1275 \u12e8\u1270\u1230\u1320 \u120c\u120b \u12e8\u12ad\u1265\u122d \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Additional certificate of honour from governmental and community organisations." }
+    description: { am: "ከተቋማት የተበረከተ ሌላ የክብር ምስክር ወረቀት።", en: "Additional certificate of honour from governmental and community organisations." }
   },
 ];
+
+// ── Official Governance, Advisory Board & Departmental Structure ─────────────
+export const SELIHOM_GOVERNANCE = {
+  founder: {
+    name: { am: "አቶ ሚኪያስ ለገሰ", en: "Ato Mikiyas Legesse" },
+    title: { am: "የሰሊሆም ማህበር መስራችና ስራ አስኪያጅ", en: "Founder & General Manager" },
+    bio: {
+      am: "የሰሊሆም ማህበር በ2010 ዓ.ም. የተመሰረተው በአቶ ሚኪያስ ለገሰ ጥረት ነው። በጎዳና ላይ የወደቁ፣ የተጣሉና የአዕምሮ ህመም ያለባቸውን ወገኖች ከሞት አፋፍ በማዳን፣ ፍቅርና ክብካቤ በመስጠት ዛሬ ከ400 በላይ ወገኖችን በቋሚነት የሚያስተናግድ ተቋም እንዲሆን አስችለዋል።",
+      en: "Selihom Association was founded in 2018 by Ato Mikiyas Legesse following personal tragedy turned into a lifetime mission. Rescuing vulnerable mentally ill and abandoned citizens directly from city streets, his vision has grown Selihom into a sanctuary caring for over 400 individuals every day."
+    }
+  },
+  board: [
+    {
+      id: "board-1",
+      name: { am: "ክቡር ዶ/ር ፍቃዱ ተሰማ", en: "Hon. Dr. Fekadu Tessema" },
+      role: { am: "የአስተዳደር ቦርድ ሰብሳቢ", en: "Board Chairperson" },
+      desc: {
+        am: "የተቋሙን ስትራቴጂካዊ አመራር፣ የፖሊሲ ቁጥጥርና ከህዝባዊ ተቋማት ጋር ያለውን ግንኙነት በበላይነት ይመራሉ።",
+        en: "Provides strategic oversight, governance excellence, and public institutional relations."
+      }
+    },
+    {
+      id: "board-2",
+      name: { am: "አቶ ገዛኸኝ ብርሃኑ (የህግ አማካሪ)", en: "Ato Gezahegn Berhanu (Esq.)" },
+      role: { am: "የህግና መልካም አስተዳደር አማካሪ", en: "Legal & Regulatory Advisor" },
+      desc: {
+        am: "የማህበሩን ህጋዊ አሰራር፣ የሲቪል ማህበረሰብ ድርጅቶች መመሪያዎች ተገዢነትና የሰብአዊ መብት ጥበቃ ያረጋግጣሉ።",
+        en: "Ensures full civil society regulatory compliance and legal protection of residents."
+      }
+    },
+    {
+      id: "board-3",
+      name: { am: "ዶ/ር ዮናስ አበበ (ስነ-አዕምሮ አማካሪ)", en: "Dr. Yonas Abebe (MD, Psych.)" },
+      role: { am: "ከፍተኛ የህክምናና ስነ-አዕምሮ አማካሪ", en: "Senior Psychiatric & Clinical Advisor" },
+      desc: {
+        am: "የአዕምሮ ህክምና ፕሮቶኮሎችን፣ የሪፈራል ሆስፒታሎች ትስስርና የክሊኒካል ጥራትን ይመክራሉ።",
+        en: "Advises clinical psychiatric standards, medication protocols, and hospital partnerships."
+      }
+    }
+  ],
+  departments: [
+    {
+      id: "dept-finance",
+      name: { am: "አቶ አማኑኤል ወርቁ", en: "Ato Amanuel Worku" },
+      role: { am: "የፋይናንስ፣ ኦዲትና ግልጽነት ኃላፊ", en: "Finance, Audit & Transparency Officer" },
+      desc: {
+        am: "የማህበሩን ወርሃዊ የኦዲት ሪፖርቶች፣ የለጋሾች ግልጽነትና የሂሳብ አያያዝ በታማኝነት ያከናውናሉ።",
+        en: "Ensures complete financial transparency, transparent donor accounting, and statutory audited compliance."
+      }
+    },
+    {
+      id: "dept-clinical",
+      name: { am: "ዶ/ር ቴዎድሮስ ሀይሌ", en: "Dr. Tewodros Haile" },
+      role: { am: "የስነ-አዕምሮ ህክምናና ጤና አስተባባሪ", en: "Psychiatric & Clinical Lead" },
+      desc: {
+        am: "የተጠቃሚዎችን የሆስፒታል ህክምና፣ የመድሃኒት ክትትልና የስነ-ልቦና ማገገም ይመራሉ።",
+        en: "Coordinates specialized psychiatric evaluations, hospital referrals, and continuous clinical medication."
+      }
+    },
+    {
+      id: "dept-shelter",
+      name: { am: "ወ/ሮ ቤተልሄም ታደሰ", en: "W/ro Betelhem Tadesse" },
+      role: { am: "የመጠለያና የተጠቃሚዎች ደህንነት ኃላፊ", en: "Shelter Operations & Welfare Director" },
+      desc: {
+        am: "በእንጦጦ ማዕከል የዕለት ምግብ ዝግጅት፣ ንጹህ አልባሳትና የነዋሪዎችን ደህንነት ያስተባብራሉ።",
+        en: "Oversees daily residential operations, nutritious meal programs, and shelter safety for 400+ residents."
+      }
+    },
+    {
+      id: "dept-marketing",
+      name: { am: "ወ/ሪት ሀና መንግስቱ", en: "W/rit Hanna Mengistu" },
+      role: { am: "የህዝብ ግንኙነት፣ ማርኬቲንግና ለጋሾች ኃላፊ", en: "PR, Marketing & Donor Relations" },
+      desc: {
+        am: "ለጋሾችን ማስተባበር፣ የማህበረሰብ ግንዛቤ መፍጠርና የተቋሙን ዜናዎችና መልዕክቶች ያሰራጫሉ።",
+        en: "Leads community outreach, donor communications, awareness campaigns, and public relations."
+      }
+    },
+    {
+      id: "dept-vocational",
+      name: { am: "ወ/ሪት ሰላማዊት አበራ", en: "W/rit Selamawit Abera" },
+      role: { am: "የሙያ ስልጠናና ማህበረሰብ ውህደት አስተባባሪ", en: "Vocational Skills & Reintegration Lead" },
+      desc: {
+        am: "ያገገሙ ሰዎችን በልብስ ስፌት፣ አነስተኛ ንግድና የእጅ ስራ በማሰልጠን ወደ ማህበረሰቡ እንዲቀላቀሉ ያደርጋሉ።",
+        en: "Develops vocational training courses, startup toolkits, and transition plans for recovered beneficiaries."
+      }
+    },
+    {
+      id: "dept-volunteer",
+      name: { am: "አቶ ዳዊት በቀለ", en: "Ato Dawit Bekele" },
+      role: { am: "የበጎ ፈቃደኞችና የማህበረሰብ አስተባባሪ", en: "Volunteer Network Coordinator" },
+      desc: {
+        am: "የበጎ ፈቃደኞችን ምዝገባ፣ ስምሪትና የማዕከል አገልግሎት አስተዋጽኦ በቅንጅት ያስተዳድራሉ።",
+        en: "Coordinates volunteer applications, shift scheduling, orientations, and communal engagement."
+      }
+    }
+  ]
+};
+

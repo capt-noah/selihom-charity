@@ -55,18 +55,22 @@ export function MedicineRow({
   const [open, setOpen] = useState(false);
   const selected = qty > 0;
 
-  // Monthly goal and progress calculation
+  // Monthly goal, deficit and surplus calculation
   const targetGoal = Math.max(1, med.monthlyQty || 100);
   const totalWithSelected = pledgedSoFar + qty;
   const progressPercent = Math.min(100, Math.round((totalWithSelected / targetGoal) * 100));
-  const remainingNeeded = Math.max(0, targetGoal - totalWithSelected);
+  const isSurplus = totalWithSelected >= targetGoal;
+  const deficit = Math.max(0, targetGoal - totalWithSelected);
+  const surplus = Math.max(0, totalWithSelected - targetGoal);
 
   return (
     <div
-      className={`rounded-2xl border-2 transition-all duration-200 overflow-hidden ${
-        selected
-          ? "border-rose-400 bg-rose-50/30"
-          : "border-gray-100 bg-white hover:border-rose-200"
+      className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
+        isSurplus && selected
+          ? "border-emerald-400 bg-emerald-50/30 shadow-sm"
+          : selected
+            ? "border-rose-400 bg-rose-50/30"
+            : "border-gray-100 bg-white hover:border-rose-200"
       }`}
     >
       {/* ── Collapsed row — 2 Rows Minimalistic ── */}
@@ -79,12 +83,14 @@ export function MedicineRow({
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                med.urgency === "High"
-                  ? "bg-red-500 ring-2 ring-red-200"
-                  : med.urgency === "Medium"
-                    ? "bg-amber-400 ring-2 ring-amber-200"
-                    : "bg-brand-sky-400 ring-2 ring-brand-sky-200"
+              className={`w-2.5 h-2.5 rounded-full shrink-0 transition-colors ${
+                isSurplus
+                  ? "bg-emerald-500 ring-2 ring-emerald-200"
+                  : med.urgency === "High"
+                    ? "bg-red-500 ring-2 ring-red-200"
+                    : med.urgency === "Medium"
+                      ? "bg-amber-400 ring-2 ring-amber-200"
+                      : "bg-brand-sky-400 ring-2 ring-brand-sky-200"
               }`}
             />
             <span className="font-serif font-bold text-sm sm:text-base text-brand-sky-950 truncate">
@@ -99,22 +105,30 @@ export function MedicineRow({
               <span>{med.patientsHelped}</span>
             </div>
 
-            {/* Priority Pill: Urgency level ONLY (no "priority" text) */}
-            <span
-              className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${URGENCY_COLORS[med.urgency]}`}
-            >
-              {language === "am"
-                ? med.urgency === "High"
-                  ? "ከፍተኛ"
-                  : med.urgency === "Medium"
-                    ? "መካከለኛ"
-                    : "ዝቅተኛ"
-                : med.urgency}
-            </span>
+            {/* Priority / Surplus Pill */}
+            {isSurplus ? (
+              <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 bg-emerald-100 text-emerald-800 border-emerald-300">
+                {language === "am" ? "ተሟልቷል" : "Goal Met"}
+              </span>
+            ) : (
+              <span
+                className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${URGENCY_COLORS[med.urgency]}`}
+              >
+                {language === "am"
+                  ? med.urgency === "High"
+                    ? "ከፍተኛ"
+                    : med.urgency === "Medium"
+                      ? "መካከለኛ"
+                      : "ዝቅተኛ"
+                  : med.urgency}
+              </span>
+            )}
 
             {/* Selected Qty Badge */}
             {selected && (
-              <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 shadow-xs">
+              <span className={`text-white text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 shadow-xs ${
+                isSurplus ? "bg-emerald-600" : "bg-rose-500"
+              }`}>
                 ×{qty}
               </span>
             )}
@@ -130,33 +144,39 @@ export function MedicineRow({
           </div>
         </div>
 
-        {/* Row 2: Progress Bar & Status */}
+        {/* Row 2: Progress Bar & Reactive Deficit/Surplus Status */}
         <div className="space-y-1">
           <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden border border-gray-200/60 shadow-inner">
-            <div
-              className="bg-linear-to-r from-rose-400 via-amber-400 to-emerald-500 h-full rounded-full transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
+            <motion.div
+              initial={false}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className={`h-full rounded-full transition-colors duration-300 ${
+                isSurplus
+                  ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 shadow-xs"
+                  : progressPercent >= 50
+                    ? "bg-gradient-to-r from-amber-400 to-amber-500"
+                    : "bg-gradient-to-r from-rose-500 to-amber-400"
+              }`}
             />
           </div>
-          <div className="flex items-center justify-between text-[10px] text-gray-500 font-medium">
-            <span>
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-gray-500 font-medium">
               {language === "am" ? "የተሰበሰበ:" : "Progress:"}{" "}
               <strong className="text-brand-sky-950 font-bold">
                 {totalWithSelected.toLocaleString()}
               </strong>{" "}
               / {targetGoal.toLocaleString()} {language === "am" ? "ክኒኖች" : "units"}
             </span>
-            <span
-              className={`font-black ${
-                progressPercent >= 100
-                  ? "text-emerald-700"
-                  : progressPercent >= 50
-                    ? "text-amber-700"
-                    : "text-rose-600"
-              }`}
-            >
-              {progressPercent}% {language === "am" ? "ተሟልቷል" : "funded"}
-            </span>
+            {isSurplus ? (
+              <span className="font-black text-emerald-700">
+                {language === "am" ? `🎉 ተሟልቷል (+${surplus.toLocaleString()} ትርፍ)` : `🎉 Goal Met (+${surplus.toLocaleString()} Surplus)`}
+              </span>
+            ) : (
+              <span className="font-bold text-amber-700">
+                {language === "am" ? `ጉድለት፡ ${deficit.toLocaleString()} ይቀራል` : `Deficit: ${deficit.toLocaleString()} needed`}
+              </span>
+            )}
           </div>
         </div>
       </button>
@@ -173,10 +193,12 @@ export function MedicineRow({
           >
             <div className="px-4 pb-4 pt-3 border-t border-gray-100 space-y-3.5">
               {/* Motivational Goal Scale Box */}
-              <div className="bg-linear-to-r from-emerald-50/80 to-rose-50/80 border border-emerald-200/70 rounded-2xl p-3.5 space-y-2">
+              <div className={`border rounded-2xl p-3.5 space-y-2 transition-colors ${
+                isSurplus ? "bg-emerald-50/80 border-emerald-200" : "bg-gradient-to-r from-amber-50/80 to-rose-50/80 border-amber-200"
+              }`}>
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-1.5 font-bold text-brand-sky-950">
-                    <Target className="w-3.5 h-3.5 text-emerald-600" />
+                    <Target className={`w-3.5 h-3.5 ${isSurplus ? "text-emerald-600" : "text-amber-600"}`} />
                     <span>{language === "am" ? "ወርሃዊ የፍላጎት ግብ" : "Monthly Need Goal"}</span>
                   </div>
                   <span className="font-mono font-black text-brand-sky-900">
@@ -188,25 +210,33 @@ export function MedicineRow({
                 </div>
 
                 {/* Main Progress Bar Scale */}
-                <div className="w-full bg-white/80 border border-emerald-200/50 h-3 rounded-full overflow-hidden p-0.5 shadow-inner">
-                  <div
-                    className="bg-linear-to-r from-rose-400 via-amber-400 to-emerald-500 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${progressPercent}%` }}
+                <div className="w-full bg-white/80 border border-gray-200/60 h-3 rounded-full overflow-hidden p-0.5 shadow-inner">
+                  <motion.div
+                    initial={false}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className={`h-full rounded-full ${
+                      isSurplus
+                        ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 shadow-xs"
+                        : "bg-gradient-to-r from-rose-400 via-amber-400 to-amber-500"
+                    }`}
                   />
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] pt-0.5">
-                  <span className="font-bold text-emerald-800 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-amber-500" />
-                    {progressPercent >= 100
+                  <span className={`font-bold flex items-center gap-1 ${isSurplus ? "text-emerald-800" : "text-amber-800"}`}>
+                    <Sparkles className={`w-3 h-3 ${isSurplus ? "text-emerald-500" : "text-amber-500"}`} />
+                    {isSurplus
                       ? language === "am"
-                        ? "🎉 ወርሃዊው ግብ ተሳክቷል!"
-                        : "🎉 Monthly goal reached!"
+                        ? `🎉 ወርሃዊው ግብ ተሳክቷል! (+${surplus.toLocaleString()} ትርፍ)`
+                        : `🎉 Monthly goal reached! (+${surplus.toLocaleString()} Surplus)`
                       : language === "am"
-                        ? `ግብ ለማሟላት ${remainingNeeded.toLocaleString()} ክኒን ይቀራሉ`
-                        : `${remainingNeeded.toLocaleString()} more needed to meet goal`}
+                        ? `ግብ ለማሟላት ${deficit.toLocaleString()} ክኒን ይቀራሉ (ጉድለት)`
+                        : `${deficit.toLocaleString()} more needed to meet goal (Deficit)`}
                   </span>
-                  <span className="font-bold text-rose-700 bg-white px-2 py-0.5 rounded-lg border border-rose-100">
+                  <span className={`font-bold px-2 py-0.5 rounded-lg border ${
+                    isSurplus ? "bg-emerald-100 text-emerald-800 border-emerald-200" : "bg-amber-100 text-amber-800 border-amber-200"
+                  }`}>
                     {progressPercent}%
                   </span>
                 </div>

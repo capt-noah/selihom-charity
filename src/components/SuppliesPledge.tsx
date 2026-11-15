@@ -278,18 +278,26 @@ const DEFAULT_CATEGORIES: SupplyCategory[] = [
   },
 ];
 
-function getInHandText(item: SupplyItem, language: string): string {
+function parseNeededNumber(item: SupplyItem): number {
   const text = item.neededQty?.en || item.neededQty?.am || "";
   const match = text.match(/\d+/);
-  const total = match ? parseInt(match[0], 10) : 50;
-  const inHand = Math.max(1, Math.round(total * 0.35));
+  return match ? parseInt(match[0], 10) : 50;
+}
+
+function getInHandNumber(item: SupplyItem): number {
+  const total = parseNeededNumber(item);
+  return Math.max(1, Math.round(total * 0.35));
+}
+
+function getInHandText(item: SupplyItem, language: string): string {
+  const inHand = getInHandNumber(item);
   if (language === "am") {
     return `${inHand} በእጅ`;
   }
   return `${inHand} In Hand`;
 }
 
-// ── Single supply item row ─────────────────────────────────────────────────────
+// ── Single supply item row with Dynamic Deficit/Surplus Goal Reaction ──────────
 function SupplyRow({
   item,
   qty,
@@ -306,74 +314,131 @@ function SupplyRow({
   const [open, setOpen] = useState(false);
   const selected = qty > 0;
 
+  // Dynamic Goal, Deficit & Surplus Calculation
+  const targetGoal = parseNeededNumber(item);
+  const inHand = getInHandNumber(item);
+  const totalWithSelected = inHand + qty;
+  const progressPercent = Math.min(100, Math.round((totalWithSelected / targetGoal) * 100));
+  const isSurplus = totalWithSelected >= targetGoal;
+  const deficit = Math.max(0, targetGoal - totalWithSelected);
+  const surplus = Math.max(0, totalWithSelected - targetGoal);
+
   return (
     <div
-      className={`rounded-2xl border-2 transition-all duration-200 overflow-hidden ${
-        selected
-          ? "border-brand-sky-400 bg-brand-sky-50/40"
-          : "border-gray-100 bg-white hover:border-brand-sky-200"
+      className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
+        isSurplus && selected
+          ? "border-emerald-400 bg-emerald-50/40 shadow-sm"
+          : selected
+            ? "border-brand-sky-400 bg-brand-sky-50/40"
+            : "border-gray-100 bg-white hover:border-brand-sky-200"
       }`}
     >
       {/* ── Collapsed row ── */}
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-3 px-4 py-3.5 text-left cursor-pointer"
+        className="w-full flex flex-col gap-2 px-4 py-3 text-left cursor-pointer hover:bg-gray-50/50 transition-colors"
       >
-        {/* Urgency dot */}
-        <span
-          className={`w-2 h-2 rounded-full shrink-0 ${URGENCY_DOT[item.urgency] || "bg-brand-sky-400"}`}
-        />
-
-        {/* Name */}
-        <span className="font-semibold text-sm text-brand-sky-950 flex-1 leading-snug">
-          {t(item.name)}
-        </span>
-
-        {/* Needed qty — compact */}
-        <div className="hidden sm:flex flex-col text-right shrink-0 min-w-[85px]">
-          <span className="text-xs font-black text-brand-sky-950">
-            {t(item.neededQty)}
-          </span>
-          <span className="text-[9px] text-gray-400 font-bold">
-            {language === "am" ? "ወርሃዊ ግብ" : "Goal"}
-          </span>
-        </div>
-
-        {/* In Hand / Delivered */}
-        <div className="hidden md:flex flex-col text-right shrink-0 min-w-[75px]">
-          <span className="text-xs font-black text-brand-green-600">
-            {getInHandText(item, language)}
-          </span>
-          <span className="text-[9px] text-gray-400 font-bold">
-            {language === "am" ? "በእጅ ያለ" : "In Hand"}
-          </span>
-        </div>
-
-        {/* Urgency badge */}
-        <div className="shrink-0 min-w-[65px] text-center">
+        <div className="w-full flex items-center gap-3">
+          {/* Urgency / Status dot */}
           <span
-            className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${URGENCY_BADGE[item.urgency] || "bg-gray-100 text-gray-700"}`}
-          >
-            {item.urgency}
+            className={`w-2.5 h-2.5 rounded-full shrink-0 transition-colors duration-300 ${
+              isSurplus
+                ? "bg-emerald-500 ring-2 ring-emerald-200"
+                : URGENCY_DOT[item.urgency] || "bg-brand-sky-400"
+            }`}
+          />
+
+          {/* Name */}
+          <span className="font-semibold text-sm text-brand-sky-950 flex-1 leading-snug">
+            {t(item.name)}
+          </span>
+
+          {/* Needed qty — compact */}
+          <div className="hidden sm:flex flex-col text-right shrink-0 min-w-[85px]">
+            <span className="text-xs font-black text-brand-sky-950">
+              {t(item.neededQty)}
+            </span>
+            <span className="text-[9px] text-gray-400 font-bold">
+              {language === "am" ? "ወርሃዊ ግብ" : "Goal"}
+            </span>
+          </div>
+
+          {/* In Hand / Delivered + Selected */}
+          <div className="hidden md:flex flex-col text-right shrink-0 min-w-[75px]">
+            <span className={`text-xs font-black transition-colors ${isSurplus ? "text-emerald-700" : "text-brand-green-600"}`}>
+              {totalWithSelected} {language === "am" ? "በእጅ" : "In Hand"}
+            </span>
+            <span className="text-[9px] text-gray-400 font-bold">
+              {qty > 0 ? (language === "am" ? `+${qty} ተመርጧል` : `+${qty} added`) : (language === "am" ? "በእጅ ያለ" : "Current")}
+            </span>
+          </div>
+
+          {/* Urgency or Surplus badge */}
+          <div className="shrink-0 min-w-[65px] text-center">
+            {isSurplus ? (
+              <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border bg-emerald-100 text-emerald-800 border-emerald-300 shadow-2xs">
+                {language === "am" ? "ተሟልቷል" : "Goal Met"}
+              </span>
+            ) : (
+              <span
+                className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${URGENCY_BADGE[item.urgency] || "bg-gray-100 text-gray-700"}`}
+              >
+                {item.urgency}
+              </span>
+            )}
+          </div>
+
+          {/* Qty badge if selected */}
+          {selected && (
+            <span className={`text-white text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 shadow-xs ${
+              isSurplus ? "bg-emerald-600" : "bg-brand-sky-500"
+            }`}>
+              ×{qty}
+            </span>
+          )}
+
+          {/* Expand chevron */}
+          <span className="text-gray-400 shrink-0 ml-1">
+            {open ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
           </span>
         </div>
 
-        {/* Qty badge if selected */}
-        {selected && (
-          <span className="bg-brand-sky-400 text-white text-[10px] font-black px-2 py-0.5 rounded-full shrink-0">
-            ×{qty}
-          </span>
-        )}
-
-        {/* Expand chevron */}
-        <span className="text-gray-400 shrink-0 ml-1">
-          {open ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
-        </span>
+        {/* ── Dynamic Goal Deficit / Surplus Mini Progress Bar ── */}
+        <div className="w-full space-y-1 pt-1">
+          <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden border border-gray-200/50">
+            <motion.div
+              initial={false}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className={`h-full rounded-full transition-colors duration-300 ${
+                isSurplus
+                  ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 shadow-xs"
+                  : progressPercent >= 50
+                    ? "bg-gradient-to-r from-amber-400 to-amber-500"
+                    : "bg-gradient-to-r from-rose-500 to-amber-400"
+              }`}
+            />
+          </div>
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-gray-400 font-semibold">
+              {progressPercent}% {language === "am" ? "ተሸፍኗል" : "covered"}
+            </span>
+            {isSurplus ? (
+              <span className="font-extrabold text-emerald-700">
+                {language === "am" ? `🎉 ግቡ ተሟልቷል (+${surplus} ትርፍ)` : `🎉 Goal Met (+${surplus} Surplus)`}
+              </span>
+            ) : (
+              <span className="font-bold text-amber-700">
+                {language === "am" ? `ጉድለት፡ ${deficit} ይቀራል` : `Deficit: ${deficit} remaining`}
+              </span>
+            )}
+          </div>
+        </div>
       </button>
 
       {/* ── Expanded detail ── */}
@@ -394,6 +459,52 @@ function SupplyRow({
                 </p>
               )}
 
+              {/* Reactive Goal Deficit / Surplus Hero Box */}
+              <div className={`p-3 rounded-2xl border transition-colors duration-300 space-y-2 ${
+                isSurplus
+                  ? "bg-emerald-50/70 border-emerald-200"
+                  : "bg-amber-50/60 border-amber-200"
+              }`}>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-brand-sky-950">
+                    {language === "am" ? "ወርሃዊ የፍላጎት ግብና ሁኔታ" : "Monthly Need Status"}
+                  </span>
+                  <span className="font-mono font-black text-brand-sky-950">
+                    {totalWithSelected} / {targetGoal}
+                  </span>
+                </div>
+
+                <div className="w-full bg-white h-2.5 rounded-full overflow-hidden border border-gray-200 p-0.5">
+                  <motion.div
+                    initial={false}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className={`h-full rounded-full ${
+                      isSurplus
+                        ? "bg-gradient-to-r from-emerald-400 to-teal-500 shadow-xs"
+                        : "bg-gradient-to-r from-rose-400 via-amber-400 to-amber-500"
+                    }`}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] pt-0.5">
+                  <span className={`font-black ${isSurplus ? "text-emerald-800" : "text-amber-800"}`}>
+                    {isSurplus
+                      ? language === "am"
+                        ? `🎉 ወርሃዊ ግቡ ተሟልቷል! (+${surplus} ትርፍ በክምችት)`
+                        : `🎉 Monthly goal reached! (+${surplus} Surplus in stock)`
+                      : language === "am"
+                        ? `⚠️ ግቡን ለማሟላት ${deficit} ተጨማሪ ያስፈልጋል (ጉድለት)`
+                        : `⚠️ Need ${deficit} more units to meet monthly goal (Deficit)`}
+                  </span>
+                  <span className={`font-bold px-2 py-0.5 rounded-md text-[10px] ${
+                    isSurplus ? "bg-emerald-200 text-emerald-900" : "bg-amber-200 text-amber-900"
+                  }`}>
+                    {progressPercent}%
+                  </span>
+                </div>
+              </div>
+
               {/* Needed quantity */}
               <div className="flex items-center justify-between text-xs text-gray-500">
                 <span className="font-bold uppercase tracking-wider text-[10px]">
@@ -407,9 +518,11 @@ function SupplyRow({
               {/* Qty stepper */}
               <div
                 className={`flex items-center justify-between rounded-xl px-3 py-2.5 border ${
-                  selected
-                    ? "bg-brand-sky-50 border-brand-sky-200"
-                    : "bg-gray-50 border-gray-200"
+                  isSurplus
+                    ? "bg-emerald-50 border-emerald-200"
+                    : selected
+                      ? "bg-brand-sky-50 border-brand-sky-200"
+                      : "bg-gray-50 border-gray-200"
                 }`}
               >
                 <span className="text-xs font-bold text-gray-600">

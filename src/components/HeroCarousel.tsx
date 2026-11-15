@@ -21,34 +21,55 @@ interface HeroSlide {
 }
 
 const HERO_SLIDES: HeroSlide[] = [
-  { id: "s1", image: award1Img,
+  {
+    id: "s-teddy",
+    image: award4Img,
+    name:  { am: "የክብር አምባሳደር ቴዲ አፍሮ እና ታዋቂ እንግዶች", en: "Teddy Afro & Distinguished VIP Ambassadors" },
+    tag:   { am: "የታዋቂ ሰዎች አጋርነት",                          en: "Celebrity & VIP Support"                  },
+    story: { am: "ድምጻዊ ቴዎድሮስ ካሳሁን (ቴዲ አፍሮ) እና ታዋቂ ግለሰቦች ሰሊሆምን ጎብኝተው የክብር አጋርነታቸውን አረጋግጠዋል።", en: "Legendary artist Tewodros Kassahun (Teddy Afro) and high-profile dignitaries championing Selihom." },
+  },
+  {
+    id: "s1",
+    image: award1Img,
     name:  { am: "የመንግስት ህጋዊ እውቅና",    en: "Official NGO Certification"    },
     tag:   { am: "ምዝገባ ቁጥር 1113/2019",  en: "Reg No. 1113/2019"             },
-    story: { am: "በፌደራል ሲቪል ማህበረሰብ ኤጀንሲ ህጋዊ ምዝገባ።", en: "Officially registered by FDRE Civil Society Organizations Agency." } },
-  { id: "s2", image: award2Img,
+    story: { am: "በፌደራል ሲቪል ማህበረሰብ ኤጀንሲ ህጋዊ ምዝገባ።", en: "Officially registered by FDRE Civil Society Organizations Agency." },
+  },
+  {
+    id: "s2",
+    image: award2Img,
     name:  { am: "የበጎ አድራጎት የክብር ሽልማት", en: "Distinguished Service Award"   },
     tag:   { am: "የሰብአዊ አገልግሎት",         en: "Humanitarian Honor"            },
-    story: { am: "ሺዎችን ከጎዳና በማንሳት የተበረከተ ሽልማት።", en: "Award honouring Selihom's outstanding community impact." } },
-  { id: "s3", image: award3Img,
+    story: { am: "ሺዎችን ከጎዳና በማንሳት የተበረከተ ሽልማት።", en: "Award honouring Selihom's outstanding community impact." },
+  },
+  {
+    id: "s3",
+    image: award3Img,
     name:  { am: "ብሄራዊ የሰብአዊ እውቅና",    en: "National Recognition"          },
     tag:   { am: "ብሄራዊ ተጽዕኖ",           en: "National Impact"               },
-    story: { am: "ሁለንተናዊ ድጋፍ ለብሄራዊ እውቅና አብቅቶ።", en: "Recognised nationally for holistic rescue and rehabilitation." } },
-  { id: "s4", image: award4Img,
-    name:  { am: "ታዋቂ እንግዶችና አምባሳደሮች", en: "VIP & Dignitary Visits"        },
-    tag:   { am: "የማህበረሰብ አጋርነት",       en: "Community Support"             },
-    story: { am: "ታዋቂ ግለሰቦች ሰሊሆምን ጎብኝተው ድጋፍ አደረጉ።", en: "Renowned personalities visiting Selihom Entoto shelter." } },
-  { id: "s5", image: award5Img,
+    story: { am: "ሁለንተናዊ ድጋፍ ለብሄራዊ እውቅና አብቅቶ።", en: "Recognised nationally for holistic rescue and rehabilitation." },
+  },
+  {
+    id: "s5",
+    image: award5Img,
     name:  { am: "የሰብአዊ አገልግሎት ሰርተፍኬት", en: "Humanitarian Certificate"     },
     tag:   { am: "ኦፊሴላዊ ሰርተፍኬት",        en: "Official Certificate"          },
-    story: { am: "ከተቋማት የተበረከተ ሰርተፍኬት።", en: "Certificate acknowledging Selihom's dedicated service." } },
-  { id: "s6", image: award6Img,
+    story: { am: "ከተቋማት የተበረከተ ሰርተፍኬት።", en: "Certificate acknowledging Selihom's dedicated service." },
+  },
+  {
+    id: "s6",
+    image: award6Img,
     name:  { am: "85% ማገገሚያ ማረጋገጫ",    en: "Service Certification"         },
     tag:   { am: "ተአማኒ ድርጅት",           en: "Trusted NGO"                   },
-    story: { am: "85% ተጠቃሚዎች ሙሉ ማገገሚያ ማረጋገጫ።", en: "Certified track record: over 85% of beneficiaries fully restored." } },
-  { id: "s7", image: award7Img,
+    story: { am: "85% ተጠቃሚዎች ሙሉ ማገገሚያ ማረጋገጫ።", en: "Certified track record: over 85% of beneficiaries fully restored." },
+  },
+  {
+    id: "s7",
+    image: award7Img,
     name:  { am: "የማህበረሰብ አገልግሎት ሽልማት", en: "Community Service Honour"     },
     tag:   { am: "ሽልማቶችና እውቅና",         en: "Honours & Medals"              },
-    story: { am: "ዓመታዊ ቁርጠኝነትና ህዝባዊ ድጋፍ።", en: "Celebrating years of collective dedication and public generosity." } },
+    story: { am: "ዓመታዊ ቁርጠኝነትና ህዝባዊ ድጋፍ።", en: "Celebrating years of collective dedication and public generosity." },
+  },
 ];
 
 export default function HeroCarousel({ onNavigateAchievements }: { onNavigateAchievements?: () => void }) {
@@ -57,9 +78,10 @@ export default function HeroCarousel({ onNavigateAchievements }: { onNavigateAch
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Fast slideshow cadence: 2000ms
   useEffect(() => {
     if (isPaused) return;
-    const timer = setInterval(() => setCurrentIndex((p) => (p + 1) % HERO_SLIDES.length), 3000);
+    const timer = setInterval(() => setCurrentIndex((p) => (p + 1) % HERO_SLIDES.length), 2000);
     return () => clearInterval(timer);
   }, [isPaused]);
 
@@ -75,6 +97,15 @@ export default function HeroCarousel({ onNavigateAchievements }: { onNavigateAch
     <div className="relative w-full" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
       {/* Card */}
       <div className="relative overflow-hidden rounded-3xl bg-white border-2 border-brand-sky-200 shadow-xl h-[360px] sm:h-[420px] md:h-[460px] group">
+
+        {/* Fast Slideshow Cadence Progress Line */}
+        <motion.div
+          key={currentIndex}
+          initial={{ width: "0%" }}
+          animate={{ width: isPaused ? "100%" : "100%" }}
+          transition={{ duration: isPaused ? 0 : 2, ease: "linear" }}
+          className="absolute top-0 left-0 h-1 bg-gradient-to-r from-brand-sky-400 via-brand-yellow-400 to-brand-green-400 z-30 pointer-events-none"
+        />
 
         {/* Slide image */}
         <AnimatePresence initial={false}>
