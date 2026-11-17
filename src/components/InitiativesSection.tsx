@@ -187,8 +187,8 @@ export default function InitiativesSection() {
           </p>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        {/* Cards Grid — 2 Spacious Rows */}
+        <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
           {CARD_DATA.map((item, idx) => {
             const theme      = CARD_THEMES[idx];
             const Icon       = item.MainIcon;
@@ -206,10 +206,10 @@ export default function InitiativesSection() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08, duration: 0.45 }}
                 onClick={() => setSelectedInitiative(item)}
-                className={`bg-white border-2 ${theme.border} ${theme.hoverBorder} rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col group cursor-pointer`}
+                className={`w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] bg-white border-2 ${theme.border} ${theme.hoverBorder} rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col group cursor-pointer`}
               >
                 {/* ── Illustrated header block ── */}
-                <div className={`relative ${theme.bg} h-40 flex items-center justify-center overflow-hidden`}>
+                <div className={`relative ${theme.bg} h-44 flex items-center justify-center overflow-hidden`}>
                   {/* Large faded background icon as texture */}
                   <IllustIcon className="absolute opacity-15 w-36 h-36 text-white" strokeWidth={1} />
 
@@ -237,11 +237,11 @@ export default function InitiativesSection() {
                 </div>
 
                 {/* ── Body ── */}
-                <div className="flex-1 flex flex-col p-5 space-y-3">
-                  <h3 className={`font-serif font-bold text-lg text-brand-sky-950 leading-tight ${theme.titleHover} transition-colors line-clamp-2`}>
+                <div className="flex-1 flex flex-col p-6 space-y-3.5">
+                  <h3 className={`font-serif font-bold text-lg sm:text-xl text-brand-sky-950 leading-tight ${theme.titleHover} transition-colors line-clamp-2`}>
                     {title}
                   </h3>
-                  <p className="text-gray-500 text-xs leading-relaxed flex-1 line-clamp-3">
+                  <p className="text-gray-500 text-xs sm:text-sm leading-relaxed flex-1 line-clamp-3">
                     {desc}
                   </p>
 

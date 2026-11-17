@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import {
   ShieldCheck,
@@ -23,7 +23,6 @@ import person4Img from "../assets/images/person4.jpg";
 
 export default function TeamSection() {
   const { language, t } = useLanguage();
-  const [activeTier, setActiveTier] = useState<"all" | "board" | "departments">("all");
 
   const boardIcons = [ShieldCheck, Scale, Stethoscope];
   const departmentIcons: Record<string, React.ComponentType<any>> = {
@@ -80,40 +79,6 @@ export default function TeamSection() {
               ? "የሰሊሆም ማህበር የሚመራው በቁርጠኛ መስራች፣ በአማካሪ ቦርድ አባላትና በሙያተኞች የጋራ አገልጋይነት ነው።"
               : "Structured for transparency, medical excellence, and accountable leadership across all operations."}
           </motion.p>
-
-          {/* Tier filter pills */}
-          <div className="flex items-center justify-center gap-2 pt-6">
-            <button
-              onClick={() => setActiveTier("all")}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTier === "all"
-                  ? "bg-brand-sky-400 text-white shadow-sm"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-brand-sky-300"
-              }`}
-            >
-              {language === "am" ? "ሙሉ መዋቅር" : "Complete Structure"}
-            </button>
-            <button
-              onClick={() => setActiveTier("board")}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTier === "board"
-                  ? "bg-brand-sky-400 text-white shadow-sm"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-brand-sky-300"
-              }`}
-            >
-              {language === "am" ? "የአማካሪ ቦርድ" : "Advisory Board"}
-            </button>
-            <button
-              onClick={() => setActiveTier("departments")}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTier === "departments"
-                  ? "bg-brand-sky-400 text-white shadow-sm"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-brand-sky-300"
-              }`}
-            >
-              {language === "am" ? "የስራ አስፈጻሚ ክፍሎች" : "Executive Department Leads"}
-            </button>
-          </div>
         </div>
 
         {/* ── Tier 1: Founder & General Manager Feature Card ── */}
@@ -171,9 +136,8 @@ export default function TeamSection() {
           </div>
         </motion.div>
 
-        {/* ── Tier 2: Advisory Board & Governance (shown on 'all' or 'board') ── */}
-        {(activeTier === "all" || activeTier === "board") && (
-          <div className="mb-14 space-y-6">
+        {/* ── Tier 2: Advisory Board & Governance ── */}
+        <div className="mb-14 space-y-6">
             <div className="flex items-center gap-3 border-b border-gray-200/80 pb-3">
               <div className="w-8 h-8 rounded-xl bg-brand-sky-100 text-brand-sky-600 flex items-center justify-center font-black text-xs">
                 II
@@ -228,11 +192,9 @@ export default function TeamSection() {
               })}
             </div>
           </div>
-        )}
 
-        {/* ── Tier 3: Executive Department Leads (shown on 'all' or 'departments') ── */}
-        {(activeTier === "all" || activeTier === "departments") && (
-          <div className="space-y-6">
+        {/* ── Tier 3: Executive Department Leads ── */}
+        <div className="space-y-6">
             <div className="flex items-center gap-3 border-b border-gray-200/80 pb-3">
               <div className="w-8 h-8 rounded-xl bg-brand-green-100 text-brand-green-700 flex items-center justify-center font-black text-xs">
                 III
@@ -295,7 +257,6 @@ export default function TeamSection() {
               })}
             </div>
           </div>
-        )}
       </div>
     </section>
   );
