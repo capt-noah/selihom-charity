@@ -16,6 +16,42 @@ import person3Img     from "./assets/images/person3.jpg";
 import person4Img     from "./assets/images/person4.jpg";
 import officialCertificate from "./assets/images/award1.jpg";
 import elderlyWiseCutout   from "./assets/images/elderly_wise.jpg";
+import teddyAfroImg from "./assets/images/teddy_afro.jpg";
+import adanechImg   from "./assets/images/adanech.jpg";
+import priestImg    from "./assets/images/priest.jpg";
+
+import img1304 from "./assets/images/IMG_1304.JPG";
+import img1305 from "./assets/images/IMG_1305.JPG";
+import img1306 from "./assets/images/IMG_1306.JPG";
+import img1307 from "./assets/images/IMG_1307.JPG";
+import img1309 from "./assets/images/IMG_1309.JPG";
+import img1310 from "./assets/images/IMG_1310.JPG";
+import img1312 from "./assets/images/IMG_1312.JPG";
+import img1314 from "./assets/images/IMG_1314.JPG";
+import img1315 from "./assets/images/IMG_1315.JPG";
+import img1316 from "./assets/images/IMG_1316.JPG";
+import img1317 from "./assets/images/IMG_1317.JPG";
+import img1318 from "./assets/images/IMG_1318.JPG";
+import img1319 from "./assets/images/IMG_1319.JPG";
+import img1320 from "./assets/images/IMG_1320.JPG";
+import img1321 from "./assets/images/IMG_1321.JPG";
+import img1322 from "./assets/images/IMG_1322.JPG";
+import img1323 from "./assets/images/IMG_1323.JPG";
+import img1324 from "./assets/images/IMG_1324.JPG";
+import img1325 from "./assets/images/IMG_1325.JPG";
+import img1326 from "./assets/images/IMG_1326.JPG";
+import img1327 from "./assets/images/IMG_1327.JPG";
+import img1328 from "./assets/images/IMG_1328.JPG";
+import img1329 from "./assets/images/IMG_1329.JPG";
+import img1330 from "./assets/images/IMG_1330.JPG";
+import img1331 from "./assets/images/IMG_1331.JPG";
+import img1332 from "./assets/images/IMG_1332.JPG";
+import img1333 from "./assets/images/IMG_1333.JPG";
+import img1334 from "./assets/images/IMG_1334.JPG";
+import img1335 from "./assets/images/IMG_1335.JPG";
+import img1336 from "./assets/images/IMG_1336.JPG";
+import img1337 from "./assets/images/IMG_1337.JPG";
+
 
 export const IMAGES = {
   selihomLogo,
@@ -525,105 +561,345 @@ export const EVENTS: EventItem[] = [
 
 export const GALLERY_ITEMS: GalleryItem[] = [
   {
+    id: "gal-teddy",
+    type: "image",
+    title: { am: "ድምፃዊ ቴዎድሮስ ካሳሁን (ቴዲ አፍሮ) በሰሊሆም", en: "Artist Tewodros Kassahun (Teddy Afro) at Selihom" },
+    category: "volunteers",
+    url: teddyAfroImg,
+    description: { am: "ታዋቂው ድምፃዊ ቴዲ አፍሮ ሰሊሆምን በአካል ጎብኝተው ለተጠቃሚዎች ያላቸውን አጋርነትና ፍቅር ሲገልጹ።", en: "Iconic Ethiopian artist Teddy Afro visiting Selihom in compassionate solidarity with residents." }
+  },
+  {
+    id: "gal-adanech",
+    type: "image",
+    title: { am: "የከንቲባ አዳነች አቤቤ ይፋዊ ጉብኝት", en: "Mayor Adanech Abiebie Official Visit" },
+    category: "volunteers",
+    url: adanechImg,
+    description: { am: "የአዲስ አበባ ከተማ ከንቲባ ክብርት ወ/ሮ አዳነች አቤቤ የሰሊሆም ማህበርን ስራዎች በአካል ተገኝተው ሲጎበኙ።", en: "Mayor of Addis Ababa H.E. Adanech Abiebie touring Selihom to inspect rehabilitation and care facilities." }
+  },
+  {
+    id: "gal-priest",
+    type: "image",
+    title: { am: "የተከበሩ የሃይማኖት አባቶችና ካህናት ቡራኬ", en: "Spiritual Fathers & Clergy Blessing" },
+    category: "volunteers",
+    url: priestImg,
+    description: { am: "የተከበሩ የሃይማኖት አባቶችና ካህናት ማዕከላችንን በመጎብኘት ለህሙማኑና ለአረጋውያኑ መንፈሳዊ ቡራኬና ጸሎት ሲያደርጉ።", en: "Revered church leaders and clergy offering blessings, prayers, and pastoral encouragement." }
+  },
+  {
+    id: "gal-1304",
+    type: "image",
+    title: { am: "ዕለታዊ የተመጣጠነ ምግብ አቅርቦት", en: "Daily Nutritious Meal Service" },
+    category: "kitchen",
+    url: img1304,
+    description: { am: "ለሰሊሆም ተጠቃሚዎች በየቀኑ በኩሽናችን የሚዘጋጅ ንጹህና ሞቅ ያለ ማዕድ።", en: "Daily wholesome breakfast, lunch, and dinner lovingly prepared in our main kitchen." }
+  },
+  {
+    id: "gal-1305",
+    type: "image",
+    title: { am: "ንጹህ የማረፊያና የመኝታ ክፍሎች", en: "Sanctuary Dormitories & Rest" },
+    category: "elderly",
+    url: img1305,
+    description: { am: "ከጎዳና የተነሱ አረጋውያንና ህሙማን በሰላምና በደህንነት የሚያርፉባቸው ንጹህ ክፍሎች።", en: "Safe, clean, and dignified dormitory quarters providing restful sleep for rescued residents." }
+  },
+  {
+    id: "gal-1306",
+    type: "image",
+    title: { am: "የአዕምሮ ጤና ክትትልና ምርመራ", en: "Psychiatric Health Assessment" },
+    category: "mental-health",
+    url: img1306,
+    description: { am: "የህክምና ባለሙያዎች ለተጠቃሚዎች የሚያደርጉት የማያቋርጥ የክሊኒካልና የስነ-አዕምሮ ክትትል።", en: "Ongoing psychiatric clinical evaluations and dedicated medication monitoring." }
+  },
+  {
+    id: "gal-1307",
+    type: "image",
+    title: { am: "የማህበረሰብ እንክብካቤና አብሮነት", en: "Community Gathering & Care" },
+    category: "volunteers",
+    url: img1307,
+    description: { am: "በሰሊሆም ማዕከል ውስጥ የሚታይ የወንድማማችነት፣ የፍቅርና የእንክብካቤ ህብረት።", en: "Daily fellowship and mutual encouragement fostering recovery and social belonging." }
+  },
+  {
+    id: "gal-1309",
+    type: "image",
+    title: { am: "የፍቅር ማዕድ በሰሊሆም አዳራሽ", en: "Warm Lunch Fellowship" },
+    category: "kitchen",
+    url: img1309,
+    description: { am: "ተጠቃሚዎች በደስታና በአንድነት የተመጣጠነ ምግብ በጋራ ሲመገቡ።", en: "Residents gathered together in the main dining hall enjoying freshly cooked meals." }
+  },
+  {
+    id: "gal-1310",
+    type: "image",
+    title: { am: "ለአረጋውያን የሚደረግ ልዩ ድጋፍ", en: "Elderly Residents Support" },
+    category: "elderly",
+    url: img1310,
+    description: { am: "ጧሪና ደጋፊ የሌላቸውን አረጋውያን የክብርና የፍቅር መጠለያ መስጠት።", en: "Personalized care and compassion for senior citizens who were previously homeless." }
+  },
+  {
+    id: "gal-1312",
+    type: "image",
+    title: { am: "የፀሐይ ሙቀትና ንጹህ አየር ማረፊያ", en: "Outdoor Sunshine & Nature Rest" },
+    category: "mental-health",
+    url: img1312,
+    description: { am: "በእንጦጦ ንጹህ አየርና የተፈጥሮ ከባቢ ውስጥ የሚካሄድ የውጪ እንቅስቃሴ።", en: "Beneficiaries relaxing outdoors under the healing mountain atmosphere of Entoto." }
+  },
+  {
+    id: "gal-1314",
+    type: "image",
+    title: { am: "የኩሽና ሰራተኞች የምግብ ዝግጅት", en: "Dedicated Kitchen Team at Work" },
+    category: "kitchen",
+    url: img1314,
+    description: { am: "ለ400+ ተጠቃሚዎች በየቀኑ በሰዓቱ ምግብ የሚያዘጋጁ ታታሪ እናቶችና አባቶች።", en: "Our committed kitchen staff preparing hundreds of warm, balanced meals each day." }
+  },
+  {
+    id: "gal-1315",
+    type: "image",
+    title: { am: "በፍቅርና በክብር የተሞላ እንክብካቤ", en: "Loving Staff & Resident Care" },
+    category: "volunteers",
+    url: img1315,
+    description: { am: "የማዕከሉ ሰራተኞች ለተጠቃሚዎች የሚያሳዩት እናታዊና አባታዊ ፍቅር።", en: "Gentle attentiveness and respectful support provided by Selihom's staff." }
+  },
+  {
+    id: "gal-1316",
+    type: "image",
+    title: { am: "የውጪ ንጹህ ማረፊያ ግቢ", en: "Spacious Courtyard & Gathering" },
+    category: "mental-health",
+    url: img1316,
+    description: { am: "ተጠቃሚዎች በሰላም የሚወያዩበትና ፀሐይ የሚሞቁበት ክፍት ግቢ።", en: "Open courtyard space offering peaceful relaxation and community interaction." }
+  },
+  {
+    id: "gal-1317",
+    type: "image",
+    title: { am: "የማለዳ የጤና ምርመራና ክትትል", en: "Morning Health & Care Rounds" },
+    category: "mental-health",
+    url: img1317,
+    description: { am: "በየቀኑ ጠዋት የሚደረግ የሰውነትና የአዕምሮ ጤና ክትትል እንቅስቃሴ።", en: "Routine morning medical assessments ensuring the wellbeing of all shelter residents." }
+  },
+  {
+    id: "gal-1318",
+    type: "image",
+    title: { am: "የጋራ የምግብ ማዕድ ተሳትፎ", en: "Shared Communal Dining" },
+    category: "kitchen",
+    url: img1318,
+    description: { am: "በአንድነት ተቀምጦ ማዕድ የመካፈል የቤተሰብ ስሜት ማዳበር።", en: "Restoring the feeling of home and belonging through shared communal meals." }
+  },
+  {
+    id: "gal-1319",
+    type: "image",
+    title: { am: "ንጹህ አልባሳትና የግል ንጽህና", en: "Dignified Clothing & Personal Care" },
+    category: "elderly",
+    url: img1319,
+    description: { am: "ለእያንዳንዱ ተጠቃሚ ንጹህ ልብስና የንጽህና መጠበቂያ ቁሳቁስ ማሟላት።", en: "Providing every rescued individual with clean clothing and hygiene supplies." }
+  },
+  {
+    id: "gal-1320",
+    type: "image",
+    title: { am: "የሰላምና የተስፋ ማገገሚያ ጊዜ", en: "Peaceful Recovery Moments" },
+    category: "mental-health",
+    url: img1320,
+    description: { am: "ከከባድ የጎዳና ህይወት ወጥተው ወደ ሰላማዊ ጤናማ ህይወት የተመለሱ ወገኖች።", en: "Witnessing life-changing tranquility and restoration from extreme street trauma." }
+  },
+  {
+    id: "gal-1321",
+    type: "image",
+    title: { am: "የእንጦጦ ማዕከል ሰፊ ቅጥር ጊቢ", en: "Entoto Center Sanctuary" },
+    category: "volunteers",
+    url: img1321,
+    description: { am: "ተጠቃሚዎች በሰላም የሚንቀሳቀሱበት ደህንነቱ የተጠበቀ የመልሶ ማቋቋሚያ ስፍራ።", en: "Safe and secure grounds nestled along the scenic hills of Entoto." }
+  },
+  {
+    id: "gal-1322",
+    type: "image",
+    title: { am: "የዕለት እንጀራና ምግብ ማዘጋጀት", en: "Daily Bread & Food Prep" },
+    category: "kitchen",
+    url: img1322,
+    description: { am: "ለዕለት ጉርስ የሚሆን ባህላዊ እንጀራና የተመጣጠነ ወጥ በኩሽናችን ሲዘጋጅ።", en: "Baking fresh injera and cooking hearty meals for the shelter community." }
+  },
+  {
+    id: "gal-1323",
+    type: "image",
+    title: { am: "የስነ-ልቦና ምክርና ውይይት", en: "Counseling & Moral Encouragement" },
+    category: "mental-health",
+    url: img1323,
+    description: { am: "የስነ-ልቦና ባለሙያዎች ለተጠቃሚዎች የሚያደርጉት የቀጥታ ማበረታቻና የውይይት ጊዜ።", en: "Structured therapy sessions helping beneficiaries regain confidence and self-worth." }
+  },
+  {
+    id: "gal-1324",
+    type: "image",
+    title: { am: "ሞቅ ያለ አልጋና ደህንነቱ የተጠበቀ መጠለያ", en: "Warm Bedding & Safe Housing" },
+    category: "elderly",
+    url: img1324,
+    description: { am: "ከብርድና ከዝናብ የተጠበቀ ምቹ የማረፊያ ስፍራ።", en: "Sheltered from harsh weather with warm blankets, mattresses, and clean dorms." }
+  },
+  {
+    id: "gal-1325",
+    type: "image",
+    title: { am: "የማህበረሰብ አንድነትና ፍቅር", en: "Community Support & Unity" },
+    category: "volunteers",
+    url: img1325,
+    description: { am: "በጎ አድራጊዎችና ሰራተኞች ከህሙማኑ ጋር ያላቸው የጠበቀ ቤተሰባዊ ትስስር።", en: "Heartwarming family bonds forged between staff, supporters, and beneficiaries." }
+  },
+  {
+    id: "gal-1326",
+    type: "image",
+    title: { am: "ለተጠቃሚዎች የተዘጋጀ የተመጣጠነ ምግብ", en: "Wholesome Nutrition Sharing" },
+    category: "kitchen",
+    url: img1326,
+    description: { am: "የሰውነት ጥንካሬንና በሽታ የመከላከል አቅምን የሚገነባ የተመጣጠነ ምግብ።", en: "Nutritious meal courses carefully planned for residents undergoing medical care." }
+  },
+  {
+    id: "gal-1327",
+    type: "image",
+    title: { am: "የእጅ ሙያና የማነቃቂያ ስራዎች", en: "Vocational & Stimulating Activities" },
+    category: "mental-health",
+    url: img1327,
+    description: { am: "ያገገሙ ተጠቃሚዎች ወደ ስራ አለም እንዲመለሱ የሚያግዝ የማነቃቂያ ፕሮግራም።", en: "Productive daytime activities encouraging fine-motor skills and independent thinking." }
+  },
+  {
+    id: "gal-1328",
+    type: "image",
+    title: { am: "የአረጋውያን ማረፊያና እንክብካቤ", en: "Elderly Companionship & Care" },
+    category: "elderly",
+    url: img1328,
+    description: { am: "የዕድሜ ባለፀጎች በክብርና በእንክብካቤ የሚያሳልፉት የዕለት ተዕለት ኑሮ።", en: "Dignified support celebrating the wisdom and vulnerability of our senior residents." }
+  },
+  {
+    id: "gal-1329",
+    type: "image",
+    title: { am: "የበጎ ፈቃደኞች የኩሽና አገልግሎት", en: "Volunteer Kitchen Shifts" },
+    category: "kitchen",
+    url: img1329,
+    description: { am: "በጎ አድራጊ ወጣቶች በምግብ ማብሰልና በማደል ሂደት ያደረጉት ተሳትፎ።", en: "Volunteers rolling up their sleeves to assist in meal preparation and dining service." }
+  },
+  {
+    id: "gal-1330",
+    type: "image",
+    title: { am: "የህክምና ቁሳቁስና የመድሃኒት ክትትል", en: "Clinical Oversight & Care" },
+    category: "mental-health",
+    url: img1330,
+    description: { am: "በየዕለቱ በሃኪሞች ክትትል የሚሰጥ አስፈላጊ መድሃኒትና ክሊኒካል እንክብካቤ።", en: "Daily medication administration and nursing supervision for psychiatric patients." }
+  },
+  {
+    id: "gal-1331",
+    type: "image",
+    title: { am: "የከሰዓት የወዳጅነትና የጨዋታ ጊዜ", en: "Afternoon Fellowship & Games" },
+    category: "volunteers",
+    url: img1331,
+    description: { am: "ተጠቃሚዎች በጋራ የሚዝናኑበትና የአዕምሮ እረፍት የሚያገኙበት ሰዓት።", en: "Lighthearted social hours encouraging conversation, board games, and laughter." }
+  },
+  {
+    id: "gal-1332",
+    type: "image",
+    title: { am: "ምቹና ደህንነቱ የተጠበቀ የመኖሪያ አካባቢ", en: "Comfortable Living Quarters" },
+    category: "elderly",
+    url: img1332,
+    description: { am: "ከጎዳና አሰቃቂ ህይወት የተላቀቁ ወገኖች የሚያገኙት የቤት ሙቀት።", en: "A truly transformative shelter ensuring dignity, security, and tranquility." }
+  },
+  {
+    id: "gal-1333",
+    type: "image",
+    title: { am: "ሁለንተናዊ የተሃድሶና የማገገም ጉዞ", en: "Holistic Restoration Journey" },
+    category: "mental-health",
+    url: img1333,
+    description: { am: "ከህመም ወደ ጤና፣ ከብቸኝነት ወደ ማህበረሰባዊ አብሮነት የተደረገ ጉዞ።", en: "Step-by-step restoration from chronic illness to renewed self-reliance." }
+  },
+  {
+    id: "gal-1334",
+    type: "image",
+    title: { am: "ሞቅ ያለ የተመጣጠነ ወጥ ማብሰል", en: "Nutritious Kitchen Prep" },
+    category: "kitchen",
+    url: img1334,
+    description: { am: "በተልባ፣ በጥራጥሬና በአትክልት የተዘጋጁ አልሚ ምግቦች።", en: "Preparing nutrient-dense pulses and vegetables to nourish recovering patients." }
+  },
+  {
+    id: "gal-1335",
+    type: "image",
+    title: { am: "የተጠቃሚዎች የደስታና የፈገግታ ገጽታ", en: "Smiling Beneficiaries Restored" },
+    category: "mental-health",
+    url: img1335,
+    description: { am: "በማዕከሉ ባገኙት ፍቅርና እንክብካቤ ምክንያት በፊታቸው ላይ የሚታይ እውነተኛ ደስታ።", en: "Radiant smiles showing the healing power of love, acceptance, and clinical care." }
+  },
+  {
+    id: "gal-1336",
+    type: "image",
+    title: { am: "የህዝብ ጎብኝዎችና የፍቅር አጋርነት", en: "Community Visitors & Solidarity" },
+    category: "volunteers",
+    url: img1336,
+    description: { am: "የተለያዩ የህብረተሰብ ክፍሎች ሰሊሆምን በመጎብኘት ያሳዩት አጋርነት።", en: "Visitors and well-wishers from all walks of life demonstrating civic compassion." }
+  },
+  {
+    id: "gal-1337",
+    type: "image",
+    title: { am: "የተስፋና የፍቅር ቅዱስ ስፍራ", en: "A Sanctuary of Hope and Love" },
+    category: "volunteers",
+    url: img1337,
+    description: { am: "ሰሊሆም — ተስፋ የቆረጡ ወገኖች ህይወት የሚታደስበት የፍቅር ማዕከል!", en: "Selihom Rehabilitation Center: a sanctuary where broken lives find eternal hope and love." }
+  },
+  {
     id: "gal-owner",
     type: "image",
-    title: { am: "\u12e8\u1230\u120a\u1206\u121d \u121b\u1205\u1260\u122d \u1218\u1235\u122b\u127d \u12d0\u1276 \u121a\u12aa\u12eb\u1235 \u1208\u1308\u1230", en: "Founder Mikiyas Legesse & Leadership" },
+    title: { am: "የሰሊሆም ማህበር መስራች አቶ ሚኪያስ ለገሰ", en: "Founder Mikiyas Legesse & Leadership" },
     category: "mental-health",
     url: charityOwnerImg,
-    description: { am: "\u12e8\u121b\u1205\u1260\u1229 \u1218\u1235\u122b\u127d\u1293 \u1235\u122b \u12d0\u1235\u134e\u1348\u12db\u121a \u12d0\u1276 \u121a\u12aa\u12eb\u1235 \u1208\u1308\u1230\u1362", en: "Founder and director Mikiyas Legesse leading Selihom's humanitarian mission." }
+    description: { am: "የማህበሩ መስራችና ስራ አስፈጻሚ አቶ ሚኪያስ ለገሰ።", en: "Founder and director Mikiyas Legesse leading Selihom's humanitarian mission." }
   },
   {
     id: "gal-person1",
     type: "image",
-    title: { am: "\u12e8\u1215\u12ad\u121d\u1293\u1293 \u12e8\u1270\u1233\u12f5\u1230\u12cb \u12cd\u1324\u1275", en: "Psychiatric Care & Rehabilitation" },
+    title: { am: "የህክምናና የተሃድሶ ውጤት", en: "Psychiatric Care & Rehabilitation" },
     category: "mental-health",
     url: person1Img,
-    description: { am: "\u12a8\u130e\u12f3\u1293 \u1270\u1290\u1230\u1273 \u1260\u1230\u120a\u1206\u121d \u121d\u1209 \u1215\u12ad\u121d\u1293 \u12eb\u1308\u129e\u127d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary provided psychiatric treatment and holistic care at Selihom." },
+    description: { am: "ከጎዳና ተነስታ በሰሊሆም ሙሉ ህክምና ያገኘች ተጠቃሚ።", en: "Beneficiary provided psychiatric treatment and holistic care at Selihom." },
     imagePosition: "object-center"
   },
   {
     id: "gal-person2",
     type: "image",
-    title: { am: "\u12e8\u1215\u12ad\u121d\u1293\u1293 \u12e8\u1270\u1233\u12f5\u1230\u12cb \u1235\u12a8\u1275", en: "Rehabilitation Transformation" },
+    title: { am: "የህክምናና የተሃድሶ ስኬት", en: "Rehabilitation Transformation" },
     category: "mental-health",
     url: person2Img,
-    description: { am: "\u12a8\u130e\u12f3\u1293 \u1215\u12ed\u12c8\u1275 \u12c8\u1325\u1276 \u1260\u1230\u120a\u1206\u121d \u121d\u1209 \u1260\u121d\u1209 \u12eb\u1308\u1308\u121d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary after complete psychiatric recovery at Selihom." },
+    description: { am: "ከጎዳና ህይወት ወጥቶ በሰሊሆም ሙሉ በሙሉ ያገገመ ተጠቃሚ።", en: "Beneficiary after complete psychiatric recovery at Selihom." },
     imagePosition: "object-top"
   },
   {
     id: "gal-person3",
     type: "image",
-    title: { am: "\u12e8\u121b\u1308\u1308\u121d\u1293 \u12e8\u12f0\u1235\u1273 \u130d\u12d8", en: "Recovery & Restoration of Health" },
+    title: { am: "የማገገምና የደስታ ጉዞ", en: "Recovery & Restoration of Health" },
     category: "mental-health",
     url: person3Img,
-    description: { am: "\u1260\u121b\u1205\u1260\u1229 \u1215\u12ad\u121d\u1293 \u134d\u1245\u122d \u12d0\u130d\u129d\u1273 \u1260\u1230\u120b\u121d \u12e8\u121d\u1275\u1296\u122d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary celebrating recovery in clean traditional dress." },
+    description: { am: "በማህበሩ ህክምና ፍቅር አግኝታ በሰላም የምትኖር ተጠቃሚ።", en: "Beneficiary celebrating recovery in clean traditional dress." },
     imagePosition: "object-center"
   },
   {
     id: "gal-person4",
     type: "image",
-    title: { am: "\u12e8\u121d\u1209 \u1270\u1233\u12f5\u1230\u12cb\u1293 \u12e8\u121b\u1205\u1260\u1228\u1230\u1263\u12ca \u1270\u1233\u1275\u134e", en: "Full Recovery & Reintegration" },
+    title: { am: "የሙሉ ተሃድሶና የማህበረሰባዊ ተሳትፎ", en: "Full Recovery & Reintegration" },
     category: "mental-health",
     url: person4Img,
-    description: { am: "\u1260\u121b\u1205\u1260\u1229 \u12f5\u130d\u12c3 \u12d0\u130d\u129d\u1276 \u121d\u1209 \u1260\u121d\u1209 \u12eb\u1308\u1308\u121d \u1270\u1338\u12ab\u121a\u1362", en: "Beneficiary rehabilitated and fully healed, wearing formal attire." },
+    description: { am: "በማህበሩ ድጋፍ አግኝቶ ሙሉ በሙሉ ያገገመ ተጠቃሚ።", en: "Beneficiary rehabilitated and fully healed, wearing formal attire." },
     imagePosition: "object-top"
   },
   {
     id: "gal-award1",
     type: "image",
-    title: { am: "\u12e8\u1218\u1295\u130d\u1235\u1275 \u1215\u130b\u12ca \u12d5\u12c9\u1243\u1293", en: "Official NGO Certification" },
+    title: { am: "የመንግስት ህጋዊ እውቅና", en: "Official NGO Certification" },
     category: "mental-health",
     url: award1Img,
-    description: { am: "\u12e8\u1230\u120a\u1206\u121d \u1215\u130b\u12ca \u121d\u12d8\u1308\u1263 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Official registration certificate and government recognition." }
+    description: { am: "የሰሊሆም ህጋዊ ምዝገባ ምስክር ወረቀት።", en: "Official registration certificate and government recognition." }
   },
   {
     id: "gal-award2",
     type: "image",
-    title: { am: "\u12e8\u1260\u130e \u12d0\u12f5\u122b\u130e\u1275 \u12e8\u12ad\u1265\u122d \u123d\u120d\u121b\u1275", en: "Distinguished Service Award" },
+    title: { am: "የበጎ አድራጎት የክብር ሽልማት", en: "Distinguished Service Award" },
     category: "mental-health",
     url: award2Img,
-    description: { am: "\u1208\u1230\u120a\u1206\u121d \u121b\u1205\u1260\u122d \u12e8\u1270\u1230\u1320 \u12e8\u12ad\u1265\u122d \u123d\u120d\u121b\u1275\u1362", en: "Distinguished service award presented to Selihom." }
+    description: { am: "ለሰሊሆም ማህበር የተሰጠ የክብር ሽልማት።", en: "Distinguished service award presented to Selihom." }
   },
   {
     id: "gal-award3",
     type: "image",
-    title: { am: "ብሄራዊ \u12e8\u1230\u1265\u12d0\u12ca \u12d5\u12c9\u1243\u1293", en: "National Humanitarian Recognition" },
+    title: { am: "ብሄራዊ የሰብአዊ እውቅና", en: "National Humanitarian Recognition" },
     category: "mental-health",
     url: award3Img,
-    description: { am: "\u1208\u1230\u120a\u1206\u121d \u12eb\u1308\u129e\u12cd \u1265\u1204\u122b\u12ca \u12d5\u12c9\u1243\u1293\u1362", en: "National humanitarian honor for rescuing and rehabilitating street beneficiaries." }
-  },
-  {
-    id: "gal-award4",
-    type: "image",
-    title: { am: "\u1273\u12c8\u12aa \u12d5\u1295\u130e\u127d\u1293 \u12d0\u121d\u1263\u1233\u12f0\u122e\u127d \u130d\u1265\u129d\u1275", en: "Distinguished VIP & Guest Visits" },
-    category: "mental-health",
-    url: award4Img,
-    description: { am: "\u1273\u12c8\u12aa \u130d\u1208\u1230\u129e\u127d\u1293 \u12e8\u12ad\u1265\u122d \u12d5\u1295\u130e\u127d \u1230\u120a\u1206\u121d\u1295 \u1235\u130e\u1260\u129d\u1362", en: "Dignitaries and personalities visiting Selihom shelter." }
-  },
-  {
-    id: "gal-award5",
-    type: "image",
-    title: { am: "\u12e8\u1230\u1265\u12d0\u12ca \u12d0\u130d\u120d\u130e\u1275 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275", en: "Humanitarian Excellence Certificate" },
-    category: "mental-health",
-    url: award5Img,
-    description: { am: "\u1208\u1230\u120a\u1206\u121d \u12e8\u1270\u1230\u1320 \u12e8\u1230\u1265\u12d0\u12ca \u12d0\u130d\u120d\u130e\u1275 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Certificate of appreciation acknowledging Selihom's dedicated service." }
-  },
-  {
-    id: "gal-award6",
-    type: "image",
-    title: { am: "\u12e8\u1270\u1233\u12f5\u1230\u12cb\u1293 \u12d5\u1295\u12ad\u1265\u12ab\u1260 \u121b\u1228\u130b\u1308\u1338", en: "Official Service Certification" },
-    category: "mental-health",
-    url: award6Img,
-    description: { am: "85% \u1270\u1338\u12ab\u121a\u12c8\u127d\u1295 \u12eb\u12f5\u1290 \u12f5\u122d\u130d\u1275 \u121d\u1235\u12ad\u122d \u12c8\u1228\u1240\u1275\u1362", en: "Certified track record restoring health to over 85% of beneficiaries." }
-  },
-  {
-    id: "gal-award7",
-    type: "image",
-    title: { am: "የማህበረሰብ አገልግሎት ሽልማት", en: "Community Service Honour" },
-    category: "mental-health",
-    url: award7Img,
-    description: { am: "ከተቋማት የተበረከተ ሌላ የክብር ምስክር ወረቀት።", en: "Additional certificate of honour from governmental and community organisations." }
-  },
+    description: { am: "ለሰሊሆም ያገኘው ብሄራዊ እውቅና።", en: "National humanitarian honor for rescuing and rehabilitating street beneficiaries." }
+  }
 ];
 
 // ── Official Governance, Advisory Board & Departmental Structure ─────────────

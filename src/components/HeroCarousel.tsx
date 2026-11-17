@@ -7,10 +7,13 @@ import { useNavigate } from "react-router-dom";
 import award1Img from "../assets/images/award1.jpg";
 import award2Img from "../assets/images/award2.jpg";
 import award3Img from "../assets/images/award3.jpg";
-import award4Img from "../assets/images/award4.jpg";
 import award5Img from "../assets/images/award5.jpg";
 import award6Img from "../assets/images/award6.jpg";
 import award7Img from "../assets/images/award7.jpg";
+
+import teddyAfroImg from "../assets/images/teddy_afro.jpg";
+import adanechImg from "../assets/images/adanech.jpg";
+import priestImg from "../assets/images/priest.jpg";
 
 interface HeroSlide {
   id: string;
@@ -23,10 +26,24 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: "s-teddy",
-    image: award4Img,
-    name:  { am: "የክብር አምባሳደር ቴዲ አፍሮ እና ታዋቂ እንግዶች", en: "Teddy Afro & Distinguished VIP Ambassadors" },
-    tag:   { am: "የታዋቂ ሰዎች አጋርነት",                          en: "Celebrity & VIP Support"                  },
-    story: { am: "ድምጻዊ ቴዎድሮስ ካሳሁን (ቴዲ አፍሮ) እና ታዋቂ ግለሰቦች ሰሊሆምን ጎብኝተው የክብር አጋርነታቸውን አረጋግጠዋል።", en: "Legendary artist Tewodros Kassahun (Teddy Afro) and high-profile dignitaries championing Selihom." },
+    image: teddyAfroImg,
+    name:  { am: "ድምፃዊ ቴዎድሮስ ካሳሁን (ቴዲ አፍሮ) በሰሊሆም", en: "Artist Tewodros Kassahun (Teddy Afro) at Selihom" },
+    tag:   { am: "የክብር አምባሳደር ጉብኝት",                          en: "VIP Ambassador Visit"                     },
+    story: { am: "ታዋቂው ድምፃዊ ቴዎድሮስ ካሳሁን (ቴዲ አፍሮ) ሰሊሆምን በአካል ጎብኝተው ለተጠቃሚዎች ያላቸውን ፍቅርና የሰብአዊ አጋርነት ገልጸዋል።", en: "Celebrated Ethiopian icon Tewodros Kassahun (Teddy Afro) visiting Selihom in loving solidarity with shelter residents." },
+  },
+  {
+    id: "s-adanech",
+    image: adanechImg,
+    name:  { am: "የአዲስ አበባ ከተማ ከንቲባ ክብርት ወ/ሮ አዳነች አቤቤ", en: "Mayor Adanech Abiebie at Selihom" },
+    tag:   { am: "የከተማ አስተዳደር ጉብኝት",                          en: "City Leadership Visit"                  },
+    story: { am: "የአዲስ አበባ ከተማ አስተዳደር ከንቲባ ክብርት ወ/ሮ አዳነች አቤቤ የሰሊሆም ተሃድሶና የእንክብካቤ ማዕከልን ጎብኝተው አጋርነታቸውን አረጋግጠዋል።", en: "Addis Ababa Mayor H.E. Adanech Abiebie touring Selihom's facility and endorsing our compassionate humanitarian mission." },
+  },
+  {
+    id: "s-priest",
+    image: priestImg,
+    name:  { am: "የተከበሩ የሃይማኖት አባቶችና ካህናት ቡራኬ",          en: "Spiritual Fathers & Clergy Blessing" },
+    tag:   { am: "መንፈሳዊ ቡራኬና አጋርነት",                          en: "Faith & Community Blessing"            },
+    story: { am: "የተከበሩ የሃይማኖት አባቶችና ካህናት ማዕከላችንን በመጎብኘት ለህሙማኑ፣ ለአረጋውያኑና ለሰራተኞቹ ጸሎትና መንፈሳዊ ቡራኬ ሰጥተዋል።", en: "Venerated spiritual fathers and clergy visiting Selihom to offer prayers, blessings, and spiritual comfort to our community." },
   },
   {
     id: "s1",
