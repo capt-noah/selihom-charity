@@ -11,6 +11,7 @@ import AboutPage from "./pages/AboutPage";
 import ProgramsPage from "./pages/ProgramsPage";
 import StoriesPage from "./pages/StoriesPage";
 import GalleryPage from "./pages/GalleryPage";
+import DonatePage from "./pages/DonatePage";
 import GetInvolvedPage from "./pages/GetInvolvedPage";
 import EventsPage from "./pages/EventsPage";
 import NewsPage from "./pages/NewsPage";
@@ -145,10 +146,10 @@ function AppInner() {
               <Route path="/programs" element={<ProgramsPage />} />
               <Route path="/stories" element={<StoriesPage />} />
               <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/donate" element={<DonatePage />} />
+              <Route path="/support" element={<DonatePage />} />
+              <Route path="/ways-to-support" element={<DonatePage />} />
               <Route path="/get-involved" element={<GetInvolvedPage />} />
-              <Route path="/ways-to-support" element={<GetInvolvedPage />} />
-              <Route path="/support" element={<GetInvolvedPage />} />
-              <Route path="/donate" element={<GetInvolvedPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/news/:slug" element={<NewsPage />} />

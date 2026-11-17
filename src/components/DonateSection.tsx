@@ -18,14 +18,14 @@ import SuppliesPledge from "./SuppliesPledge";
 interface DonateSectionProps {
   initialInitiativeId?: string | null;
   initialCustomAmount?: number | null;
-  onClearInitialValues: () => void;
+  onClearInitialValues?: () => void;
 }
 
 export default function DonateSection({
   initialInitiativeId,
   initialCustomAmount,
   onClearInitialValues,
-}: DonateSectionProps) {
+}: DonateSectionProps = {}) {
   const { t, language } = useLanguage();
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>(BANK_ACCOUNTS);
@@ -44,7 +44,7 @@ export default function DonateSection({
     if (initialInitiativeId || initialCustomAmount) {
       const el = document.getElementById("donate");
       if (el) el.scrollIntoView({ behavior: "smooth" });
-      onClearInitialValues();
+      onClearInitialValues?.();
     }
   }, [initialInitiativeId, initialCustomAmount]);
 
@@ -59,9 +59,8 @@ export default function DonateSection({
       {/* ── SECTION 1: FINANCIAL / MONEY SUPPORT (TOP) ── */}
       <section
         id="donate"
-        className="py-24 bg-white relative overflow-hidden border-t border-brand-sky-100"
+        className="pt-16 pb-20 relative overflow-hidden"
       >
-        <DotGridPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.span
@@ -139,7 +138,7 @@ export default function DonateSection({
                 return (
                   <div
                     key={idx}
-                    className="bg-gray-50 hover:bg-white rounded-2xl p-6 border-2 border-gray-100 hover:border-brand-sky-300 shadow-md hover:shadow-xl transition-all flex flex-col justify-between group"
+                    className="bg-white rounded-2xl p-6 border border-brand-sky-100 hover:border-brand-sky-300 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group"
                   >
                     <div>
                       <div
@@ -220,7 +219,7 @@ export default function DonateSection({
       {/* ── SECTION 2: IN-KIND & MEDICINE PLEDGES (BELOW) ── */}
       <section
         id="inkind"
-        className="py-24 bg-gray-50/60 relative overflow-hidden border-t border-brand-sky-100"
+        className="pt-8 pb-24 relative overflow-hidden"
       >
         <div id="supplies" className="scroll-mt-24" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">

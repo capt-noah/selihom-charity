@@ -158,7 +158,7 @@ export default function HomePage() {
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
               >
                 <Link
-                  to="/ways-to-support"
+                  to="/donate"
                   className="w-full sm:w-auto px-8 py-4 bg-brand-sky-400 hover:bg-brand-sky-500 text-white font-extrabold text-sm tracking-wider uppercase rounded-2xl shadow-lg shadow-brand-sky-400/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5 group"
                 >
                   {language === "am" ? "አሁኑኑ ይደግፉ" : "Support Us Now"}
