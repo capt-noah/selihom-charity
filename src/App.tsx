@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import ProgramsPage from "./pages/ProgramsPage";
 import StoriesPage from "./pages/StoriesPage";
+import GalleryPage from "./pages/GalleryPage";
 import GetInvolvedPage from "./pages/GetInvolvedPage";
 import EventsPage from "./pages/EventsPage";
 import NewsPage from "./pages/NewsPage";
@@ -143,8 +144,7 @@ function AppInner() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/programs" element={<ProgramsPage />} />
               <Route path="/stories" element={<StoriesPage />} />
-              {/* Legacy redirect */}
-              <Route path="/gallery" element={<StoriesPage />} />
+              <Route path="/gallery" element={<GalleryPage />} />
               <Route path="/get-involved" element={<GetInvolvedPage />} />
               <Route path="/ways-to-support" element={<GetInvolvedPage />} />
               <Route path="/support" element={<GetInvolvedPage />} />

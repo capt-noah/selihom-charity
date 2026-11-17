@@ -19,17 +19,17 @@ export default function GallerySection() {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <motion.span initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             className="inline-block text-[11px] font-black uppercase tracking-widest text-brand-sky-500 mb-3">
-            {language === "am" ? "ምስሎቻችን" : "Inspiring Stories"}
+            {language === "am" ? "ፎቶ ማህደር" : "Photo Gallery"}
           </motion.span>
           <motion.h2 initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-brand-sky-950 tracking-tight mb-4">
-            {language === "am" ? "የህይወት ታሪኮቻችን" : "Inspiring Stories"}
+            {language === "am" ? "የተግባርና የህይወት ምስሎቻችን" : "Moments of Care & Recovery"}
           </motion.h2>
           <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
             className="text-gray-500 text-sm sm:text-base leading-relaxed">
             {language === "am"
-              ? "ዕለታዊ ህክምና፣ ምግብ እና ትምህርት ስራዎቻችን ፎቶዎች።"
-              : "Real photo moments of recovery, elder care, kitchen operations, and study groups at Selihom."}
+              ? "ዕለታዊ ህክምና፣ ምግብ፣ የመጠለያና የትምህርት ስራዎቻችን የቀጥታ ፎቶዎች።"
+              : "Real photo moments of psychiatric recovery, elder care, kitchen operations, and life at Selihom."}
           </motion.p>
         </div>
 

@@ -152,6 +152,7 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
           <p>© {new Date().getFullYear()} {t(SELIHOM_INFO.fullName)}. All Rights Reserved.</p>
           <div className="flex flex-wrap gap-4 items-center justify-center">
             <Link to="/programs"     className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "አገልግሎቶች" : "Programs"}</Link>
+            <Link to="/gallery"      className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ምስሎች"     : "Gallery"}</Link>
             <Link to="/about"        className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ስለ እኛ"   : "About"}</Link>
             <Link to="/stories"      className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ታሪኮች"    : "Stories"}</Link>
             <Link to="/events"       className="hover:text-brand-sky-700 transition-colors font-medium">{language === "am" ? "ፍቅር ድግሶች" : "Events"}</Link>
