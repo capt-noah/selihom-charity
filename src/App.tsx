@@ -13,7 +13,6 @@ import StoriesPage from "./pages/StoriesPage";
 import GetInvolvedPage from "./pages/GetInvolvedPage";
 import EventsPage from "./pages/EventsPage";
 import NewsPage from "./pages/NewsPage";
-import WaysToSupportPage from "./pages/WaysToSupportPage";
 
 import { useLanguage } from "./context/LanguageContext";
 import selihomLogo from "./assets/images/selihom_logo.jpg";
@@ -147,8 +146,9 @@ function AppInner() {
               {/* Legacy redirect */}
               <Route path="/gallery" element={<StoriesPage />} />
               <Route path="/get-involved" element={<GetInvolvedPage />} />
-              <Route path="/ways-to-support" element={<WaysToSupportPage />} />
-              <Route path="/support" element={<WaysToSupportPage />} />
+              <Route path="/ways-to-support" element={<GetInvolvedPage />} />
+              <Route path="/support" element={<GetInvolvedPage />} />
+              <Route path="/donate" element={<GetInvolvedPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/news/:slug" element={<NewsPage />} />

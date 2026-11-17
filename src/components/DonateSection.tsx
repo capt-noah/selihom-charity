@@ -105,44 +105,45 @@ export default function DonateSection({
           </motion.p>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-white rounded-3xl border-2 border-brand-sky-100 overflow-hidden shadow-xl max-w-5xl mx-auto"
-        >
-          {/* Two Primary Ways to Support: Money & In-Kind Pledges */}
-          <div className="relative z-10 grid grid-cols-2 border-b border-brand-sky-100 bg-brand-sky-50/50">
+        {/* Two Primary Ways to Support: Money & In-Kind Pledges */}
+        <div className="flex justify-center mb-10">
+          <div className="inline-flex p-1.5 rounded-full bg-brand-sky-100/70 border border-brand-sky-200/80 shadow-xs max-w-md w-full">
             <button
               onClick={() => setActiveTab("money")}
-              className={`py-4 sm:py-5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 border-b-2 transition-all cursor-pointer ${
+              className={`flex-1 py-3 px-5 text-xs sm:text-sm font-extrabold rounded-full flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 activeTab === "money"
-                  ? "border-brand-sky-400 text-brand-sky-600 bg-white shadow-xs"
-                  : "border-transparent text-gray-400 hover:text-brand-sky-500"
+                  ? "bg-white text-brand-sky-950 shadow-sm"
+                  : "text-brand-sky-800/70 hover:text-brand-sky-950"
               }`}
             >
-              <Coins className="w-5 h-5 shrink-0 text-amber-500" />
+              <Coins className="w-4 h-4 shrink-0 text-amber-500" />
               <span>{language === "am" ? "ገንዘብ" : "Money"}</span>
             </button>
 
             <button
               onClick={() => setActiveTab("inkind")}
-              className={`py-4 sm:py-5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 border-b-2 transition-all cursor-pointer ${
+              className={`flex-1 py-3 px-5 text-xs sm:text-sm font-extrabold rounded-full flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 activeTab === "inkind"
-                  ? "border-brand-sky-400 text-brand-sky-600 bg-white shadow-xs"
-                  : "border-transparent text-gray-400 hover:text-brand-sky-500"
+                  ? "bg-white text-brand-sky-950 shadow-sm"
+                  : "text-brand-sky-800/70 hover:text-brand-sky-950"
               }`}
             >
-              <Package className="w-5 h-5 shrink-0 text-brand-sky-500" />
+              <Package className="w-4 h-4 shrink-0 text-brand-sky-500" />
               <span>{language === "am" ? "የዓይነት ድጋፍ" : "In-Kind Pledges"}</span>
             </button>
           </div>
+        </div>
 
-          <div className="relative z-0 p-6 md:p-10 overflow-hidden">
-            {/* ── MONEY / BANK ACCOUNTS ── */}
-            {activeTab === "money" && (
-              <div className="space-y-8">
-                <div className="text-center max-w-xl mx-auto mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-5xl mx-auto"
+        >
+          {/* ── MONEY / BANK ACCOUNTS ── */}
+          {activeTab === "money" && (
+            <div className="space-y-8">
+              <div className="text-center max-w-xl mx-auto mb-6">
                   <span className="text-brand-sky-600 text-[11px] font-black uppercase tracking-widest block mb-2">
                     {language === "am"
                       ? "ህጋዊ የባንክ ሂሳቦች"
@@ -248,11 +249,8 @@ export default function DonateSection({
 
             {/* ── IN-KIND PLEDGES (Supplies + Medicines with Goals Scale) ── */}
             {activeTab === "inkind" && (
-              <div>
-                <SuppliesPledge />
-              </div>
+              <SuppliesPledge />
             )}
-          </div>
         </motion.div>
       </div>
     </section>

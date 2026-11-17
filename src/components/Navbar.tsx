@@ -30,7 +30,7 @@ export default function Navbar() {
     { to: "/stories",          label: { am: "ታሪኮች",        en: "Stories"         } },
     { to: "/events",           label: { am: "ፍቅር ድግሶች",    en: "Events"          } },
     { to: "/news",             label: { am: "ዜናዎች",        en: "News"            } },
-    { to: "/ways-to-support",  label: { am: "የድጋፍ መንገዶች", en: "Ways to Support" } },
+    { to: "/get-involved",     label: { am: "ተሳተፉ",        en: "Get Involved"     } },
   ];
 
   return (
@@ -101,7 +101,7 @@ export default function Navbar() {
           </button>
 
           <button
-            onClick={() => navigate("/ways-to-support")}
+            onClick={() => navigate("/get-involved#donate")}
             className="flex items-center gap-1.5 px-3 xl:px-4 py-1.5 xl:py-2 text-xs font-black uppercase tracking-wider rounded-full shadow-sm shadow-brand-sky-400/25 transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-white bg-brand-sky-400 hover:bg-brand-sky-500 shrink-0 whitespace-nowrap"
           >
             <Heart className="w-3.5 h-3.5 fill-current" />

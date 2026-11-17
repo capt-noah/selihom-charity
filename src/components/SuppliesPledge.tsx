@@ -881,9 +881,7 @@ export default function SuppliesPledge() {
 
       {/* ── Render Medicine View with Dynamic Goal Scale & Top Minimalistic Goal Card ── */}
       {activeTab === "medicine" ? (
-        <div className="bg-rose-50/20 p-2 sm:p-4 rounded-3xl border border-rose-100">
-          <MedicinePledge />
-        </div>
+        <MedicinePledge />
       ) : (
         /* ── Render Standard Category Supplies View (Food, Hygiene, Psychiatry, Supplies) ── */
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
